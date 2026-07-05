@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uttoron — Your Skills Passport</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --navy:#14313B;
+  --navy-deep:#0D2229;
+  --paper:#F6F0DF;
+  --paper-dim:#EAE1C7;
+  --ink:#1C2B2E;
+  --marigold:#E8A33D;
+  --coral:#E2593B;
+  --teal-stamp:#2E7D5B;
+  --line:rgba(246,240,223,0.16);
+  --shadow:rgba(13,34,41,0.35);
+  --radius:14px;
+  --font-display:'Space Grotesk',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--navy);
+  color:var(--paper);
+  font-family:var(--font-body);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.display{font-family:var(--font-display);}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+.hidden{display:none !important;}
+.mono{font-family:var(--font-mono);}
+
+:focus-visible{
+  outline:3px solid var(--marigold);
+  outline-offset:2px;
+}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px;}
+.navbar{
+  position:sticky;top:0;z-index:40;
+  background:var(--navy-deep);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  max-width:1040px;margin:0 auto;padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:1.15rem;letter-spacing:0.01em;}
+.brand-mark{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--marigold);color:var(--navy-deep);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-weight:600;font-size:0.85rem;
+  border:2px solid var(--paper);
+}
+.nav-actions{display:flex;align-items:center;gap:14px;}
+.lite-toggle{
+  display:flex;align-items:center;gap:8px;
+  font-size:0.75rem;color:var(--paper-dim);
+}
+.switch{
+  position:relative;width:40px;height:22px;border-radius:20px;
+  background:rgba(246,240,223,0.2);border:1px solid var(--line);
+  transition:background .2s;
+}
+.switch::after{
+  content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;
+  background:var(--paper);transition:transform .2s;
+}
+.switch.on{background:var(--teal-stamp);}
+.switch.on::after{transform:translateX(18px);}
+.nav-btn{
+  background:transparent;border:1px solid var(--line);color:var(--paper);
+  padding:8px 14px;border-radius:20px;font-size:0.85rem;font-weight:500;
+}
+.nav-btn:hover{border-color:var(--marigold);}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 22px;border-radius:10px;border:none;font-weight:600;font-size:0.95rem;
+  transition:transform .15s, box-shadow .15s;
+}
+.btn-primary{background:var(--coral);color:var(--paper);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(226,89,58,0.35);}
+.btn-secondary{background:transparent;color:var(--paper);border:1.5px solid var(--paper-dim);}
+.btn-secondary:hover{border-color:var(--marigold);color:var(--marigold);}
+.btn-block{width:100%;}
+body.lite .btn:hover{transform:none;box-shadow:none;}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:64px 0 48px;position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse at top right, rgba(232,163,61,0.16), transparent 55%),
+    var(--navy);
+}
+body.lite .hero{background:var(--navy);}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:36px;align-items:center;}
+@media(min-width:800px){.hero-grid{grid-template-columns:1.15fr 0.85fr;}}
+.eyebrow{
+  font-family:var(--font-mono);font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--marigold);margin-bottom:14px;display:inline-block;
+}
+.hero h1{
+  font-size:2.4rem;line-height:1.08;margin:0 0 18px;font-weight:700;
+}
+@media(min-width:800px){.hero h1{font-size:3.1rem;}}
+.hero p.lede{font-size:1.05rem;color:var(--paper-dim);max-width:46ch;margin:0 0 28px;}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px;}
+
+/* ticket counter */
+.ticket{
+  background:var(--paper);color:var(--ink);border-radius:var(--radius);
+  padding:18px 20px;display:flex;align-items:center;gap:16px;
+  border:1.5px dashed var(--navy-deep);position:relative;max-width:360px;
+}
+.ticket::before,.ticket::after{
+  content:"";position:absolute;width:16px;height:16px;background:var(--navy);
+  border-radius:50%;top:50%;transform:translateY(-50%);
+}
+.ticket::before{left:-9px;}
+.ticket::after{right:-9px;}
+.ticket-num{font-family:var(--font-mono);font-size:1.9rem;font-weight:600;letter-spacing:0.02em;min-width:5ch;}
+.ticket-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#5b6b63;}
+
+.hero-passport{
+  background:var(--paper);color:var(--ink);border-radius:18px;
+  padding:26px;box-shadow:0 30px 60px var(--shadow);
+  transform:rotate(-2deg);
+  border:1px solid rgba(0,0,0,0.06);
+}
+body.lite .hero-passport{transform:none;box-shadow:0 8px 20px rgba(0,0,0,0.25);}
+.hero-passport .ptitle{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:#7a6a4a;}
+.hero-passport h3{margin:6px 0 16px;font-size:1.3rem;}
+.stamp-row{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* ---------- stamps ---------- */
+.stamp{
+  width:78px;height:78px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--font-display);font-weight:700;font-size:0.68rem;line-height:1.15;padding:6px;
+}
+.stamp.locked{border:2px dashed rgba(28,43,46,0.35);color:rgba(28,43,46,0.45);}
+.stamp.earned{
+  border:2.5px solid var(--teal-stamp);color:var(--teal-stamp);
+  transform:rotate(-8deg);
+  box-shadow:inset 0 0 0 3px rgba(46,125,91,0.08);
+}
+body.lite .stamp.earned{transform:none;}
+
+/* ---------- sections ---------- */
+section{padding:56px 0;}
+.section-head{max-width:60ch;margin-bottom:32px;}
+.section-head .eyebrow{margin-bottom:10px;}
+.section-head h2{font-size:1.7rem;margin:0 0 10px;}
+.section-head p{color:var(--paper-dim);margin:0;}
+
+.tracks-grid{display:grid;grid-template-columns:1fr;gap:18px;}
+@media(min-width:760px){.tracks-grid{grid-template-columns:repeat(3,1fr);}}
+.track-card{
+  background:var(--navy-deep);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;position:relative;
+}
+.track-card .tag{
+  font-family:var(--font-mono);font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--marigold);
+}
+.track-card h3{margin:10px 0 8px;font-size:1.15rem;}
+.track-card p{color:var(--paper-dim);font-size:0.9rem;margin:0 0 16px;}
+.track-card .lesson-link{
+  font-size:0.85rem;font-weight:600;color:var(--paper);text-decoration:none;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.track-card .lesson-link:hover{color:var(--marigold);}
+
+/* demo lesson banner */
+.demo-banner{
+  background:linear-gradient(135deg,var(--teal-stamp),#245c47);
+  border-radius:18px;padding:26px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;
+}
+body.lite .demo-banner{background:var(--teal-stamp);}
+.demo-banner h3{margin:0 0 6px;font-size:1.25rem;}
+.demo-banner p{margin:0;color:rgba(246,240,223,0.85);max-width:44ch;font-size:0.92rem;}
+
+/* ---------- cards / forms ---------- */
+.card{
+  background:var(--paper);color:var(--ink);border-radius:18px;
+  padding:32px;max-width:440px;margin:0 auto;box-shadow:0 20px 50px var(--shadow);
+}
+.card h2{margin:0 0 4px;font-size:1.5rem;}
+.card .sub{color:#5b6b63;font-size:0.9rem;margin:0 0 22px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:0.8rem;font-weight:600;margin-bottom:6px;color:#3d4a44;}
+.field input{
+  width:100%;padding:11px 13px;border-radius:9px;border:1.5px solid #d8cfae;
+  font-size:1rem;font-family:var(--font-body);background:#fff;color:var(--ink);
+}
+.field input:focus{outline:none;border-color:var(--teal-stamp);}
+.avatar-pick{display:flex;gap:8px;flex-wrap:wrap;}
+.avatar-opt{
+  width:44px;height:44px;border-radius:50%;border:2px solid #d8cfae;background:#fff;
+  font-size:1.3rem;display:flex;align-items:center;justify-content:center;
+}
+.avatar-opt.selected{border-color:var(--teal-stamp);background:#e6f2ec;}
+.form-msg{font-size:0.85rem;margin:10px 0 0;min-height:1.2em;}
+.form-msg.error{color:var(--coral);}
+.form-msg.ok{color:var(--teal-stamp);}
+.switch-link{font-size:0.85rem;text-align:center;margin-top:18px;color:#5b6b63;}
+.switch-link button{background:none;border:none;color:var(--teal-stamp);font-weight:600;text-decoration:underline;padding:0;}
+
+/* ---------- dashboard / passport ---------- */
+.passport-page{background:var(--paper);color:var(--ink);border-radius:20px;padding:0;overflow:hidden;box-shadow:0 20px 50px var(--shadow);}
+.passport-header{
+  background:var(--navy-deep);color:var(--paper);padding:28px 30px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:space-between;
+}
+.passport-id{display:flex;align-items:center;gap:16px;}
+.passport-avatar{
+  width:58px;height:58px;border-radius:50%;background:var(--marigold);
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+  border:2px solid var(--paper);
+}
+.passport-id .name{font-family:var(--font-display);font-weight:700;font-size:1.2rem;}
+.passport-id .num{font-family:var(--font-mono);font-size:0.8rem;color:var(--paper-dim);}
+.passport-body{padding:30px;}
+.stamp-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+@media(min-width:700px){.stamp-grid{grid-template-columns:repeat(3,1fr);}}
+.stamp-tile{
+  border:1.5px solid #e3d9b8;border-radius:14px;padding:18px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.stamp-tile.done{background:#eef6f1;border-color:var(--teal-stamp);}
+.stamp-tile h4{margin:0;font-size:0.95rem;}
+.stamp-tile .status{font-size:0.78rem;color:#7a7060;}
+.stamp-tile .status.done{color:var(--teal-stamp);font-weight:600;}
+.progress-summary{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;
+  font-family:var(--font-mono);font-size:0.85rem;color:#5b6b63;
+}
+
+/* ---------- lesson runner ---------- */
+.lesson-shell{background:var(--paper);color:var(--ink);border-radius:20px;padding:30px;max-width:640px;margin:0 auto;box-shadow:0 20px 50px var(--shadow);}
+.lesson-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+.lesson-top .tag{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal-stamp);}
+.lesson-top h2{margin:6px 0 0;font-size:1.4rem;}
+.close-x{background:none;border:none;font-size:1.4rem;color:#8a806c;padding:4px 8px;}
+.scenario-card{background:#fff;border:1.5px solid #e3d9b8;border-radius:14px;padding:20px;margin-bottom:18px;}
+.scenario-card .msg{font-size:0.98rem;color:var(--ink);}
+.msg-bubble{
+  background:#f2ede0;border-radius:10px;padding:14px 16px;font-size:0.95rem;
+  border-left:4px solid var(--marigold);margin-top:2px;
+}
+.choice-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.choice-btn{
+  flex:1;min-width:140px;background:#fff;border:1.5px solid #cbbf95;border-radius:10px;
+  padding:12px 14px;font-weight:600;font-size:0.9rem;text-align:left;
+}
+.choice-btn:hover{border-color:var(--teal-stamp);}
+.feedback{
+  border-radius:10px;padding:12px 14px;font-size:0.88rem;margin-top:14px;
+}
+.feedback.good{background:#e6f2ec;color:#245c47;}
+.feedback.bad{background:#fbe9e5;color:#9c3a26;}
+.lesson-progress{display:flex;gap:6px;margin-bottom:18px;}
+.dot{width:9px;height:9px;border-radius:50%;background:#e3d9b8;}
+.dot.active{background:var(--teal-stamp);}
+.reply-option{display:block;width:100%;text-align:left;background:#fff;border:1.5px solid #cbbf95;border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:0.9rem;}
+.reply-option:hover{border-color:var(--teal-stamp);}
+
+.ledger-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:0.9rem;}
+.ledger-table th,.ledger-table td{padding:8px 6px;border-bottom:1px solid #e3d9b8;text-align:left;}
+.ledger-table input{width:70px;padding:6px 8px;border-radius:6px;border:1.5px solid #d8cfae;font-family:var(--font-mono);}
+.ledger-total{font-family:var(--font-mono);font-size:1.2rem;font-weight:600;text-align:right;margin-bottom:16px;}
+.lesson-complete{
+  text-align:center;padding:20px 0;
+}
+.lesson-complete .big-stamp{
+  width:96px;height:96px;border-radius:50%;border:3px solid var(--teal-stamp);color:var(--teal-stamp);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:var(--font-display);
+  font-weight:700;font-size:0.8rem;transform:rotate(-8deg);
+}
+
+/* ---------- footer ---------- */
+footer{padding:36px 0 50px;border-top:1px solid var(--line);color:var(--paper-dim);font-size:0.82rem;}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="brand"><span class="brand-mark">উ</span> Uttoron</div>
+    <div class="nav-actions">
+      <label class="lite-toggle">
+        Lite mode
+        <span class="switch" id="liteSwitch" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle lite mode"></span>
+      </label>
+      <button class="nav-btn" id="navAuthBtn">Sign in</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== LANDING VIEW ===================== -->
+<div id="view-landing">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Free · Works offline · No email needed</span>
+        <h1>Your first stamp starts here.</h1>
+        <p class="lede">Uttoron teaches real, job-ready computer skills &mdash; built for shared phones, borrowed computers, and slow internet. Every finished lesson earns a stamp in your own Skills Passport.</p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" id="heroSignupBtn">Get your passport</button>
+          <button class="btn btn-secondary" id="heroSigninBtn">I already have one</button>
+        </div>
+        <div class="ticket">
+          <div>
+            <div class="ticket-num mono" id="counterNum">····</div>
+            <div class="ticket-label">Passports issued so far</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-passport">
+        <div class="ptitle">Skills Passport · Preview</div>
+        <h3>3 tracks. 3 stamps. 1 you.</h3>
+        <div class="stamp-row">
+          <div class="stamp earned">DATA<br>✓</div>
+          <div class="stamp locked">DIGITAL</div>
+          <div class="stamp locked">FIX-IT</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Three tracks</span>
+        <h2>Skills that turn into jobs, not just certificates.</h2>
+        <p>Every track is built around what employers and internship supervisors actually ask for &mdash; not abstract theory.</p>
+      </div>
+      <div class="tracks-grid">
+        <div class="track-card">
+          <span class="tag">Track 01</span>
+          <h3>Office &amp; Data</h3>
+          <p>Spreadsheets, typing, and keeping a clean ledger &mdash; the basics every office and shop needs.</p>
+          <a class="lesson-link" data-lesson="ledger" href="#">Try: Balance the Till →</a>
+        </div>
+        <div class="track-card">
+          <span class="tag">Track 02</span>
+          <h3>Digital Presence</h3>
+          <p>Professional email, filling out applications, and sounding confident in writing.</p>
+          <a class="lesson-link" data-lesson="inbox" href="#">Try: Inbox Ready →</a>
+        </div>
+        <div class="track-card">
+          <span class="tag">Track 03</span>
+          <h3>Troubleshooting</h3>
+          <p>Fix a dropped wifi connection, spot a scam message, solve problems without panic.</p>
+          <a class="lesson-link" data-lesson="scam" href="#">Try: Spot the Scam →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="demo-banner">
+        <div>
+          <h3>No account needed to try a lesson</h3>
+          <p>Play any lesson above right now. Sign up afterwards to save your stamp to a real passport.</p>
+        </div>
+        <button class="btn btn-secondary" style="border-color:var(--paper);" id="scrollTracksBtn">See the tracks ↑</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== SIGNUP VIEW ===================== -->
+<div id="view-signup" class="hidden">
+  <section>
+    <div class="wrap">
+      <div class="card">
+        <h2>Create your passport</h2>
+        <p class="sub">Just a nickname and a 4-digit PIN &mdash; no email or phone number needed.</p>
+        <form id="signupForm">
+          <div class="field">
+            <label for="suNick">What should we call you?</label>
+            <input id="suNick" maxlength="24" placeholder="e.g. Tanvir" autocomplete="off" required>
+          </div>
+          <div class="field">
+            <label>Pick an avatar</label>
+            <div class="avatar-pick" id="avatarPick">
+              <button type="button" class="avatar-opt" data-a="🦉">🦉</button>
+              <button type="button" class="avatar-opt" data-a="🐯">🐯</button>
+              <button type="button" class="avatar-opt" data-a="🦋">🦋</button>
+              <button type="button" class="avatar-opt" data-a="🐢">🐢</button>
+              <button type="button" class="avatar-opt" data-a="🦜">🦜</button>
+              <button type="button" class="avatar-opt" data-a="🐬">🐬</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="suPin">Choose a 4-digit PIN</label>
+            <input id="suPin" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" required>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Create my passport</button>
+          <p class="form-msg" id="signupMsg"></p>
+        </form>
+        <p class="switch-link">Already have a passport? <button id="toSigninLink">Sign in</button></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== SIGNIN VIEW ===================== -->
+<div id="view-signin" class="hidden">
+  <section>
+    <div class="wrap">
+      <div class="card">
+        <h2>Welcome back</h2>
+        <p class="sub">Enter your passport number and PIN.</p>
+        <form id="signinForm">
+          <div class="field">
+            <label for="siNum">Passport number</label>
+            <input id="siNum" placeholder="e.g. UT-4821" autocomplete="off" required>
+          </div>
+          <div class="field">
+            <label for="siPin">PIN</label>
+            <input id="siPin" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" required>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+          <p class="form-msg" id="signinMsg"></p>
+        </form>
+        <p class="switch-link">New here? <button id="toSignupLink">Create a passport</button></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== DASHBOARD VIEW ===================== -->
+<div id="view-dashboard" class="hidden">
+  <section>
+    <div class="wrap">
+      <div class="passport-page">
+        <div class="passport-header">
+          <div class="passport-id">
+            <div class="passport-avatar" id="dashAvatar">🦉</div>
+            <div>
+              <div class="name" id="dashName">Nickname</div>
+              <div class="num mono" id="dashNum">UT-0000</div>
+            </div>
+          </div>
+          <button class="nav-btn" id="logoutBtn">Log out</button>
+        </div>
+        <div class="passport-body">
+          <div class="progress-summary">
+            <span id="stampCount">0 of 3 skills stamped</span>
+            <span id="memberSince"></span>
+          </div>
+          <div class="stamp-grid" id="dashStampGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== LESSON VIEW ===================== -->
+<div id="view-lesson" class="hidden">
+  <section>
+    <div class="wrap">
+      <div class="lesson-shell" id="lessonShell"></div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Uttoron &mdash; a Skills Passport prototype.</span>
+    <span>Built for shared devices &amp; slow connections.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var TRACKS = {
+    scam:   { key:"scam",   label:"Troubleshooting", stampText:"FIX-IT" },
+    inbox:  { key:"inbox",  label:"Digital Presence", stampText:"DIGITAL" },
+    ledger: { key:"ledger", label:"Office & Data",    stampText:"DATA" }
+  };
+
+  var session = null; // { num, nickname, avatar, createdAt }
+  var pendingAvatar = "🦉";
+
+  // ---------- helpers ----------
+  function $(sel){ return document.querySelector(sel); }
+  function $all(sel){ return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+
+  function showView(name){
+    ["landing","signup","signin","dashboard","lesson"].forEach(function(v){
+      $("#view-"+v).classList.toggle("hidden", v!==name);
+    });
+    window.scrollTo({top:0, behavior: document.body.classList.contains("lite") ? "auto" : "smooth"});
+  }
+
+  function pad4(n){
+    n = String(n);
+    while(n.length<4){ n = "0"+n; }
+    return n;
+  }
+
+  async function refreshCounter(){
+    var el = $("#counterNum");
+    try{
+      var res = await window.storage.list("users:", true);
+      var count = (res && res.keys) ? res.keys.length : 0;
+      el.textContent = pad4(count);
+    }catch(e){
+      el.textContent = "----";
+      console.error("Counter load failed:", e);
+    }
+  }
+
+  async function generatePassportNumber(){
+    for(var i=0;i<8;i++){
+      var num = "UT-" + Math.floor(1000+Math.random()*9000);
+      try{
+        var existing = await window.storage.get("users:"+num, true);
+        if(!existing) return num;
+      }catch(e){
+        return num; // get throws when key doesn't exist -> free to use
+      }
+    }
+    return "UT-"+Date.now().toString().slice(-4);
+  }
+
+  // ---------- lite mode ----------
+  var liteSwitch = $("#liteSwitch");
+  function setLite(on){
+    document.body.classList.toggle("lite", on);
+    liteSwitch.classList.toggle("on", on);
+    liteSwitch.setAttribute("aria-pressed", on ? "true":"false");
+  }
+  liteSwitch.addEventListener("click", function(){
+    setLite(!document.body.classList.contains("lite"));
+  });
+  liteSwitch.addEventListener("keydown", function(e){
+    if(e.key==="Enter" || e.key===" "){ e.preventDefault(); liteSwitch.click(); }
+  });
+
+  // ---------- nav / routing ----------
+  $("#navAuthBtn").addEventListener("click", function(){
+    if(session){ showView("dashboard"); } else { showView("signin"); }
+  });
+  $("#heroSignupBtn").addEventListener("click", function(){ showView("signup"); });
+  $("#heroSigninBtn").addEventListener("click", function(){ showView("signin"); });
+  $("#toSigninLink").addEventListener("click", function(){ showView("signin"); });
+  $("#toSignupLink").addEventListener("click", function(){ showView("signup"); });
+  $("#scrollTracksBtn").addEventListener("click", function(){
+    document.querySelector(".tracks-grid").scrollIntoView({behavior: document.body.classList.contains("lite")?"auto":"smooth"});
+  });
+  $("#logoutBtn").addEventListener("click", function(){
+    session = null;
+    $("#navAuthBtn").textContent = "Sign in";
+    showView("landing");
+  });
+
+  $all(".lesson-link").forEach(function(a){
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      openLesson(a.getAttribute("data-lesson"));
+    });
+  });
+
+  // ---------- avatar picker ----------
+  $all(".avatar-opt").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      $all(".avatar-opt").forEach(function(b){ b.classList.remove("selected"); });
+      btn.classList.add("selected");
+      pendingAvatar = btn.getAttribute("data-a");
+    });
+  });
+  $(".avatar-opt").classList.add("selected"); // default first avatar
+
+  // ---------- signup ----------
+  $("#signupForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = $("#signupMsg");
+    msg.className = "form-msg";
+    var nick = $("#suNick").value.trim();
+    var pin = $("#suPin").value.trim();
+
+    if(nick.length < 2){ msg.textContent = "Please enter a name with at least 2 letters."; msg.classList.add("error"); return; }
+    if(!/^[0-9]{4}$/.test(pin)){ msg.textContent = "PIN must be exactly 4 digits."; msg.classList.add("error"); return; }
+
+    msg.textContent = "Creating your passport...";
+    try{
+      var num = await generatePassportNumber();
+      var record = { nickname: nick, pin: pin, avatar: pendingAvatar, createdAt: Date.now() };
+      var saved = await window.storage.set("users:"+num, JSON.stringify(record), true);
+      if(!saved) throw new Error("save failed");
+      await window.storage.set("progress:"+num, JSON.stringify({scam:false, inbox:false, ledger:false}), true);
+
+      session = { num: num, nickname: nick, avatar: pendingAvatar, createdAt: record.createdAt };
+      msg.textContent = "Passport " + num + " created! Redirecting...";
+      msg.classList.add("ok");
+      $("#navAuthBtn").textContent = "My passport";
+      refreshCounter();
+      setTimeout(function(){ enterDashboard(); }, 700);
+    }catch(err){
+      console.error(err);
+      msg.textContent = "Something went wrong saving your passport. Please try again.";
+      msg.classList.add("error");
+    }
+  });
+
+  // ---------- signin ----------
+  $("#signinForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    var msg = $("#signinMsg");
+    msg.className = "form-msg";
+    var num = $("#siNum").value.trim().toUpperCase();
+    var pin = $("#siPin").value.trim();
+
+    msg.textContent = "Checking...";
+    try{
+      var res = await window.storage.get("users:"+num, true);
+      if(!res){ throw new Error("not found"); }
+      var record = JSON.parse(res.value);
+      if(record.pin !== pin){
+        msg.textContent = "That PIN doesn't match. Try again.";
+        msg.classList.add("error");
+        return;
+      }
+      session = { num:num, nickname:record.nickname, avatar:record.avatar, createdAt:record.createdAt };
+      msg.textContent = "Welcome back, " + record.nickname + "!";
+      msg.classList.add("ok");
+      $("#navAuthBtn").textContent = "My passport";
+      setTimeout(function(){ enterDashboard(); }, 500);
+    }catch(err){
+      msg.textContent = "We couldn't find that passport number. Check it and try again.";
+      msg.classList.add("error");
+    }
+  });
+
+  // ---------- dashboard ----------
+  async function enterDashboard(){
+    if(!session) return;
+    $("#dashAvatar").textContent = session.avatar;
+    $("#dashName").textContent = session.nickname;
+    $("#dashNum").textContent = session.num;
+    var d = new Date(session.createdAt);
+    $("#memberSince").textContent = "Member since " + d.toLocaleDateString();
+
+    var progress = await loadProgress();
+    renderStampGrid(progress);
+    showView("dashboard");
+  }
+
+  async function loadProgress(){
+    try{
+      var res = await window.storage.get("progress:"+session.num, true);
+      return res ? JSON.parse(res.value) : {scam:false, inbox:false, ledger:false};
+    }catch(e){
+      return {scam:false, inbox:false, ledger:false};
+    }
+  }
+
+  async function saveProgress(progress){
+    try{
+      await window.storage.set("progress:"+session.num, JSON.stringify(progress), true);
+    }catch(e){ console.error("progress save failed", e); }
+  }
+
+  function renderStampGrid(progress){
+    var grid = $("#dashStampGrid");
+    grid.innerHTML = "";
+    var earned = 0;
+    Object.keys(TRACKS).forEach(function(key){
+      var t = TRACKS[key];
+      var done = !!progress[key];
+      if(done) earned++;
+      var tile = document.createElement("div");
+      tile.className = "stamp-tile" + (done ? " done":"");
+      tile.innerHTML =
+        '<div class="stamp ' + (done?'earned':'locked') + '">' + t.stampText + (done?'<br>✓':'') + '</div>' +
+        '<h4>' + t.label + '</h4>' +
+        '<div class="status ' + (done?'done':'') + '">' + (done ? 'Stamped' : 'Not started') + '</div>' +
+        '<button class="btn btn-secondary" data-lesson="'+key+'" style="border-color:#cbbf95;color:#3d4a44;padding:8px 14px;font-size:0.82rem;">' +
+          (done ? 'Review lesson' : 'Start lesson') +
+        '</button>';
+      tile.querySelector("button").addEventListener("click", function(){ openLesson(key); });
+      grid.appendChild(tile);
+    });
+    $("#stampCount").textContent = earned + " of 3 skills stamped";
+  }
+
+  // ---------- lesson content ----------
+  var SCAM_ITEMS = [
+    { text:"URGENT: Your account will be closed! Click here to verify now: bit.ly/xyz123", answer:"fishy",
+      why:"Urgency, a shortened link, and a threat to close your account are classic scam signs." },
+    { text:"Hi, it's Ms. Rahman from the centre. Don't forget the workshop is at 4pm tomorrow.", answer:"safe",
+      why:"A known person, a specific detail, no link or pressure to act immediately." },
+    { text:"You've won a free iPhone! Just pay a 200 taka delivery fee to claim it.", answer:"fishy",
+      why:"Real prizes never ask you to pay money first." },
+    { text:"Reminder: the library computer lab closes early on Friday for maintenance.", answer:"safe",
+      why:"Plain information, nothing asked of you, no link to click." },
+    { text:"Your bKash account is locked. Send your PIN to this number to unlock it.", answer:"fishy",
+      why:"No real bank or mobile money service will ever ask for your PIN." }
+  ];
+
+  var INBOX_ITEMS = [
+    { prompt:"Your instructor emails: \"You missed yesterday's workshop — is everything alright?\"",
+      options:[
+        {text:"ya sry was busy lol", correct:false, why:"Too casual for a message to an instructor."},
+        {text:"Why does it matter to you?", correct:false, why:"This reads as rude, even if unintentional."},
+        {text:"Hi Ms. Rahman, sorry I missed it — I had a family emergency. Could you let me know how I can catch up? Thank you.", correct:true, why:"Clear, polite, and takes responsibility while asking for a next step."}
+      ]},
+    { prompt:"A recruiter emails: \"Are you available for a short call this Thursday at 3pm?\"",
+      options:[
+        {text:"idk maybe", correct:false, why:"Vague and unprofessional — recruiters need a clear answer."},
+        {text:"Yes, Thursday at 3pm works well for me. Could you send the call link beforehand? Thank you.", correct:true, why:"Confirms the time clearly and asks for what you need next."},
+        {text:"Sure whenever works for u :)", correct:false, why:"Too casual, and doesn't actually confirm the specific time."}
+      ]}
+  ];
+
+  var LEDGER_ITEMS = [
+    { name:"Notebook", price:20, qty:3 },
+    { name:"Pen", price:10, qty:5 },
+    { name:"Eraser", price:5, qty:4 },
+    { name:"Ruler", price:15, qty:2 }
+  ];
+
+  function lessonProgressDots(total, activeIndex){
+    var html = '<div class="lesson-progress">';
+    for(var i=0;i<total;i++){
+      html += '<span class="dot ' + (i<=activeIndex ? 'active':'') + '"></span>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function closeLesson(){
+    showView(session ? "dashboard" : "landing");
+    if(session) enterDashboard();
+  }
+
+  async function markComplete(trackKey){
+    if(!session) return;
+    var progress = await loadProgress();
+    progress[trackKey] = true;
+    await saveProgress(progress);
+  }
+
+  function completeScreen(trackLabel, stampText, onDone){
+    var shell = $("#lessonShell");
+    shell.innerHTML =
+      '<div class="lesson-complete">' +
+        '<div class="big-stamp">'+stampText+'<br>✓</div>' +
+        '<h2>Nice work — lesson complete!</h2>' +
+        '<p style="color:#5b6b63;">' + (session ? "\""+trackLabel+"\" has been stamped into your passport." : "Sign up to save this stamp to a real passport.") + '</p>' +
+        '<div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">' +
+          (session
+            ? '<button class="btn btn-primary" id="lcDash">Back to my passport</button>'
+            : '<button class="btn btn-primary" id="lcSignup">Create a passport</button><button class="btn btn-secondary" id="lcClose">Close</button>') +
+        '</div>' +
+      '</div>';
+    if(session){
+      $("#lcDash").addEventListener("click", closeLesson);
+    }else{
+      $("#lcSignup").addEventListener("click", function(){ showView("signup"); });
+      $("#lcClose").addEventListener("click", function(){ showView("landing"); });
+    }
+    if(onDone) onDone();
+  }
+
+  function openLesson(key){
+    if(key==="scam") runScamLesson();
+    else if(key==="inbox") runInboxLesson();
+    else if(key==="ledger") runLedgerLesson();
+    showView("lesson");
+  }
+
+  // --- Spot the Scam ---
+  function runScamLesson(){
+    var idx = 0, correctCount = 0;
+    function render(){
+      var shell = $("#lessonShell");
+      if(idx >= SCAM_ITEMS.length){
+        markComplete("scam");
+        completeScreen("Troubleshooting: Online Safety", "FIX-IT");
+        return;
+      }
+      var item = SCAM_ITEMS[idx];
+      shell.innerHTML =
+        '<div class="lesson-top"><div><span class="tag">Troubleshooting</span><h2>Spot the Scam</h2></div><button class="close-x" id="lClose">&times;</button></div>' +
+        lessonProgressDots(SCAM_ITEMS.length, idx) +
+        '<div class="scenario-card"><div class="msg-bubble">' + item.text + '</div>' +
+        '<div class="choice-row">' +
+          '<button class="choice-btn" data-a="safe">✅ Looks safe</button>' +
+          '<button class="choice-btn" data-a="fishy">🚩 Looks fishy</button>' +
+        '</div>' +
+        '<div id="scamFeedback"></div></div>';
+      $("#lClose").addEventListener("click", closeLesson);
+      $all(".choice-btn").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var chosen = btn.getAttribute("data-a");
+          var fb = $("#scamFeedback");
+          var correct = chosen === item.answer;
+          if(correct) correctCount++;
+          fb.innerHTML = '<div class="feedback ' + (correct?'good':'bad') + '">' +
+            (correct ? "Correct! " : "Not quite. ") + item.why + '</div>' +
+            '<button class="btn btn-primary" id="scamNext" style="margin-top:14px;">' +
+            (idx===SCAM_ITEMS.length-1 ? "See results" : "Next") + '</button>';
+          $all(".choice-btn").forEach(function(b){ b.disabled = true; });
+          $("#scamNext").addEventListener("click", function(){ idx++; render(); });
+        });
+      });
+    }
+    render();
+  }
+
+  // --- Inbox Ready ---
+  function runInboxLesson(){
+    var idx = 0;
+    function render(){
+      var shell = $("#lessonShell");
+      if(idx >= INBOX_ITEMS.length){
+        markComplete("inbox");
+        completeScreen("Digital Presence: Professional Email", "DIGITAL");
+        return;
+      }
+      var item = INBOX_ITEMS[idx];
+      var optsHtml = item.options.map(function(o, i){
+        return '<button class="reply-option" data-i="'+i+'">'+o.text+'</button>';
+      }).join("");
+      shell.innerHTML =
+        '<div class="lesson-top"><div><span class="tag">Digital Presence</span><h2>Inbox Ready</h2></div><button class="close-x" id="lClose">&times;</button></div>' +
+        lessonProgressDots(INBOX_ITEMS.length, idx) +
+        '<div class="scenario-card"><div class="msg-bubble">' + item.prompt + '</div>' +
+        '<p style="font-size:0.85rem;color:#5b6b63;margin:14px 0 6px;">Pick the best reply:</p>' +
+        optsHtml + '<div id="inboxFeedback"></div></div>';
+      $("#lClose").addEventListener("click", closeLesson);
+      $all(".reply-option").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var o = item.options[parseInt(btn.getAttribute("data-i"),10)];
+          var fb = $("#inboxFeedback");
+          fb.innerHTML = '<div class="feedback ' + (o.correct?'good':'bad') + '">' +
+            (o.correct ? "That's the one. " : "Not the best choice. ") + o.why + '</div>' +
+            '<button class="btn btn-primary" id="inboxNext" style="margin-top:14px;">' +
+            (idx===INBOX_ITEMS.length-1 ? "See results" : "Next") + '</button>';
+          $all(".reply-option").forEach(function(b){ b.disabled = true; });
+          $("#inboxNext").addEventListener("click", function(){ idx++; render(); });
+        });
+      });
+    }
+    render();
+  }
+
+  // --- Balance the Till ---
+  function runLedgerLesson(){
+    var shell = $("#lessonShell");
+    var rowsHtml = LEDGER_ITEMS.map(function(it, i){
+      return '<tr><td>'+it.name+'</td><td class="mono">'+it.price+' \u09F3</td>' +
+        '<td><input type="number" min="0" class="qtyInput" data-i="'+i+'" value="'+it.qty+'"></td>' +
+        '<td class="mono lineTotal" data-i="'+i+'">'+(it.price*it.qty)+' \u09F3</td></tr>';
+    }).join("");
+
+    shell.innerHTML =
+      '<div class="lesson-top"><div><span class="tag">Office & Data</span><h2>Balance the Till</h2></div><button class="close-x" id="lClose">&times;</button></div>' +
+      '<p style="color:#5b6b63;font-size:0.9rem;margin-top:-8px;">Change the quantities and watch the shop\'s total update live.</p>' +
+      '<table class="ledger-table"><thead><tr><th>Item</th><th>Unit price</th><th>Qty sold</th><th>Line total</th></tr></thead>' +
+      '<tbody id="ledgerBody">' + rowsHtml + '</tbody></table>' +
+      '<div class="ledger-total">Grand total: <span id="grandTotal" class="mono"></span></div>' +
+      '<div class="scenario-card">' +
+        '<p style="margin:0 0 10px;font-size:0.92rem;">Quick check: if you sell <strong>2 more Notebooks</strong> today, what will the new grand total be?</p>' +
+        '<input type="number" id="quizInput" placeholder="Type the new total" style="padding:10px 12px;border-radius:8px;border:1.5px solid #d8cfae;font-family:var(--font-mono);width:180px;">' +
+        '<button class="btn btn-primary" id="quizCheck" style="margin-left:8px;">Check</button>' +
+        '<div id="ledgerFeedback"></div>' +
+      '</div>';
+
+    $("#lClose").addEventListener("click", closeLesson);
+
+    function recalc(){
+      var total = 0;
+      $all(".qtyInput").forEach(function(inp){
+        var i = parseInt(inp.getAttribute("data-i"),10);
+        var qty = parseInt(inp.value,10) || 0;
+        var lineTotal = qty * LEDGER_ITEMS[i].price;
+        total += lineTotal;
+        var cell = document.querySelector('.lineTotal[data-i="'+i+'"]');
+        if(cell) cell.textContent = lineTotal + " \u09F3";
+      });
+      $("#grandTotal").textContent = total + " \u09F3";
+      return total;
+    }
+    $all(".qtyInput").forEach(function(inp){ inp.addEventListener("input", recalc); });
+    var currentTotal = recalc();
+
+    $("#quizCheck").addEventListener("click", function(){
+      var answer = currentTotal + 2*LEDGER_ITEMS[0].price;
+      var given = parseInt($("#quizInput").value,10);
+      var fb = $("#ledgerFeedback");
+      if(given === answer){
+        fb.innerHTML = '<div class="feedback good" style="margin-top:12px;">Correct — ' + answer + ' \u09F3. You\'ve got it!</div>' +
+          '<button class="btn btn-primary" id="ledgerDone" style="margin-top:12px;">Finish lesson</button>';
+        $("#ledgerDone").addEventListener("click", function(){
+          markComplete("ledger");
+          completeScreen("Office & Data: Ledger Basics", "DATA");
+        });
+      }else{
+        fb.innerHTML = '<div class="feedback bad" style="margin-top:12px;">Not quite — try recalculating the notebook line first.</div>';
+      }
+    });
+  }
+
+  // ---------- init ----------
+  refreshCounter();
+})();
+</script>
+</body>
+</html>
