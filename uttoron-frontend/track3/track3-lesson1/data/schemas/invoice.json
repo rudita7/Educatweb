@@ -1,8 +1,0 @@
-{
-  "id": "string",
-  "customerName": "string",
-  "invoiceDate": "ISO date",
-  "lineItems": [{ "description": "string", "qty": "number", "unitPrice": "number" }],
-  "total": "number",
-  "status": "Paid | Pending | Overdue"
-}
