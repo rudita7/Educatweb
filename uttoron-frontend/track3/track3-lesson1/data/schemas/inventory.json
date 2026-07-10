@@ -1,0 +1,8 @@
+{
+  "id": "string",
+  "itemName": "string",
+  "sku": "string",
+  "quantity": "number",
+  "lastUpdated": "ISO date",
+  "location": "string"
+}
