@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Skills Passport</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --navy: #14313B;
+            --navy-deep: #0D2229;
+            --paper: #F6F0DF;
+            --paper-dim: #EAE1C7;
+            --ink: #1C2B2E;
+            --marigold: #E8A33D;
+            --coral: #E2593B;
+            --teal-stamp: #2E7D5B;
+            --line: rgba(246, 240, 223, 0.16);
+            --shadow: rgba(13, 34, 41, 0.35);
+            --radius: 16px;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: var(--paper);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.01em; }
+        .mono { font-family: var(--font-mono); }
+        .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+        a { color: var(--marigold); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.03);
+            background-blend-mode: luminosity;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: none;
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1.4px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 20%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.08) 80%, rgba(255, 255, 255, 0.25) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--coral); color: var(--paper); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(226, 89, 58, 0.35); }
+        .btn-secondary { background: transparent; color: var(--paper); border: 1.5px solid rgba(255,255,255,0.2); }
+        .btn-secondary:hover { border-color: var(--marigold); color: var(--marigold); }
+        .btn-success { background: var(--teal-stamp); color: var(--paper); }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46, 125, 91, 0.35); }
+        .btn-outline-dark { background: transparent; color: var(--ink); border: 1.5px solid #cbbf95; }
+        .btn-outline-dark:hover { border-color: var(--teal-stamp); color: var(--teal-stamp); }
+        .btn-block { width: 100%; }
+        .btn-sm { padding: 7px 16px; font-size: 0.8rem; }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .nav-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--marigold);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 2px solid var(--paper);
+            flex-shrink: 0;
+        }
+        .nav-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--paper);
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: border-color 0.2s;
+        }
+        .nav-btn:hover { border-color: var(--marigold); }
+        .nav-links {
+            display: none;
+            gap: 32px;
+        }
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: #fff; }
+        @media (min-width: 768px) { .nav-links { display: flex; } }
+
+        .view { display: none; animation: fadeUp 0.35s ease; }
+        .view.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero {
+            padding: 56px 0 40px;
+            position: relative;
+            overflow: hidden;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            background: radial-gradient(ellipse at top right, rgba(232, 163, 61, 0.06), transparent 55%), #0a0a0a;
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            align-items: center;
+            width: 100%;
+        }
+        @media (min-width: 800px) { .hero-grid { grid-template-columns: 1.2fr 0.8fr; } }
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--marigold);
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .hero h1 {
+            font-size: 2.2rem;
+            line-height: 1.08;
+            margin: 0 0 14px;
+            font-weight: 700;
+            font-family: 'Instrument Serif', serif;
+        }
+        .hero h1 em { font-style: italic; color: rgba(255, 255, 255, 0.5); }
+        @media (min-width: 800px) { .hero h1 { font-size: 2.9rem; } }
+        .hero .lede {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 46ch;
+            margin: 0 0 24px;
+        }
+        .hero-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+
+        .ticket {
+            background: rgba(246, 240, 223, 0.95);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--ink);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            border: 1.5px dashed var(--navy-deep);
+            position: relative;
+            margin-top: 12px;
+        }
+        .ticket::before, .ticket::after {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .ticket::before { left: -8px; }
+        .ticket::after { right: -8px; }
+        .ticket-num { font-family: var(--font-mono); font-size: 1.7rem; font-weight: 600; min-width: 5ch; }
+        .ticket-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: #5b6b63; }
+
+        .hero-passport {
+            background: rgba(246, 240, 223, 0.95);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--ink);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .hero-passport .ptitle {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #7a6a4a;
+        }
+        .hero-passport h3 { margin: 4px 0 14px; font-size: 1.15rem; }
+        .stamp-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        .stamp {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.6rem;
+            line-height: 1.2;
+            padding: 4px;
+            flex-direction: column;
+        }
+        .stamp.locked { border: 2px dashed rgba(28,43,46,0.3); color: rgba(28,43,46,0.4); }
+        .stamp.earned { border: 2.5px solid var(--teal-stamp); color: var(--teal-stamp); transform: rotate(-6deg); box-shadow: inset 0 0 0 3px rgba(46,125,91,0.08); }
+        .stamp.earned .stamp-icon { font-size: 1.4rem; margin-bottom: 2px; }
+
+        section { padding: 48px 0; position: relative; z-index: 2; }
+        .section-head { max-width: 58ch; margin-bottom: 28px; }
+        .section-head .eyebrow { margin-bottom: 8px; }
+        .section-head h2 { font-size: 1.6rem; margin: 0 0 8px; font-family: 'Instrument Serif', serif; }
+        .section-head h2 em { font-style: italic; color: rgba(255, 255, 255, 0.3); }
+        .section-head p { color: rgba(255, 255, 255, 0.5); margin: 0; }
+
+        .track-selector {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .track-selector button {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1.5px solid transparent;
+            transition: all 0.2s;
+        }
+        .track-selector button.active { background: var(--marigold); color: #000; border-color: var(--marigold); }
+        .track-selector button:hover:not(.active) { border-color: var(--marigold); color: #fff; }
+
+        .tracks-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+        @media (min-width: 760px) { .tracks-grid { grid-template-columns: repeat(4, 1fr); } }
+        .track-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .track-card:hover { border-color: var(--marigold); transform: translateY(-3px); }
+        .track-card .tag {
+            font-family: var(--font-mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--marigold);
+        }
+        .track-card h3 { margin: 8px 0 6px; font-size: 1.1rem; }
+        .track-card p { color: rgba(255, 255, 255, 0.4); font-size: 0.88rem; margin: 0 0 14px; }
+        .track-card .lesson-link {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--paper);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .track-card .lesson-link:hover { border-color: var(--marigold); color: var(--marigold); }
+
+        .demo-banner {
+            background: linear-gradient(135deg, rgba(46, 125, 91, 0.85), rgba(36, 92, 71, 0.85));
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 18px;
+            padding: 24px 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .demo-banner h3 { margin: 0 0 4px; font-size: 1.15rem; }
+        .demo-banner p { margin: 0; color: rgba(246, 240, 223, 0.85); max-width: 44ch; font-size: 0.88rem; }
+
+        .card {
+            background: rgba(246, 240, 223, 0.95);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--ink);
+            border-radius: 18px;
+            padding: 30px 28px;
+            max-width: 440px;
+            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        .card h2 { margin: 0 0 4px; font-size: 1.4rem; }
+        .card .sub { color: #5b6b63; font-size: 0.88rem; margin: 0 0 20px; }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 5px; color: #3d4a44; }
+        .field input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 9px;
+            border: 1.5px solid #d8cfae;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--ink);
+            transition: border-color 0.2s;
+        }
+        .field input:focus { outline: none; border-color: var(--teal-stamp); }
+        .avatar-pick { display: flex; gap: 8px; flex-wrap: wrap; }
+        .avatar-opt {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #d8cfae;
+            background: #fff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .avatar-opt:hover { transform: scale(1.05); }
+        .avatar-opt.selected { border-color: var(--teal-stamp); background: #e6f2ec; }
+        .form-msg { font-size: 0.85rem; margin: 10px 0 0; min-height: 1.2em; padding: 8px; border-radius: 6px; }
+        .form-msg.error { color: var(--coral); background: rgba(226, 89, 59, 0.08); }
+        .form-msg.ok { color: var(--teal-stamp); background: rgba(46, 125, 91, 0.08); }
+        .switch-link { font-size: 0.85rem; text-align: center; margin-top: 16px; color: #5b6b63; }
+        .switch-link button { background: none; border: none; color: var(--teal-stamp); font-weight: 600; text-decoration: underline; padding: 0; cursor: pointer; font-size: inherit; }
+
+        .passport-page {
+            background: rgba(246, 240, 223, 0.95);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--ink);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        .passport-header {
+            background: var(--navy-deep);
+            color: var(--paper);
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .passport-id { display: flex; align-items: center; gap: 14px; }
+        .passport-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--marigold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 2px solid var(--paper);
+            flex-shrink: 0;
+        }
+        .passport-id .name { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+        .passport-id .num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--paper-dim); }
+        .passport-body { padding: 28px; }
+        .progress-summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: #5b6b63;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .stamp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (min-width: 700px) { .stamp-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stamp-tile {
+            border: 1.5px solid #e3d9b8;
+            border-radius: 14px;
+            padding: 18px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .stamp-tile.done { background: #eef6f1; border-color: var(--teal-stamp); }
+        .stamp-tile h4 { margin: 0; font-size: 0.92rem; }
+        .stamp-tile .status { font-size: 0.75rem; color: #7a7060; }
+        .stamp-tile .status.done { color: var(--teal-stamp); font-weight: 600; }
+        .stamp-tile .stamp-sm {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2.5px dashed rgba(28,43,46,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.55rem;
+            color: rgba(28,43,46,0.35);
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+        .stamp-tile.done .stamp-sm { border-color: var(--teal-stamp); color: var(--teal-stamp); transform: rotate(-4deg); background: rgba(46,125,91,0.06); }
+        .stamp-tile.done .stamp-sm .stamp-icon { font-size: 1.2rem; }
+        .track-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #7a7060;
+            background: var(--paper-dim);
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-top: 4px;
+        }
+        .stamp-tile.done .track-label { background: #d4e8dd; }
+        .dashboard-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e3d9b8;
+        }
+        .dashboard-actions .btn { flex: 1; min-width: 120px; }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--navy-deep);
+            color: var(--paper);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .toast.success { border-color: var(--teal-stamp); }
+        .toast.error { border-color: var(--coral); }
+
+        footer {
+            padding: 32px 0 44px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.78rem;
+            position: relative;
+            z-index: 2;
+        }
+        footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 1.7rem; }
+            .hero { padding: 32px 0 24px; min-height: auto; }
+            section { padding: 32px 0; }
+            .card { padding: 22px 18px; }
+            .passport-header { padding: 18px 20px; }
+            .passport-body { padding: 18px; }
+            .demo-banner { padding: 18px 20px; }
+            .ticket { padding: 12px 16px; }
+            .ticket-num { font-size: 1.3rem; }
+            .stamp-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="showView('landing')">Home</a>
+                <a href="#" onclick="document.querySelector('.tracks-grid').scrollIntoView({behavior:'smooth'})">Lessons</a>
+                <a href="#" onclick="showView('signup')">Sign Up</a>
+                <a href="analytics.html">📊 Analytics</a>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn" id="navAuthBtn">Sign in</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LANDING -->
+    <div id="view-landing" class="view active">
+        <section class="hero">
+            <div class="wrap hero-grid">
+                <div>
+                    <span class="eyebrow">📘 Skills Passport</span>
+                    <h1>Build your future,<br /><em>one stamp at a time.</em></h1>
+                    <p class="lede">Complete lessons in Office &amp; Data and Digital Presence to earn stamps. No email needed — works on any device.</p>
+                    <div class="hero-ctas">
+                        <button class="btn btn-primary" id="heroSignupBtn">Get your passport</button>
+                        <button class="btn btn-secondary" id="heroSigninBtn">I already have one</button>
+                        <a href="analytics.html" class="btn btn-secondary" style="border-color:rgba(255,255,255,0.15);">📊 Analytics</a>
+                    </div>
+                    <div class="ticket">
+                        <div>
+                            <div class="ticket-num mono" id="counterNum">····</div>
+                            <div class="ticket-label">Passports issued so far</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-passport">
+                    <div class="ptitle">✦ Skills Passport · Preview</div>
+                    <h3>8 stamps across 2 tracks</h3>
+                    <div class="stamp-row">
+                        <div class="stamp earned"><span class="stamp-icon">📊</span>DATA</div>
+                        <div class="stamp locked"><span class="stamp-icon">💬</span>COMMS</div>
+                        <div class="stamp locked"><span class="stamp-icon">✉️</span>EMAIL</div>
+                        <div class="stamp locked"><span class="stamp-icon">📄</span>CV</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="wrap">
+                <div class="section-head">
+                    <span class="eyebrow">Choose a track</span>
+                    <h2>Office &amp; Data <em>or</em> Digital Presence</h2>
+                    <p>Each track has four lessons. Complete them all to earn your stamps.</p>
+                </div>
+                <div class="track-selector" id="trackSelector">
+                    <button class="active" data-track="office-data">📊 Office &amp; Data</button>
+                    <button data-track="digital-presence">💬 Digital Presence</button>
+                </div>
+                <div id="lessonListContainer">
+                    <div class="tracks-grid" id="trackCards"></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="wrap">
+                <div class="demo-banner">
+                    <div>
+                        <h3>🎯 Try the interactive lessons</h3>
+                        <p>Practice typing with finger placement or learn spreadsheet formulas in a live grid.</p>
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <a href="typing-lesson.html" class="btn btn-secondary" style="border-color:rgba(255,255,255,0.3);">⌨️ Typing Lesson</a>
+                        <a href="spreadsheet-lesson.html" class="btn btn-secondary" style="border-color:rgba(255,255,255,0.3);">📊 Spreadsheet Lesson</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="view-signup" class="view">
+        <section>
+            <div class="wrap">
+                <div class="card">
+                    <h2>✨ Create your passport</h2>
+                    <p class="sub">Just a nickname and a 4-digit PIN — no email or phone needed.</p>
+                    <form id="signupForm" autocomplete="off">
+                        <div class="field">
+                            <label for="suNick">What should we call you?</label>
+                            <input id="suNick" maxlength="24" placeholder="e.g. Tanvir" required />
+                        </div>
+                        <div class="field">
+                            <label>Pick an avatar</label>
+                            <div class="avatar-pick" id="avatarPick">
+                                <button type="button" class="avatar-opt selected" data-a="🦉">🦉</button>
+                                <button type="button" class="avatar-opt" data-a="🐯">🐯</button>
+                                <button type="button" class="avatar-opt" data-a="🦋">🦋</button>
+                                <button type="button" class="avatar-opt" data-a="🐢">🐢</button>
+                                <button type="button" class="avatar-opt" data-a="🦜">🦜</button>
+                                <button type="button" class="avatar-opt" data-a="🐬">🐬</button>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="suPin">Choose a 4-digit PIN</label>
+                            <input id="suPin" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" required />
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">Create my passport</button>
+                        <p class="form-msg" id="signupMsg"></p>
+                    </form>
+                    <p class="switch-link">Already have a passport? <button id="toSigninLink" type="button">Sign in</button></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- SIGNIN -->
+    <div id="view-signin" class="view">
+        <section>
+            <div class="wrap">
+                <div class="card">
+                    <h2>👋 Welcome back</h2>
+                    <p class="sub">Enter your passport number and PIN.</p>
+                    <form id="signinForm" autocomplete="off">
+                        <div class="field">
+                            <label for="siNum">Passport number</label>
+                            <input id="siNum" placeholder="e.g. UT-4821" required />
+                        </div>
+                        <div class="field">
+                            <label for="siPin">PIN</label>
+                            <input id="siPin" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" required />
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+                        <p class="form-msg" id="signinMsg"></p>
+                    </form>
+                    <p class="switch-link">New here? <button id="toSignupLink" type="button">Create a passport</button></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="view-dashboard" class="view">
+        <section>
+            <div class="wrap">
+                <div class="passport-page">
+                    <div class="passport-header">
+                        <div class="passport-id">
+                            <div class="passport-avatar" id="dashAvatar">🦉</div>
+                            <div>
+                                <div class="name" id="dashName">Nickname</div>
+                                <div class="num mono" id="dashNum">UT-0000</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <button class="nav-btn" id="backToHomeBtn">🏠 Home</button>
+                            <button class="nav-btn" id="logoutBtn">Log out</button>
+                        </div>
+                    </div>
+                    <div class="passport-body">
+                        <div class="progress-summary">
+                            <span id="stampCount">0 of 8 stamps earned</span>
+                            <span id="memberSince"></span>
+                        </div>
+                        <div class="stamp-grid" id="dashStampGrid"></div>
+                        <div class="dashboard-actions">
+                            <a href="typing-lesson.html" class="btn btn-outline-dark btn-sm">⌨️ Typing Lesson</a>
+                            <a href="spreadsheet-lesson.html" class="btn btn-outline-dark btn-sm">📊 Spreadsheet Lesson</a>
+                            <button class="btn btn-secondary btn-sm" id="dashBackToHome">🏠 Back to Home</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- LESSON (embedded - kept for backward compatibility) -->
+    <div id="view-lesson" class="view">
+        <section>
+            <div class="wrap">
+                <div class="lesson-shell" id="lessonShell"></div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Two tracks · Eight lessons · One passport</span>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        "use strict";
+
+        // ============================================================
+        //  STORAGE - Works in any browser
+        // ============================================================
+        const Storage = {
+            get(key) {
+                try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch { return null; }
+            },
+            set(key, val) {
+                try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch { return false; }
+            },
+            remove(key) {
+                try { localStorage.removeItem(key); return true; } catch { return false; }
+            },
+            count(prefix) {
+                let c = 0;
+                try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith(prefix)) c++; } } catch {}
+                return c;
+            }
+        };
+
+        // ============================================================
+        //  DATA
+        // ============================================================
+        const TRACKS = [{
+            id: 'office-data',
+            title: 'Office & Data',
+            icon: '📊',
+            lessons: [
+                { id: 'typing', title: 'Keyboard & Typing', emoji: '⌨️', desc: 'Practice typing with finger placement guidance', file: 'typing-lesson.html' },
+                { id: 'spreadsheet', title: 'Spreadsheet Basics', emoji: '📊', desc: 'Learn SUM, AVERAGE, MAX, MIN with a live grid', file: 'spreadsheet-lesson.html' },
+                { id: 'data-accuracy', title: 'Data Accuracy', emoji: '🧹', desc: 'Clean data, error checking', file: null },
+                { id: 'data-project', title: 'Data Entry Project', emoji: '📋', desc: 'Real-world office simulation', file: null }
+            ]
+        }, {
+            id: 'digital-presence',
+            title: 'Digital Presence & Communication',
+            icon: '💬',
+            lessons: [
+                { id: 'comms', title: 'Professional Communication', emoji: '💬', desc: 'Etiquette, client handling', file: null },
+                { id: 'email', title: 'Email & Digital Comms', emoji: '✉️', desc: 'Writing, attachments, enquiries', file: null },
+                { id: 'cv', title: 'Building Your CV', emoji: '📄', desc: 'CV structure, application forms', file: null },
+                { id: 'career', title: 'Career Readiness', emoji: '🎤', desc: 'Interviews, passwords, meetings', file: null }
+            ]
+        }];
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let session = null;
+        let progress = {};
+        let pendingAvatar = '🦉';
+        let currentTrackId = 'office-data';
+
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer = null;
+        function showToast(msg, type = '') {
+            const el = $('#toast');
+            el.textContent = msg;
+            el.className = 'toast show ' + type;
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { el.className = 'toast'; }, 3500);
+        }
+
+        // ============================================================
+        //  VIEW MANAGEMENT
+        // ============================================================
+        function showView(name) {
+            $$('.view').forEach(v => v.classList.remove('active'));
+            const target = $('#view-' + name);
+            if (target) target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const btn = $('#navAuthBtn');
+            if (name === 'dashboard') { btn.textContent = 'My passport'; } 
+            else if (session) { btn.textContent = 'My passport'; } 
+            else { btn.textContent = 'Sign in'; }
+        }
+
+        function refreshCounter() {
+            const count = Storage.count('user:');
+            const el = $('#counterNum');
+            if (el) { el.textContent = String(count).padStart(4, '0'); }
+        }
+
+        // ============================================================
+        //  TRACK CARDS
+        // ============================================================
+        function renderTrackCards(trackId) {
+            const container = $('#trackCards');
+            const track = TRACKS.find(t => t.id === trackId);
+            if (!track) return;
+            let html = '';
+            track.lessons.forEach((lesson, idx) => {
+                const num = String(idx + 1).padStart(2, '0');
+                const isClickable = lesson.file !== null;
+                html += `
+                    <div class="track-card" ${!isClickable ? 'style="opacity:0.5;"' : ''}>
+                        <span class="tag">Lesson ${num}</span>
+                        <h3>${lesson.emoji} ${lesson.title}</h3>
+                        <p>${lesson.desc}</p>
+                        ${isClickable ? `<a href="${lesson.file}" class="lesson-link">Try this lesson →</a>` : `<span style="color:rgba(255,255,255,0.2);font-size:0.85rem;">Coming soon</span>`}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================================
+        //  AUTH
+        // ============================================================
+        function loadSession() {
+            const data = Storage.get('uttoron:session');
+            if (data && data.num) {
+                const user = Storage.get('user:' + data.num);
+                if (user) {
+                    session = { num: data.num, nickname: user.nickname, avatar: user.avatar, createdAt: user.createdAt || Date.now() };
+                    const p = Storage.get('progress:' + session.num);
+                    progress = p || {};
+                    TRACKS.forEach(track => {
+                        track.lessons.forEach(l => { if (!(l.id in progress)) progress[l.id] = false; });
+                    });
+                    return true;
+                } else {
+                    Storage.remove('uttoron:session');
+                    session = null;
+                    progress = {};
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        function signOut() {
+            session = null;
+            progress = {};
+            Storage.remove('uttoron:session');
+            showView('landing');
+            refreshCounter();
+            showToast('Signed out successfully');
+        }
+
+        function goHome() {
+            showView('landing');
+            refreshCounter();
+        }
+
+        function goToDashboard() {
+            if (session) {
+                renderDashboard();
+                showView('dashboard');
+            } else {
+                showView('landing');
+                showToast('Please sign in first', 'error');
+            }
+        }
+
+        // ============================================================
+        //  DASHBOARD
+        // ============================================================
+        function renderDashboard() {
+            if (!session) return;
+            $('#dashAvatar').textContent = session.avatar || '👤';
+            $('#dashName').textContent = session.nickname;
+            $('#dashNum').textContent = session.num;
+            const d = new Date(session.createdAt || Date.now());
+            $('#memberSince').textContent = 'Joined ' + d.toLocaleDateString();
+
+            let totalLessons = 0, earned = 0, html = '';
+            TRACKS.forEach(track => {
+                track.lessons.forEach((lesson) => {
+                    totalLessons++;
+                    const done = !!progress[lesson.id];
+                    if (done) earned++;
+                    const isClickable = lesson.file !== null;
+                    html += `
+                        <div class="stamp-tile ${done ? 'done' : ''}">
+                            <div class="stamp-sm">
+                                <span class="stamp-icon">${lesson.emoji}</span>
+                                ${done ? '✓' : ''}
+                            </div>
+                            <h4>${lesson.title}</h4>
+                            <div class="track-label">${track.icon} ${track.title}</div>
+                            <div class="status ${done ? 'done' : ''}">${done ? '✅ Stamped' : '⭕ Not started'}</div>
+                            ${isClickable ? `<a href="${lesson.file}" class="btn btn-outline-dark btn-sm" style="font-size:0.7rem;padding:4px 12px;display:inline-block;text-decoration:none;">${done ? 'Review' : 'Start'} →</a>` : `<span style="font-size:0.65rem;color:#8a806c;">Coming soon</span>`}
+                        </div>
+                    `;
+                });
+            });
+            $('#dashStampGrid').innerHTML = html;
+            $('#stampCount').textContent = earned + ' of ' + totalLessons + ' stamps earned';
+        }
+
+        function enterDashboard() {
+            if (!session) return;
+            renderDashboard();
+            showView('dashboard');
+        }
+
+        // ============================================================
+        //  NAV EVENTS
+        // ============================================================
+        $('#navAuthBtn').addEventListener('click', () => {
+            if (session) { enterDashboard(); } else { showView('signin'); }
+        });
+        $('#heroSignupBtn').addEventListener('click', () => showView('signup'));
+        $('#heroSigninBtn').addEventListener('click', () => showView('signin'));
+        $('#toSigninLink').addEventListener('click', () => showView('signin'));
+        $('#toSignupLink').addEventListener('click', () => showView('signup'));
+        $('#logoutBtn').addEventListener('click', signOut);
+        $('#backToHomeBtn').addEventListener('click', goHome);
+        $('#dashBackToHome').addEventListener('click', goHome);
+
+        // Track selector
+        const trackSelector = $('#trackSelector');
+        trackSelector.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (!btn || !btn.dataset.track) return;
+            $$('#trackSelector button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTrackId = btn.dataset.track;
+            renderTrackCards(currentTrackId);
+        });
+
+        // ============================================================
+        //  AVATAR PICKER
+        // ============================================================
+        $$('.avatar-opt').forEach(btn => {
+            btn.addEventListener('click', function() {
+                $$('.avatar-opt').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                pendingAvatar = this.dataset.a;
+            });
+        });
+        const selectedAvatar = document.querySelector('.avatar-opt.selected');
+        if (selectedAvatar) pendingAvatar = selectedAvatar.dataset.a;
+
+        // ============================================================
+        //  SIGNUP
+        // ============================================================
+        const signupForm = $('#signupForm');
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const msg = $('#signupMsg');
+            msg.className = 'form-msg';
+            msg.textContent = '';
+
+            const nick = $('#suNick').value.trim();
+            const pin = $('#suPin').value.trim();
+
+            if (nick.length < 2) {
+                msg.textContent = 'Name must be at least 2 characters.';
+                msg.classList.add('error');
+                return;
+            }
+            if (!/^[0-9]{4}$/.test(pin)) {
+                msg.textContent = 'PIN must be exactly 4 digits.';
+                msg.classList.add('error');
+                return;
+            }
+
+            let num, attempts = 0, existing = null;
+            do {
+                const n = Math.floor(1000 + Math.random() * 9000);
+                num = 'UT-' + n;
+                attempts++;
+                existing = Storage.get('user:' + num);
+            } while (existing !== null && attempts <= 50);
+
+            if (existing !== null) {
+                msg.textContent = 'Could not generate a unique number. Please try again.';
+                msg.classList.add('error');
+                return;
+            }
+
+            const user = { num, nickname: nick, avatar: pendingAvatar, pin, createdAt: Date.now() };
+            if (!Storage.set('user:' + num, user)) {
+                msg.textContent = 'Failed to save. Please try again.';
+                msg.classList.add('error');
+                return;
+            }
+
+            session = { num, nickname: nick, avatar: pendingAvatar, createdAt: user.createdAt };
+            progress = {};
+            TRACKS.forEach(track => { track.lessons.forEach(l => { progress[l.id] = false; }); });
+            Storage.set('progress:' + num, progress);
+            Storage.set('uttoron:session', { num });
+
+            msg.textContent = '✅ Passport ' + num + ' created!';
+            msg.classList.add('ok');
+            refreshCounter();
+            showToast('Welcome, ' + nick + '!', 'success');
+            setTimeout(() => enterDashboard(), 600);
+        });
+
+        // ============================================================
+        //  SIGNIN
+        // ============================================================
+        const signinForm = $('#signinForm');
+        signinForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const msg = $('#signinMsg');
+            msg.className = 'form-msg';
+            msg.textContent = '';
+
+            const num = $('#siNum').value.trim().toUpperCase();
+            const pin = $('#siPin').value.trim();
+
+            if (!num || !pin) {
+                msg.textContent = 'Please fill in both fields.';
+                msg.classList.add('error');
+                return;
+            }
+
+            const user = Storage.get('user:' + num);
+            if (!user) {
+                msg.textContent = 'Passport not found. Check the number.';
+                msg.classList.add('error');
+                return;
+            }
+            if (user.pin !== pin) {
+                msg.textContent = 'Incorrect PIN. Try again.';
+                msg.classList.add('error');
+                return;
+            }
+
+            session = { num, nickname: user.nickname, avatar: user.avatar, createdAt: user.createdAt };
+            const p = Storage.get('progress:' + num);
+            progress = p || {};
+            TRACKS.forEach(track => { track.lessons.forEach(l => { if (!(l.id in progress)) progress[l.id] = false; }); });
+            Storage.set('uttoron:session', { num });
+
+            msg.textContent = '✅ Welcome back, ' + user.nickname + '!';
+            msg.classList.add('ok');
+            showToast('Signed in as ' + user.nickname, 'success');
+            setTimeout(() => enterDashboard(), 500);
+        });
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            if (loadSession()) { enterDashboard(); } 
+            else { showView('landing'); }
+            refreshCounter();
+            renderTrackCards(currentTrackId);
+
+            $('#suPin').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') signupForm.dispatchEvent(new Event('submit'));
+            });
+            $('#siPin').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') signinForm.dispatchEvent(new Event('submit'));
+            });
+        }
+
+        init();
+
+    })();
+    </script>
+
+</body>
+</html>
