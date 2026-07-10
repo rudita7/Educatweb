@@ -1,0 +1,669 @@
+/* ============================================================
+   Uttoron Design System - Track 3 Lesson 1
+   Syncs with home landing page design
+   ============================================================ */
+
+/* ============================================================
+   1. DESIGN TOKENS (from home page)
+   ============================================================ */
+:root {
+    /* Colors from home page */
+    --navy: #14313B;
+    --navy-deep: #0D2229;
+    --paper: #F6F0DF;
+    --paper-dim: #EAE1C7;
+    --ink: #1C2B2E;
+    --marigold: #E8A33D;
+    --coral: #E2593B;
+    --teal-stamp: #2E7D5B;
+    --line: rgba(246, 240, 223, 0.16);
+    --shadow: rgba(13, 34, 41, 0.35);
+    
+    /* Fonts from home page */
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    
+    /* Spacing */
+    --radius: 16px;
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    
+    /* Legacy variables (kept for compatibility) */
+    --color-ink: #1a1a1a;
+    --color-paper: #faf8f3;
+    --color-teal: #2d8a8a;
+    --color-stamp: #d4a574;
+    --color-error: #c84e4e;
+    --color-success: #5a8a5a;
+    --color-warning: #d4a574;
+    --color-border: #d4c5b9;
+    --color-bg-light: #f5f2ed;
+}
+
+/* ============================================================
+   2. BODY & BACKGROUND (Dark theme like home page)
+   ============================================================ */
+body {
+    background: #0a0a0a;
+    color: var(--paper);
+    font-family: var(--font-body);
+    padding: 0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+}
+
+/* ============================================================
+   3. NAVIGATION (Uttoron style)
+   ============================================================ */
+.top-nav {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 20px;
+    margin: 0 -20px 25px -20px;
+    border-radius: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.top-nav .brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--paper);
+}
+
+.top-nav .brand span {
+    color: var(--marigold);
+}
+
+.top-nav a {
+    color: var(--marigold);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+    padding: 7px 0;
+}
+
+.top-nav a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.top-nav .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.top-nav .nav-links .separator {
+    color: rgba(255, 255, 255, 0.15);
+    margin: 0 4px;
+}
+
+.top-nav .nav-links .current {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ============================================================
+   4. HEADER / TITLE
+   ============================================================ */
+header {
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: var(--spacing-lg);
+}
+
+h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: var(--spacing-sm);
+}
+
+h1#lessonTitle {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.2rem;
+    color: var(--paper);
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--paper);
+    margin-bottom: var(--spacing-md);
+}
+
+h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--paper);
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+p {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.7;
+}
+
+/* ============================================================
+   5. LESSON NAVIGATION TABS
+   ============================================================ */
+.lesson-nav {
+    display: flex;
+    gap: 12px;
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.module-btn {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.82rem;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.module-btn:hover {
+    border-color: var(--marigold);
+    color: #fff;
+    background: transparent;
+}
+
+.module-btn.active {
+    background: var(--marigold);
+    color: #000;
+    border-color: var(--marigold);
+}
+
+/* ============================================================
+   6. INSTRUCTION BOXES
+   ============================================================ */
+.instruction {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 4px solid var(--marigold);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border-radius: var(--radius);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.instruction strong {
+    color: var(--paper);
+}
+
+/* ============================================================
+   7. RECORD CARDS (Paper/ledger aesthetic)
+   ============================================================ */
+.record-card {
+    background: rgba(246, 240, 223, 0.95);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: var(--ink);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.record-field {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid rgba(28, 43, 46, 0.08);
+}
+
+.record-field:last-child {
+    border-bottom: none;
+}
+
+.field-label {
+    font-weight: 600;
+    color: var(--teal-stamp);
+    min-width: 150px;
+    font-family: var(--font-body);
+}
+
+.field-value {
+    flex: 1;
+    text-align: right;
+    word-break: break-word;
+    font-family: var(--font-mono);
+}
+
+.field-value.error {
+    color: var(--coral);
+    font-weight: 600;
+}
+
+/* ============================================================
+   8. INTERACTIVE FIELDS (Click to select)
+   ============================================================ */
+.clickable-field {
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.clickable-field:hover {
+    background-color: rgba(232, 163, 61, 0.15);
+}
+
+.clickable-field.selected {
+    background-color: rgba(46, 125, 91, 0.15);
+    border: 1px solid var(--teal-stamp);
+    border-radius: 4px;
+}
+
+.clickable-field.incorrect {
+    background-color: rgba(226, 89, 59, 0.15);
+    border: 1px solid var(--coral);
+    border-radius: 4px;
+}
+
+/* ============================================================
+   9. BUTTONS (Uttoron style)
+   ============================================================ */
+button {
+    padding: 11px 24px;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.92rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Primary button (Coral) */
+button:not(.secondary):not(.state-btn):not(.flag-btn) {
+    background: var(--coral);
+    color: var(--paper);
+}
+
+button:not(.secondary):not(.state-btn):not(.flag-btn):hover {
+    box-shadow: 0 6px 20px rgba(226, 89, 58, 0.35);
+}
+
+/* Secondary button */
+button.secondary {
+    background: transparent;
+    color: var(--paper);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+}
+
+button.secondary:hover {
+    border-color: var(--marigold);
+    color: var(--marigold);
+    transform: translateY(-2px);
+}
+
+/* State machine buttons */
+.state-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
+    color: var(--paper);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+}
+
+.state-btn:hover {
+    border-color: var(--marigold);
+    color: var(--marigold);
+    transform: none;
+}
+
+.state-btn.active {
+    background: var(--teal-stamp);
+    color: var(--paper);
+    border-color: var(--teal-stamp);
+}
+
+/* Flag button */
+.flag-btn {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.78rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    background: transparent;
+    color: var(--paper);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.flag-btn:hover {
+    border-color: var(--coral);
+    color: var(--coral);
+    transform: translateY(-2px);
+}
+
+.button-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   10. FEEDBACK / MESSAGES
+   ============================================================ */
+.feedback {
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
+    margin-top: var(--spacing-md);
+    display: none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.feedback.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.feedback.success {
+    background: rgba(46, 125, 91, 0.15);
+    border: 1px solid var(--teal-stamp);
+    color: var(--teal-stamp);
+}
+
+.feedback.error {
+    background: rgba(226, 89, 59, 0.15);
+    border: 1px solid var(--coral);
+    color: var(--coral);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================
+   11. TIMER
+   ============================================================ */
+.timer {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--marigold);
+    margin-bottom: var(--spacing-md);
+}
+
+/* ============================================================
+   12. RECORDS LIST (Challenge & Simulation)
+   ============================================================ */
+.records-list {
+    display: grid;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.record-item {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
+    transition: all 0.3s ease;
+    color: var(--paper);
+}
+
+.record-item strong {
+    color: var(--paper);
+}
+
+.record-item small {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.record-item.flagged {
+    border-left: 4px solid var(--coral);
+    background: rgba(226, 89, 59, 0.08);
+}
+
+/* ============================================================
+   13. PRIORITY LIST (Drag & Drop)
+   ============================================================ */
+.priority-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.priority-item {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--paper);
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.priority-item:hover {
+    border-color: var(--marigold);
+    background: rgba(232, 163, 61, 0.05);
+}
+
+.priority-rank {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--marigold);
+    min-width: 40px;
+}
+
+.priority-severity {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--marigold);
+    color: #000;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ============================================================
+   14. STATE MACHINE
+   ============================================================ */
+.state-machine {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+/* ============================================================
+   15. ERROR TYPE GRID
+   ============================================================ */
+.error-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.error-type-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.2s ease;
+}
+
+.error-type-card:hover {
+    border-color: var(--marigold);
+    color: var(--paper);
+}
+
+.error-type-card.active {
+    border-color: var(--marigold);
+    background: rgba(232, 163, 61, 0.08);
+    color: var(--paper);
+}
+
+.error-type-card strong {
+    color: var(--paper);
+}
+
+.error-type-card small {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================
+   16. FOOTER
+   ============================================================ */
+.footer {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.78rem;
+}
+
+.footer p {
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 4px;
+}
+
+/* ============================================================
+   17. RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+    .top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 16px;
+        margin: 0 -16px 20px -16px;
+    }
+    
+    .top-nav .nav-links {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .top-nav .nav-links .separator {
+        display: none;
+    }
+    
+    h1, h1#lessonTitle {
+        font-size: 1.7rem;
+    }
+    
+    .lesson-nav {
+        padding: 10px 14px;
+        gap: 8px;
+    }
+    
+    .module-btn {
+        padding: 6px 14px;
+        font-size: 0.75rem;
+    }
+    
+    .record-field {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .field-label {
+        min-width: auto;
+    }
+    
+    .field-value {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .error-type-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .state-machine {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 400px) {
+    .error-type-grid {
+        grid-template-columns: 1fr;
+    }
+}

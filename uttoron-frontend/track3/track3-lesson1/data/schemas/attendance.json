@@ -1,0 +1,8 @@
+{
+  "id": "string",
+  "employeeName": "string",
+  "date": "ISO date",
+  "checkIn": "HH:mm",
+  "checkOut": "HH:mm",
+  "status": "Present | Absent | Late"
+}

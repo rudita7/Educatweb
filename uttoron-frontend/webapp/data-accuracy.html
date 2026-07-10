@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Track 3: Data Accuracy & Quality Assurance - Uttoron</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --navy: #14313B;
+            --navy-deep: #0D2229;
+            --paper: #F6F0DF;
+            --paper-dim: #EAE1C7;
+            --ink: #1C2B2E;
+            --marigold: #E8A33D;
+            --coral: #E2593B;
+            --teal-stamp: #2E7D5B;
+            --radius: 16px;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: var(--paper);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        .wrap {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        a {
+            color: var(--marigold);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================================
+           NAVIGATION BAR
+           ============================================================ */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .nav-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--marigold);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 2px solid var(--paper);
+            flex-shrink: 0;
+        }
+        .nav-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--paper);
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            transition: border-color 0.2s;
+            cursor: pointer;
+        }
+        .nav-btn:hover {
+            border-color: var(--marigold);
+        }
+
+        /* ============================================================
+           HERO
+           ============================================================ */
+        .hero {
+            padding: 40px 0 30px;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: 2.2rem;
+            line-height: 1.08;
+            margin: 0 0 8px;
+            font-weight: 700;
+            font-family: 'Instrument Serif', serif;
+        }
+        .hero h1 em {
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .hero .lede {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 50ch;
+            margin: 0 0 16px;
+        }
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--marigold);
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .section-head {
+            max-width: 58ch;
+            margin-bottom: 28px;
+        }
+        .section-head h2 {
+            font-size: 1.5rem;
+            margin: 0 0 6px;
+            font-family: 'Instrument Serif', serif;
+        }
+        .section-head p {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ============================================================
+           LESSON GRID
+           ============================================================ */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 760px) {
+            .lesson-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .lesson-card {
+            background: rgba(246, 240, 223, 0.95);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            color: var(--ink);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .lesson-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+        .lesson-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .lesson-card .lesson-number {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            background: var(--paper-dim);
+            padding: 2px 12px;
+            border-radius: 20px;
+            color: #4a4a3a;
+            font-weight: 600;
+        }
+        .lesson-card .status-badge {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .status-badge.available {
+            background: var(--teal-stamp);
+            color: #fff;
+        }
+        .status-badge.coming-soon {
+            background: #d4c5b9;
+            color: #6b5f4f;
+        }
+        .lesson-card h3 {
+            font-size: 1.2rem;
+            margin: 0 0 8px;
+        }
+        .lesson-card p {
+            color: #5b6b63;
+            font-size: 0.9rem;
+            margin: 0 0 12px;
+        }
+        .lesson-card .module-list {
+            font-size: 0.82rem;
+            color: #7a7060;
+            margin-bottom: 16px;
+            list-style: none;
+            padding: 0;
+        }
+        .lesson-card .module-list li {
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lesson-card .module-list li::before {
+            content: "●";
+            color: var(--teal-stamp);
+            font-size: 0.5rem;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: var(--coral);
+            color: var(--paper);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(226, 89, 58, 0.35);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--ink);
+            border: 1.5px solid #cbbf95;
+        }
+        .btn-secondary:hover {
+            border-color: var(--teal-stamp);
+            color: var(--teal-stamp);
+        }
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-success {
+            background: var(--teal-stamp);
+            color: var(--paper);
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 91, 0.35);
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ============================================================
+           CAPSTONE SECTION
+           ============================================================ */
+        .capstone-section {
+            margin-top: 40px;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(46, 125, 91, 0.2), rgba(232, 163, 61, 0.1));
+            border-radius: 18px;
+            border: 1px solid rgba(46, 125, 91, 0.3);
+        }
+        .capstone-section h2 {
+            font-family: 'Instrument Serif', serif;
+            color: var(--marigold);
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .capstone-section p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .capstone-section .locked {
+            color: var(--coral);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        footer {
+            padding: 32px 0 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.78rem;
+            margin-top: 40px;
+        }
+        footer .wrap {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .lesson-card {
+                padding: 18px;
+            }
+            .capstone-section {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    NAVIGATION
+    ============================================================ -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div>
+                <a href="index1.html" class="nav-btn">🏠 Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+    MAIN CONTENT
+    ============================================================ -->
+    <div class="wrap">
+
+        <!-- HERO -->
+        <section class="hero">
+            <span class="eyebrow">🧹 Track 3</span>
+            <h1>Data Accuracy & <em>Quality Assurance</em></h1>
+            <p class="lede">Learn to verify, clean, organize, update, and maintain accurate records — the day-to-day skills of a records/QA/data-entry professional.</p>
+        </section>
+
+        <!-- LESSONS -->
+        <section>
+            <div class="section-head">
+                <h2>📚 Lessons</h2>
+                <p>Complete all 4 lessons to earn your Data Accuracy stamp.</p>
+            </div>
+
+            <div class="lesson-grid">
+
+                <!-- ============================================
+                LESSON 1 - AVAILABLE (LINKED)
+                ============================================ -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🔍</span>
+                        <span>
+                            <span class="status-badge available">✓ Available</span>
+                            <span class="lesson-number">6 modules</span>
+                        </span>
+                    </div>
+                    <h3>Lesson 1: Finding & Identifying Errors</h3>
+                    <p>Learn to spot and categorize data quality issues in real records.</p>
+                    <ul class="module-list">
+                        <li>Why Accuracy Matters</li>
+                        <li>Types of Errors</li>
+                        <li>Spot the Error</li>
+                        <li>Error Hunt Challenge</li>
+                        <li>Prioritizing Errors</li>
+                        <li>Workplace Simulation</li>
+                    </ul>
+                    <a href="../track3/track3-lesson1/index.html" class="btn btn-primary btn-block">Start Lesson 1 →</a>
+                </div>
+
+                <!-- ============================================
+                LESSON 2 - AVAILABLE (LINKED)
+                ============================================ -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">✏️</span>
+                        <span>
+                            <span class="status-badge available">✓ Available</span>
+                            <span class="lesson-number">6 modules</span>
+                        </span>
+                    </div>
+                    <h3>Lesson 2: Correcting & Updating Records</h3>
+                    <p>Master the skills of fixing errors and safely updating records.</p>
+                    <ul class="module-list">
+                        <li>Updating Information</li>
+                        <li>Following Instructions</li>
+                        <li>Avoiding Accidental Changes</li>
+                        <li>Version Checking</li>
+                        <li>Maintaining Consistency</li>
+                        <li>Workplace Simulation</li>
+                    </ul>
+                    <a href="../track3/track3-lesson2/index.html" class="btn btn-primary btn-block">Start Lesson 2 →</a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CAPSTONE -->
+        <section class="capstone-section">
+            <h2>🎯 Capstone: A Day in the Records Department</h2>
+            <p style="margin-bottom: 16px;">A complete simulated workday. Review customer forms, invoices, attendance sheets, and inventory logs containing intentional errors. Correct valid mistakes, flag records needing supervisor approval, complete a QA checklist, and submit a final quality report.</p>
+            <p class="locked">🔒 Available after completing all 4 lessons</p>
+        </section>
+
+    </div>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Track 3: Data Accuracy & Quality Assurance</span>
+        </div>
+    </footer>
+
+</body>
+</html>
