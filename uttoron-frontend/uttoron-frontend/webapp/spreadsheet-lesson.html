@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Spreadsheet Basics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== RESET & ROOT ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --navy: #14313B;
+            --navy-deep: #0D2229;
+            --paper: #F6F0DF;
+            --paper-dim: #EAE1C7;
+            --ink: #1C2B2E;
+            --marigold: #E8A33D;
+            --coral: #E2593B;
+            --teal-stamp: #2E7D5B;
+            --line: rgba(246, 240, 223, 0.16);
+            --shadow: rgba(13, 34, 41, 0.35);
+            --radius: 16px;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            margin: 0;
+            background: var(--navy);
+            color: var(--paper);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: var(--font-display);
+            letter-spacing: -0.01em;
+        }
+        .mono {
+            font-family: var(--font-mono);
+        }
+        .wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        a {
+            color: var(--marigold);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: transform 0.15s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: var(--coral);
+            color: var(--paper);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(226, 89, 58, 0.35);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--paper);
+            border: 1.5px solid var(--paper-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--marigold);
+            color: var(--marigold);
+        }
+        .btn-success {
+            background: var(--teal-stamp);
+            color: var(--paper);
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 91, 0.35);
+        }
+        .btn-sm {
+            padding: 7px 16px;
+            font-size: 0.8rem;
+        }
+        .btn-block {
+            width: 100%;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--navy-deep);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .nav-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.01em;
+        }
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--marigold);
+            color: var(--navy-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 2px solid var(--paper);
+            flex-shrink: 0;
+        }
+        .back-link {
+            color: var(--paper-dim);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .back-link:hover {
+            color: var(--marigold);
+            text-decoration: none;
+        }
+
+        section {
+            padding: 32px 0;
+        }
+        .lesson-shell {
+            background: var(--paper);
+            color: var(--ink);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 20px 50px var(--shadow);
+        }
+        .lesson-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            gap: 12px;
+        }
+        .lesson-top .tag {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--teal-stamp);
+        }
+        .lesson-top h2 {
+            margin: 4px 0 0;
+            font-size: 1.3rem;
+        }
+        .lesson-progress {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e3d9b8;
+            transition: background 0.3s;
+        }
+        .dot.active {
+            background: var(--teal-stamp);
+        }
+        .dot.done {
+            background: var(--teal-stamp);
+            opacity: 0.5;
+        }
+
+        /* ===== SPREADSHEET STYLES ===== */
+        .spreadsheet-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            border: 1.5px solid #d8cfae;
+            overflow-x: auto;
+        }
+        .spreadsheet-container table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 400px;
+        }
+        .spreadsheet-container th,
+        .spreadsheet-container td {
+            border: 1px solid #b5aa8a;
+            padding: 0;
+            text-align: center;
+            height: 32px;
+            min-width: 48px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        .spreadsheet-container th {
+            background: #f0ebe0;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        .spreadsheet-container td input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            padding: 0 4px;
+            outline: none;
+        }
+        .spreadsheet-container td input:focus {
+            background: #fcf8f0;
+            box-shadow: inset 0 0 0 2px var(--marigold);
+        }
+        .spreadsheet-container td .cell-formula {
+            font-size: 0.65rem;
+            color: #8a806c;
+            display: block;
+            margin-top: -2px;
+        }
+        .spreadsheet-container .selected-cell {
+            background: #eef6f1;
+            box-shadow: inset 0 0 0 2px var(--teal-stamp);
+        }
+        .spreadsheet-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .spreadsheet-toolbar .formula-bar {
+            flex: 1;
+            min-width: 150px;
+            padding: 6px 10px;
+            border: 1.5px solid #d8cfae;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            background: #faf8f2;
+        }
+        .spreadsheet-toolbar .formula-bar:focus {
+            border-color: var(--teal-stamp);
+            outline: none;
+        }
+        .spreadsheet-step {
+            background: #faf8f2;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            border-left: 4px solid var(--marigold);
+        }
+        .spreadsheet-step .step-instruction {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+        }
+        .spreadsheet-step .step-status {
+            font-size: 0.85rem;
+            color: #5b6b63;
+            margin-top: 4px;
+        }
+        .spreadsheet-step .step-status.done {
+            color: var(--teal-stamp);
+            font-weight: 600;
+        }
+        .spreadsheet-step .step-status.error {
+            color: var(--coral);
+        }
+        .spreadsheet-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .spreadsheet-controls .btn {
+            font-size: 0.8rem;
+            padding: 6px 14px;
+        }
+
+        .lesson-complete {
+            text-align: center;
+            padding: 16px 0;
+        }
+        .big-stamp {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            border: 3px solid var(--teal-stamp);
+            color: var(--teal-stamp);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 0.75rem;
+            flex-direction: column;
+            transform: rotate(-6deg);
+            background: rgba(46, 125, 91, 0.06);
+        }
+        .big-stamp .stamp-icon {
+            font-size: 1.6rem;
+        }
+
+        footer {
+            padding: 32px 0 44px;
+            border-top: 1px solid var(--line);
+            color: var(--paper-dim);
+            font-size: 0.78rem;
+        }
+        footer .wrap {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--navy-deep);
+            color: var(--paper);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+            border: 1px solid var(--line);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+        .toast.success {
+            border-color: var(--teal-stamp);
+        }
+        .toast.error {
+            border-color: var(--coral);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <a href="index1.html" class="back-link">← Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- ===== LESSON ===== -->
+    <section>
+        <div class="wrap">
+            <div class="lesson-shell" id="lessonShell"></div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport</span>
+            <span>Spreadsheet Basics · Interactive Lesson</span>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            "use strict";
+
+            // ============================================================
+            //  STORAGE HELPERS (for progress saving)
+            // ============================================================
+            function getStorage(key) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    if (raw === null) return null;
+                    return JSON.parse(raw);
+                } catch (e) {
+                    console.warn('Storage.get error for key:', key, e);
+                    return null;
+                }
+            }
+
+            function setStorage(key, val) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(val));
+                    return true;
+                } catch (e) {
+                    console.warn('Storage.set error for key:', key, e);
+                    return false;
+                }
+            }
+
+            // ============================================================
+            //  SAVE PROGRESS
+            // ============================================================
+            function saveSpreadsheetProgress() {
+                const session = getStorage('uttoron:session');
+                if (!session || !session.num) {
+                    showToast('Please sign in to save your progress!', '');
+                    return false;
+                }
+
+                const progressKey = 'progress:' + session.num;
+                let progress = getStorage(progressKey) || {};
+
+                // Mark spreadsheet as complete
+                progress.spreadsheet = true;
+
+                // Save back to localStorage
+                if (setStorage(progressKey, progress)) {
+                    showToast('✅ Stamp saved to your Passport!', 'success');
+                    return true;
+                } else {
+                    showToast('Failed to save progress. Please try again.', 'error');
+                    return false;
+                }
+            }
+
+            // ============================================================
+            //  LESSON DATA
+            // ============================================================
+            const LESSON_DATA = {
+                'spreadsheet': {
+                    title: 'Spreadsheet Basics',
+                    tag: 'Interactive Grid',
+                    type: 'interactive',
+                    steps: [{
+                        instruction: 'Enter the numbers 10, 20, 30 in cells A1, A2, A3.',
+                        validate: (grid) => {
+                            return grid.get('A1') == 10 && grid.get('A2') == 20 && grid.get('A3') ==
+                            30;
+                        },
+                        hint: 'Click each cell, type the number, and press Enter or Tab to confirm.'
+                    }, {
+                        instruction: 'In cell A4, use the SUM function to add A1, A2, A3. (Type =SUM(A1:A3))',
+                        validate: (grid) => {
+                            const val = grid.get('A4');
+                            return val == 60 || String(grid._raw('A4')).toUpperCase() ===
+                                '=SUM(A1:A3)';
+                        },
+                        hint: 'Start with =, then SUM, then (A1:A3)'
+                    }, {
+                        instruction: 'Enter numbers 5, 10, 15 in cells B1, B2, B3, then in B4 use AVERAGE to calculate the average.',
+                        validate: (grid) => {
+                            return grid.get('B1') == 5 && grid.get('B2') == 10 && grid.get('B3') ==
+                                15 &&
+                                grid.get('B4') == 10;
+                        },
+                        hint: 'AVERAGE(B1:B3)'
+                    }, {
+                        instruction: 'In cell C1, use MAX to find the highest value in A1:A3.',
+                        validate: (grid) => {
+                            return grid.get('C1') == 30;
+                        },
+                        hint: 'MAX(A1:A3)'
+                    }, {
+                        instruction: 'In cell C2, use MIN to find the lowest value in B1:B3.',
+                        validate: (grid) => {
+                            return grid.get('C2') == 5;
+                        },
+                        hint: 'MIN(B1:B3)'
+                    }]
+                }
+            };
+
+            // ============================================================
+            //  STATE
+            // ============================================================
+            let currentLessonId = 'spreadsheet';
+            let currentItemIndex = 0;
+            let lessonItems = [];
+            let lessonType = '';
+            let lessonCompleted = false;
+
+            // ============================================================
+            //  PERSISTENT GRID DATA (shared across all steps)
+            // ============================================================
+            const cols = ['A', 'B', 'C', 'D', 'E'];
+            const rows = [1, 2, 3, 4, 5];
+            const cellIds = [];
+            cols.forEach(c => {
+                rows.forEach(r => {
+                    cellIds.push(c + r);
+                });
+            });
+
+            // This grid data persists across step changes
+            const gridData = {};
+            cellIds.forEach(id => { gridData[id] = ''; });
+            const computed = {};
+
+            const $ = (sel) => document.querySelector(sel);
+            const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+            // ============================================================
+            //  TOAST
+            // ============================================================
+            let toastTimer = null;
+
+            function showToast(msg, type = '') {
+                const el = $('#toast');
+                el.textContent = msg;
+                el.className = 'toast show ' + type;
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => { el.className = 'toast'; }, 3500);
+            }
+
+            // ============================================================
+            //  SPREADSHEET ENGINE
+            // ============================================================
+            function getCellValue(id) {
+                const raw = gridData[id];
+                if (raw === undefined || raw === '') return NaN;
+                if (typeof raw === 'number') return raw;
+                if (typeof raw === 'string' && raw.startsWith('=')) {
+                    return evaluateFormula(raw);
+                }
+                const num = parseFloat(raw);
+                return isNaN(num) ? NaN : num;
+            }
+
+            function getRawValue(id) {
+                return gridData[id] || '';
+            }
+
+            function evaluateFormula(formula) {
+                const expr = formula.substring(1).trim().toUpperCase();
+                const match = expr.match(/^(SUM|AVERAGE|MAX|MIN|COUNT)\(([A-Z]+\d+:[A-Z]+\d+)\)$/);
+                if (!match) return NaN;
+                const func = match[1];
+                const range = match[2];
+                const [start, end] = range.split(':');
+                if (!start || !end) return NaN;
+                const startCol = start.charAt(0);
+                const startRow = parseInt(start.substring(1));
+                const endCol = end.charAt(0);
+                const endRow = parseInt(end.substring(1));
+                const colStartIdx = cols.indexOf(startCol);
+                const colEndIdx = cols.indexOf(endCol);
+                if (colStartIdx === -1 || colEndIdx === -1) return NaN;
+                const values = [];
+                for (let c = colStartIdx; c <= colEndIdx; c++) {
+                    for (let r = startRow; r <= endRow; r++) {
+                        const id = cols[c] + r;
+                        const val = getCellValue(id);
+                        if (!isNaN(val) && val !== '') {
+                            values.push(val);
+                        }
+                    }
+                }
+                if (values.length === 0) return NaN;
+                switch (func) {
+                    case 'SUM':
+                        return values.reduce((a, b) => a + b, 0);
+                    case 'AVERAGE':
+                        return values.reduce((a, b) => a + b, 0) / values.length;
+                    case 'MAX':
+                        return Math.max(...values);
+                    case 'MIN':
+                        return Math.min(...values);
+                    case 'COUNT':
+                        return values.length;
+                    default:
+                        return NaN;
+                }
+            }
+
+            function recomputeAll() {
+                cellIds.forEach(id => {
+                    const raw = gridData[id];
+                    if (typeof raw === 'string' && raw.startsWith('=')) {
+                        computed[id] = evaluateFormula(raw);
+                    } else {
+                        const num = parseFloat(raw);
+                        computed[id] = isNaN(num) ? raw : num;
+                    }
+                });
+            }
+
+            function getDisplayValue(id) {
+                const raw = gridData[id];
+                if (typeof raw === 'string' && raw.startsWith('=')) {
+                    const val = computed[id];
+                    if (isNaN(val)) return '#ERROR';
+                    return val;
+                }
+                if (raw === '') return '';
+                const num = parseFloat(raw);
+                if (!isNaN(num)) return num;
+                return raw;
+            }
+
+            // ============================================================
+            //  INTERACTIVE SPREADSHEET LESSON RENDERER
+            // ============================================================
+            function renderInteractiveLesson() {
+                const data = LESSON_DATA[currentLessonId];
+                if (!data) return;
+                const steps = data.steps || [];
+                const totalSteps = steps.length;
+                const shell = $('#lessonShell');
+
+                if (currentItemIndex >= totalSteps) {
+                    // Lesson complete!
+                    if (!lessonCompleted) {
+                        lessonCompleted = true;
+                        saveSpreadsheetProgress();
+                    }
+                    showCompletionScreen(data);
+                    return;
+                }
+
+                let selectedCell = 'A1';
+
+                function buildGridHTML() {
+                    let tableHtml = '<table>';
+                    tableHtml += '<tr><th></th>';
+                    cols.forEach(c => { tableHtml += `<th>${c}</th>`; });
+                    tableHtml += '</tr>';
+                    rows.forEach(r => {
+                        tableHtml += `<tr><th>${r}</th>`;
+                        cols.forEach(c => {
+                            const id = c + r;
+                            const display = getDisplayValue(id);
+                            const raw = gridData[id];
+                            const isFormula = typeof raw === 'string' && raw.startsWith('=');
+                            const formulaHint = isFormula ? raw : '';
+                            const isSelected = (selectedCell === id);
+                            tableHtml += `
+                                <td class="${isSelected ? 'selected-cell' : ''}" data-cell="${id}">
+                                    <input type="text" data-cell="${id}" value="${display === '' ? '' : display}" placeholder="" />
+                                    ${formulaHint ? `<span class="cell-formula">${formulaHint}</span>` : ''}
+                                </td>
+                            `;
+                        });
+                        tableHtml += '</tr>';
+                    });
+                    tableHtml += '</table>';
+                    return tableHtml;
+                }
+
+                function updateCellDisplay(id) {
+                    const td = document.querySelector(`td[data-cell="${id}"]`);
+                    if (!td) return;
+                    const input = td.querySelector('input');
+                    if (!input) return;
+                    const display = getDisplayValue(id);
+                    input.value = display === '' ? '' : display;
+                    const raw = gridData[id];
+                    const hintSpan = td.querySelector('.cell-formula');
+                    if (hintSpan) {
+                        if (typeof raw === 'string' && raw.startsWith('=')) {
+                            hintSpan.textContent = raw;
+                        } else {
+                            hintSpan.textContent = '';
+                        }
+                    }
+                    td.classList.toggle('selected-cell', id === selectedCell);
+                }
+
+                function refreshAllCells() {
+                    cellIds.forEach(id => {
+                        const raw = gridData[id];
+                        if (typeof raw === 'string' && raw.startsWith('=')) {
+                            computed[id] = evaluateFormula(raw);
+                        }
+                        updateCellDisplay(id);
+                    });
+                }
+
+                function getNextCell(id) {
+                    const col = id.charAt(0);
+                    const row = parseInt(id.substring(1));
+                    const colIndex = cols.indexOf(col);
+                    if (colIndex === -1) return null;
+                    if (row < 5) {
+                        return col + (row + 1);
+                    } else {
+                        if (colIndex < cols.length - 1) {
+                            return cols[colIndex + 1] + '1';
+                        } else {
+                            return null;
+                        }
+                    }
+                }
+
+                const currentStep = steps[currentItemIndex];
+                const statusEl = document.getElementById('stepStatus');
+                const currentStatus = statusEl ? statusEl.textContent : 'Complete the task above.';
+
+                // Preserve the current selected cell if possible
+                const activeInput = document.activeElement && document.activeElement.tagName === 'INPUT' ?
+                    document.activeElement.dataset.cell : null;
+                if (activeInput) selectedCell = activeInput;
+
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">${data.tag || 'Spreadsheet'}</span>
+                            <h2>${data.title}</h2>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <span style="font-size:0.8rem;background:var(--teal-stamp);color:#fff;padding:2px 12px;border-radius:12px;">
+                            Step ${currentItemIndex+1} of ${totalSteps}
+                        </span>
+                        <span style="font-size:0.8rem;background:var(--paper-dim);color:var(--ink);padding:2px 12px;border-radius:12px;">
+                            ${currentStep.instruction}
+                        </span>
+                    </div>
+                    <div class="spreadsheet-container">
+                        <div class="spreadsheet-toolbar">
+                            <span style="font-weight:600;font-size:0.85rem;">Selected: <span id="selectedCellDisplay">${selectedCell}</span></span>
+                            <input type="text" id="formulaBar" class="formula-bar" placeholder="Enter value or formula (e.g. =SUM(A1:A3))" value="${gridData[selectedCell] || ''}" />
+                        </div>
+                        <div id="gridWrapper">
+                            ${buildGridHTML()}
+                        </div>
+                        <div class="spreadsheet-step">
+                            <div class="step-instruction">${currentStep.instruction}</div>
+                            <div class="step-status" id="stepStatus">${currentStatus}</div>
+                            <div class="spreadsheet-controls">
+                                <button class="btn btn-primary btn-sm" id="checkStepBtn">✔ Check Step</button>
+                                <button class="btn btn-secondary btn-sm" id="resetGridBtn">↺ Reset Grid</button>
+                                ${currentItemIndex > 0 ? `<button class="btn btn-secondary btn-sm" id="prevStepBtn">← Prev</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+                        <button class="btn btn-primary btn-sm" id="stepNextBtn" disabled>${currentItemIndex === totalSteps-1 ? 'Finish' : 'Next Step'}</button>
+                    </div>
+                `;
+
+                // --- Cell inputs ---
+                const inputs = document.querySelectorAll('#gridWrapper input[data-cell]');
+                inputs.forEach(inp => {
+                    inp.addEventListener('focus', function() {
+                        const id = this.dataset.cell;
+                        selectedCell = id;
+                        document.getElementById('selectedCellDisplay').textContent = id;
+                        const raw = gridData[id] || '';
+                        document.getElementById('formulaBar').value = raw;
+                        document.querySelectorAll('#gridWrapper td').forEach(td => td.classList.remove(
+                        'selected-cell'));
+                        this.closest('td').classList.add('selected-cell');
+                    });
+                    inp.addEventListener('blur', function() {
+                        const id = this.dataset.cell;
+                        const val = this.value.trim();
+                        if (gridData[id] !== val) {
+                            gridData[id] = val;
+                            recomputeAll();
+                            refreshAllCells();
+                            document.getElementById('formulaBar').value = val;
+                            document.querySelectorAll('#gridWrapper td').forEach(td => td.classList.remove(
+                                'selected-cell'));
+                            const td = document.querySelector(`td[data-cell="${id}"]`);
+                            if (td) td.classList.add('selected-cell');
+                        }
+                    });
+                    inp.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            this.blur();
+                            const id = this.dataset.cell;
+                            const nextCell = getNextCell(id);
+                            if (nextCell) {
+                                const nextInput = document.querySelector(
+                                    `#gridWrapper input[data-cell="${nextCell}"]`);
+                                if (nextInput) nextInput.focus();
+                            }
+                        }
+                    });
+                });
+
+                // --- Formula bar ---
+                const formulaBar = document.getElementById('formulaBar');
+                formulaBar.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const cellId = selectedCell;
+                        if (cellId) {
+                            const val = this.value.trim();
+                            if (gridData[cellId] !== val) {
+                                gridData[cellId] = val;
+                                recomputeAll();
+                                refreshAllCells();
+                                const inp = document.querySelector(
+                                    `#gridWrapper input[data-cell="${cellId}"]`);
+                                if (inp) {
+                                    const display = getDisplayValue(cellId);
+                                    inp.value = display === '' ? '' : display;
+                                    const td = inp.closest('td');
+                                    const hintSpan = td.querySelector('.cell-formula');
+                                    if (hintSpan) {
+                                        if (typeof val === 'string' && val.startsWith('=')) {
+                                            hintSpan.textContent = val;
+                                        } else {
+                                            hintSpan.textContent = '';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // --- Check Step ---
+                document.getElementById('checkStepBtn').addEventListener('click', function() {
+                    const currentStep = steps[currentItemIndex];
+                    const gridChecker = {
+                        get: getCellValue,
+                        _raw: getRawValue
+                    };
+                    const isValid = currentStep.validate(gridChecker);
+                    const statusEl = document.getElementById('stepStatus');
+                    if (isValid) {
+                        statusEl.textContent = '✅ Correct! You can proceed.';
+                        statusEl.className = 'step-status done';
+                        document.getElementById('stepNextBtn').disabled = false;
+                    } else {
+                        const hint = currentStep.hint || 'Check your entries and formulas.';
+                        statusEl.textContent = '❌ Not yet. ' + hint;
+                        statusEl.className = 'step-status error';
+                        document.getElementById('stepNextBtn').disabled = true;
+                    }
+                });
+
+                // --- Reset Grid (clears all cells) ---
+                document.getElementById('resetGridBtn').addEventListener('click', function() {
+                    if (confirm('Reset all cells? This will clear all your data.')) {
+                        cellIds.forEach(id => { gridData[id] = ''; });
+                        recomputeAll();
+                        selectedCell = 'A1';
+                        refreshAllCells();
+                        document.getElementById('selectedCellDisplay').textContent = 'A1';
+                        document.getElementById('formulaBar').value = '';
+                        document.getElementById('stepStatus').textContent = 'Grid reset. Try again.';
+                        document.getElementById('stepStatus').className = 'step-status';
+                        document.getElementById('stepNextBtn').disabled = true;
+                        const firstInput = document.querySelector('#gridWrapper input[data-cell="A1"]');
+                        if (firstInput) firstInput.focus();
+                    }
+                });
+
+                // --- Next Step (preserves all data) ---
+                document.getElementById('stepNextBtn').addEventListener('click', function() {
+                    if (this.disabled) return;
+                    currentItemIndex++;
+                    if (currentItemIndex >= totalSteps) {
+                        // Lesson complete!
+                        if (!lessonCompleted) {
+                            lessonCompleted = true;
+                            saveSpreadsheetProgress();
+                        }
+                        showCompletionScreen(data);
+                    } else {
+                        renderInteractiveLesson();
+                    }
+                });
+
+                // --- Prev Step (preserves all data) ---
+                const prevBtn = document.getElementById('prevStepBtn');
+                if (prevBtn) {
+                    prevBtn.addEventListener('click', function() {
+                        if (currentItemIndex > 0) {
+                            currentItemIndex--;
+                            renderInteractiveLesson();
+                        }
+                    });
+                }
+
+                // Focus the previously selected cell or first cell
+                setTimeout(() => {
+                    const targetInput = document.querySelector(
+                        `#gridWrapper input[data-cell="${selectedCell}"]`);
+                    if (targetInput) {
+                        targetInput.focus();
+                        targetInput.setSelectionRange(targetInput.value.length, targetInput.value.length);
+                    } else {
+                        const firstInput = document.querySelector('#gridWrapper input[data-cell]');
+                        if (firstInput) firstInput.focus();
+                    }
+                }, 10);
+            }
+
+            // ============================================================
+            //  COMPLETION
+            // ============================================================
+            function showCompletionScreen(data) {
+                const shell = $('#lessonShell');
+                shell.innerHTML = `
+                    <div class="lesson-complete">
+                        <div class="big-stamp">
+                            <span class="stamp-icon">📊</span>
+                            ✓
+                        </div>
+                        <h2>🎯 Lesson complete!</h2>
+                        <p style="color:#5b6b63;">You've mastered spreadsheet basics — SUM, AVERAGE, MAX, and MIN!</p>
+                        <p style="color:var(--teal-stamp);font-weight:600;margin-top:8px;">✅ Stamp saved to your Passport!</p>
+                        <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+                            <a href="index1.html" class="btn btn-primary">Back to Home</a>
+                            <button class="btn btn-secondary" id="resetLessonBtn">🔄 Start Over</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('resetLessonBtn').addEventListener('click', function() {
+                    // Reset grid data
+                    cellIds.forEach(id => { gridData[id] = ''; });
+                    recomputeAll();
+                    currentItemIndex = 0;
+                    lessonCompleted = false;
+                    renderInteractiveLesson();
+                });
+            }
+
+            // ============================================================
+            //  CHECK IF ALREADY COMPLETED
+            // ============================================================
+            function checkProgress() {
+                const session = getStorage('uttoron:session');
+                if (session && session.num) {
+                    const progress = getStorage('progress:' + session.num);
+                    if (progress && progress.spreadsheet === true) {
+                        // Already completed, but we'll let them practice again
+                        // They can still re-do the lesson
+                        console.log('Spreadsheet lesson already completed!');
+                    }
+                }
+            }
+
+            // ============================================================
+            //  INIT
+            // ============================================================
+            function init() {
+                // Initialize with empty grid
+                recomputeAll();
+                checkProgress();
+                renderInteractiveLesson();
+            }
+
+            init();
+
+        })();
+    </script>
+
+</body>
+</html>
