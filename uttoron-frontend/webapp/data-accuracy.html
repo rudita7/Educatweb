@@ -7,40 +7,64 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
     <style>
-        * {
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
         :root {
-            --navy: #14313B;
-            --navy-deep: #0D2229;
-            --paper: #F6F0DF;
-            --paper-dim: #EAE1C7;
-            --ink: #1C2B2E;
+            --bg: #050505;
+            --bg-elev: #0b0b0c;
+            --ink: #F5F1E6;
+            --ink-dim: rgba(245, 241, 230, 0.62);
+            --ink-faint: rgba(245, 241, 230, 0.36);
+            --coral: #E6493C;
+            --coral-soft: #FF6B57;
+            --coral-glow: rgba(230, 73, 60, 0.45);
             --marigold: #E8A33D;
-            --coral: #E2593B;
-            --teal-stamp: #2E7D5B;
-            --radius: 16px;
+            --teal: #2E7D5B;
+            --teal-glow: rgba(46, 125, 91, 0.4);
+            --line: rgba(255, 255, 255, 0.09);
+            --line-soft: rgba(255, 255, 255, 0.05);
+            --glass: rgba(255, 255, 255, 0.035);
+            --glass-strong: rgba(255, 255, 255, 0.065);
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-pill: 999px;
+            --shadow-lg: 0 30px 70px rgba(0, 0, 0, 0.55);
             --font-display: 'Space Grotesk', sans-serif;
+            --font-serif: 'Instrument Serif', serif;
             --font-body: 'Inter', sans-serif;
             --font-mono: 'IBM Plex Mono', monospace;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
         body {
             margin: 0;
-            background: #0a0a0a;
-            color: var(--paper);
+            background: var(--bg);
+            color: var(--ink);
             font-family: var(--font-body);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
+            position: relative;
+        }
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 60% 45% at 82% 0%, rgba(230, 73, 60, 0.14), transparent 60%),
+                linear-gradient(180deg, #0d0505 0%, #050505 60%, #030202 100%);
         }
         .wrap {
             max-width: 1040px;
             margin: 0 auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
         a {
             color: var(--marigold);
@@ -57,19 +81,22 @@
             position: sticky;
             top: 0;
             z-index: 50;
-            padding: 12px 20px;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 16px 0;
         }
         .nav-inner {
-            max-width: 1040px;
+            max-width: 1080px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+            background: rgba(9, 9, 10, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-pill);
+            padding: 9px 10px 9px 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
         .brand {
             display: flex;
@@ -77,36 +104,41 @@
             gap: 10px;
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
         }
         .brand-mark {
             width: 34px;
             height: 34px;
             border-radius: 50%;
-            background: var(--marigold);
-            color: #000;
+            background: linear-gradient(135deg, var(--coral-soft), var(--marigold));
+            color: #14100a;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--font-mono);
             font-weight: 600;
-            font-size: 0.8rem;
-            border: 2px solid var(--paper);
+            font-size: 0.85rem;
             flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(230, 73, 60, 0.35);
         }
-        .nav-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: var(--paper);
-            padding: 7px 16px;
-            border-radius: 20px;
+        .nav-btn, .back-link {
+            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            border: none;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
             font-size: 0.82rem;
-            font-weight: 500;
-            transition: border-color 0.2s;
+            font-weight: 600;
+            transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
             cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
-        .nav-btn:hover {
-            border-color: var(--marigold);
+        .nav-btn:hover, .back-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px var(--coral-glow);
+            text-decoration: none;
         }
 
         /* ============================================================
@@ -125,11 +157,11 @@
         }
         .hero h1 em {
             font-style: italic;
-            color: rgba(255, 255, 255, 0.4);
+            color: var(--coral-soft);
         }
         .hero .lede {
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--ink-dim);
             max-width: 50ch;
             margin: 0 0 16px;
         }
@@ -153,7 +185,7 @@
             font-family: 'Instrument Serif', serif;
         }
         .section-head p {
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--ink-dim);
         }
 
         /* ============================================================
@@ -171,19 +203,20 @@
         }
 
         .lesson-card {
-            background: rgba(246, 240, 223, 0.95);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             color: var(--ink);
-            border-radius: 18px;
+            border-radius: var(--radius-lg);
             padding: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--line);
+            transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
         }
         .lesson-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            border-color: var(--coral);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
         }
         .lesson-card .card-header {
             display: flex;
@@ -194,39 +227,44 @@
         .lesson-card .lesson-number {
             font-family: var(--font-mono);
             font-size: 0.65rem;
-            background: var(--paper-dim);
+            background: rgba(232, 163, 61, 0.12);
             padding: 2px 12px;
-            border-radius: 20px;
-            color: #4a4a3a;
+            border-radius: var(--radius-pill);
+            color: var(--marigold);
             font-weight: 600;
+            border: 1px solid rgba(232, 163, 61, 0.3);
         }
         .lesson-card .status-badge {
             font-family: var(--font-mono);
             font-size: 0.6rem;
             padding: 2px 12px;
-            border-radius: 20px;
+            border-radius: var(--radius-pill);
             font-weight: 600;
         }
         .status-badge.available {
-            background: var(--teal-stamp);
-            color: #fff;
+            background: rgba(46, 125, 91, 0.18);
+            color: #6fd6ab;
+            border: 1px solid rgba(46, 125, 91, 0.4);
         }
         .status-badge.coming-soon {
-            background: #d4c5b9;
-            color: #6b5f4f;
+            background: transparent;
+            color: var(--ink-faint);
+            border: 1px dashed var(--line);
         }
         .lesson-card h3 {
             font-size: 1.2rem;
             margin: 0 0 8px;
+            font-family: var(--font-display);
+            color: var(--ink);
         }
         .lesson-card p {
-            color: #5b6b63;
+            color: var(--ink-dim);
             font-size: 0.9rem;
             margin: 0 0 12px;
         }
         .lesson-card .module-list {
             font-size: 0.82rem;
-            color: #7a7060;
+            color: var(--ink-faint);
             margin-bottom: 16px;
             list-style: none;
             padding: 0;
@@ -239,7 +277,7 @@
         }
         .lesson-card .module-list li::before {
             content: "●";
-            color: var(--teal-stamp);
+            color: var(--teal);
             font-size: 0.5rem;
         }
 
@@ -251,33 +289,36 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 10px 22px;
-            border-radius: 10px;
+            padding: 12px 26px;
+            border-radius: var(--radius-pill);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             border: none;
             cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.2s;
+            transition: transform 0.2s var(--ease), box-shadow 0.25s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+            font-family: var(--font-body);
         }
         .btn:active {
             transform: scale(0.96);
         }
         .btn-primary {
-            background: var(--coral);
-            color: var(--paper);
+            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25);
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(226, 89, 58, 0.35);
+            box-shadow: 0 10px 32px var(--coral-glow);
         }
         .btn-secondary {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.03);
             color: var(--ink);
-            border: 1.5px solid #cbbf95;
+            border: 1.5px solid var(--line);
         }
         .btn-secondary:hover {
-            border-color: var(--teal-stamp);
-            color: var(--teal-stamp);
+            border-color: var(--coral);
+            color: var(--coral-soft);
+            transform: translateY(-2px);
         }
         .btn-secondary:disabled {
             opacity: 0.5;
@@ -285,12 +326,12 @@
             transform: none;
         }
         .btn-success {
-            background: var(--teal-stamp);
-            color: var(--paper);
+            background: linear-gradient(135deg, #3f9a72, var(--teal));
+            color: #fff;
         }
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 91, 0.35);
+            box-shadow: 0 6px 20px var(--teal-glow);
         }
         .btn-block {
             width: 100%;
@@ -303,21 +344,23 @@
         .capstone-section {
             margin-top: 40px;
             padding: 28px;
-            background: linear-gradient(135deg, rgba(46, 125, 91, 0.2), rgba(232, 163, 61, 0.1));
-            border-radius: 18px;
-            border: 1px solid rgba(46, 125, 91, 0.3);
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            border: 1px dashed var(--line);
         }
         .capstone-section h2 {
-            font-family: 'Instrument Serif', serif;
+            font-family: var(--font-serif);
             color: var(--marigold);
             font-size: 1.5rem;
             margin-bottom: 8px;
         }
         .capstone-section p {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--ink-dim);
         }
         .capstone-section .locked {
-            color: var(--coral);
+            color: var(--ink-faint);
             font-weight: 600;
         }
 
@@ -326,10 +369,12 @@
            ============================================================ */
         footer {
             padding: 32px 0 24px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.3);
+            border-top: 1px solid var(--line-soft);
+            color: var(--ink-faint);
             font-size: 0.78rem;
             margin-top: 40px;
+            position: relative;
+            z-index: 1;
         }
         footer .wrap {
             display: flex;
@@ -355,6 +400,8 @@
     </style>
 </head>
 <body>
+
+    <div class="page-bg" aria-hidden="true"></div>
 
     <!-- ============================================================
     NAVIGATION
@@ -438,6 +485,31 @@
                         <li>Workplace Simulation</li>
                     </ul>
                     <a href="../track3/track3-lesson2/index.html" class="btn btn-primary btn-block">Start Lesson 2 →</a>
+                </div>
+
+                <!-- ============================================
+                LESSON 3 - AVAILABLE (LINKED)
+                ============================================ -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🧹</span>
+                        <span>
+                            <span class="status-badge available">✓ Available</span>
+                            <span class="lesson-number">7 modules</span>
+                        </span>
+                    </div>
+                    <h3>Lesson 3: Data Cleaning & Validation</h3>
+                    <p>Learn advanced data cleaning techniques and validation rules.</p>
+                    <ul class="module-list">
+                        <li>Removing Duplicates</li>
+                        <li>Filling Missing Information</li>
+                        <li>Standardizing Formats</li>
+                        <li>Removing Extra Spaces</li>
+                        <li>Cross-checking Records</li>
+                        <li>Logical Validation</li>
+                        <li>Data Cleaning Challenge</li>
+                    </ul>
+                    <a href="../track3/track3-lesson3/index.html" class="btn btn-primary btn-block">Start Lesson 3 →</a>
                 </div>
 
             </div>

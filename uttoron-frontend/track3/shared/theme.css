@@ -167,3 +167,180 @@ footer {
     font-size: 0.78rem;
 }
 footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+/* ============================================================
+   LESSON MODULE SHELL
+   Shared by every Track 3 lesson page (module rail, panels,
+   ledgers, feedback) so each lesson doesn't redefine this UI.
+   ============================================================ */
+.lesson-hero {
+    padding: 40px 0 24px;
+    background: radial-gradient(ellipse at top right, rgba(232, 163, 61, 0.06), transparent 55%), #0a0a0a;
+}
+.lesson-hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2rem;
+    margin: 6px 0 10px;
+}
+.lesson-hero p.lede {
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 60ch;
+    margin: 0 0 20px;
+}
+
+.module-rail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+}
+.module-dot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+}
+.module-dot .num {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    flex-shrink: 0;
+}
+.module-dot.active { color: #fff; border-color: var(--marigold); }
+.module-dot.active .num { background: var(--marigold); color: #000; }
+.module-dot.done { color: var(--teal-stamp); border-color: var(--teal-stamp); }
+.module-dot.done .num { background: var(--teal-stamp); color: var(--paper); }
+.module-dot.done .num::before { content: '✓'; }
+
+.lesson-stamp-banner {
+    margin-top: 16px;
+    background: linear-gradient(135deg, rgba(46, 125, 91, 0.85), rgba(36, 92, 71, 0.85));
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+.lesson-stamp-banner.show { display: flex; }
+
+.module-panel { display: none; padding: 8px 0 48px; }
+.module-panel.active { display: block; animation: lessonFadeUp 0.3s ease; }
+@keyframes lessonFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.task-line {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--marigold);
+    margin-bottom: 6px;
+}
+.module-panel h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+.module-intro { color: rgba(255,255,255,0.55); max-width: 66ch; margin-bottom: 20px; font-size: 0.94rem; }
+
+.ledger {
+    background: rgba(246, 240, 223, 0.95);
+    color: var(--ink);
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    margin-bottom: 18px;
+}
+.ledger-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7a6a4a;
+    margin-bottom: 10px;
+}
+.ledger-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid #e3d9b8;
+}
+.ledger-row:last-child { border-bottom: none; }
+.ledger-row .k { font-size: 0.82rem; font-weight: 600; color: #4a5850; }
+.ledger-row .v { font-family: var(--font-mono); font-size: 0.9rem; }
+.ledger-row input, .ledger-row select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1.5px solid #d8cfae;
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    background: #fff;
+    color: var(--ink);
+}
+.ledger-row input:focus, .ledger-row select:focus { outline: none; border-color: var(--teal-stamp); }
+.ledger-row input.invalid { border-color: var(--coral); background: rgba(226,89,59,0.06); }
+.field-hint { font-size: 0.72rem; color: #8a7c58; margin-top: 4px; }
+.field-hint.error { color: var(--coral); font-weight: 600; }
+
+.check-panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-top: 14px;
+}
+.check-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.feedback { font-size: 0.88rem; margin-top: 12px; padding: 10px 14px; border-radius: 8px; display: none; }
+.feedback.show { display: block; }
+.feedback.ok { background: rgba(46,125,91,0.12); color: #6fdba8; border: 1px solid rgba(46,125,91,0.4); }
+.feedback.error { background: rgba(226,89,58,0.1); color: #ff9d84; border: 1px solid rgba(226,89,58,0.4); }
+
+.instruction-card {
+    background: rgba(232, 163, 61, 0.1);
+    border: 1.5px dashed var(--marigold);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    color: var(--paper);
+}
+.instruction-card strong { color: var(--marigold); }
+
+.diffline { font-family: var(--font-mono); font-size: 0.88rem; line-height: 1.7; word-break: break-word; }
+.diffline .add { background: rgba(46,125,91,0.25); color: #1c5c3f; border-radius: 3px; padding: 0 1px; }
+.diffline .del { background: rgba(226,89,58,0.22); color: #8a2f1c; text-decoration: line-through; border-radius: 3px; padding: 0 1px; }
+
+.history-list { list-style: none; font-family: var(--font-mono); font-size: 0.78rem; }
+.history-list li { padding: 6px 10px; border-left: 3px solid #d8cfae; color: #5b6b63; }
+.history-list li.current { border-left-color: var(--teal-stamp); color: var(--ink); font-weight: 600; background: rgba(46,125,91,0.08); }
+.history-list li.undone { color: #b8ab84; text-decoration: line-through; }
+
+.roster-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.roster-table th, .roster-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #e3d9b8; }
+.roster-table th { font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: #7a6a4a; }
+.mismatch-flag { font-family: var(--font-mono); font-size: 0.7rem; padding: 2px 8px; border-radius: 8px; background: rgba(226,89,58,0.12); color: #a83f26; }
+
+.stamp-earn-pill {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+}

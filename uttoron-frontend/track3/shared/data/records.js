@@ -14,10 +14,10 @@
     ];
 
     const CUSTOMERS = [
-        { customerId: 'CUS-301', name: 'Green Valley Traders' },
-        { customerId: 'CUS-302', name: 'Bay Textiles Ltd.' },
-        { customerId: 'CUS-303', name: 'Dhanmondi Hardware' },
-        { customerId: 'CUS-304', name: 'Sundarban Foods' }
+        { customerId: 'CUS-301', name: 'Green Valley Traders', address: 'Uttara, Dhaka' },
+        { customerId: 'CUS-302', name: 'Bay Textiles Ltd.', address: 'Agrabad, Chattogram' },
+        { customerId: 'CUS-303', name: 'Dhanmondi Hardware', address: 'Dhanmondi, Dhaka' },
+        { customerId: 'CUS-304', name: 'Sundarban Foods', address: 'Khulna Sadar, Khulna' }
     ];
 
     function attendance(overrides) {
@@ -37,6 +37,7 @@
             id: 'INV-5560',
             customerId: 'CUS-302',
             customerName: 'Bay Textiles Ltd.',
+            customerAddress: 'Agrabad, Chattogram',
             invoiceDate: '2026-07-01',
             lineItems: [{ description: 'Cotton fabric roll', qty: 12, unitPrice: 850 }],
             total: 10200,

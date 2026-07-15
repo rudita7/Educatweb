@@ -6,6 +6,7 @@
     <title>Uttoron — Spreadsheet Basics</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
     <style>
         /* ===== RESET & ROOT ===== */
@@ -17,32 +18,52 @@
             padding: 0;
         }
         :root {
-            --navy: #14313B;
-            --navy-deep: #0D2229;
-            --paper: #F6F0DF;
-            --paper-dim: #EAE1C7;
-            --ink: #1C2B2E;
+            --bg: #050505;
+            --bg-elev: #0b0b0c;
+            --ink: #F5F1E6;
+            --ink-dim: rgba(245, 241, 230, 0.62);
+            --ink-faint: rgba(245, 241, 230, 0.36);
+            --coral: #E6493C;
+            --coral-soft: #FF6B57;
+            --coral-glow: rgba(230, 73, 60, 0.45);
             --marigold: #E8A33D;
-            --coral: #E2593B;
-            --teal-stamp: #2E7D5B;
-            --line: rgba(246, 240, 223, 0.16);
-            --shadow: rgba(13, 34, 41, 0.35);
-            --radius: 16px;
+            --teal: #2E7D5B;
+            --teal-glow: rgba(46, 125, 91, 0.4);
+            --line: rgba(255, 255, 255, 0.09);
+            --line-soft: rgba(255, 255, 255, 0.05);
+            --glass: rgba(255, 255, 255, 0.035);
+            --glass-strong: rgba(255, 255, 255, 0.065);
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-pill: 999px;
+            --shadow-lg: 0 30px 70px rgba(0, 0, 0, 0.55);
             --font-display: 'Space Grotesk', sans-serif;
+            --font-serif: 'Instrument Serif', serif;
             --font-body: 'Inter', sans-serif;
             --font-mono: 'IBM Plex Mono', monospace;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
         html {
             scroll-behavior: smooth;
         }
         body {
             margin: 0;
-            background: var(--navy);
-            color: var(--paper);
+            background: var(--bg);
+            color: var(--ink);
             font-family: var(--font-body);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
+            position: relative;
+        }
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 60% 45% at 82% 0%, rgba(230, 73, 60, 0.14), transparent 60%),
+                linear-gradient(180deg, #0d0505 0%, #050505 60%, #030202 100%);
         }
         h1,
         h2,
@@ -58,6 +79,8 @@
             max-width: 900px;
             margin: 0 auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
         a {
             color: var(--marigold);
@@ -66,50 +89,61 @@
         a:hover {
             text-decoration: underline;
         }
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--line);
+        }
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 11px 24px;
-            border-radius: 10px;
+            padding: 12px 26px;
+            border-radius: var(--radius-pill);
             font-weight: 600;
             font-size: 0.92rem;
-            transition: transform 0.15s, box-shadow 0.2s;
+            transition: transform 0.2s var(--ease), box-shadow 0.25s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
             border: none;
             cursor: pointer;
+            font-family: var(--font-body);
         }
         .btn:active {
             transform: scale(0.96);
         }
         .btn-primary {
-            background: var(--coral);
-            color: var(--paper);
+            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25);
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(226, 89, 58, 0.35);
+            box-shadow: 0 10px 32px var(--coral-glow);
         }
         .btn-secondary {
-            background: transparent;
-            color: var(--paper);
-            border: 1.5px solid var(--paper-dim);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--ink);
+            border: 1.5px solid var(--line);
         }
         .btn-secondary:hover {
-            border-color: var(--marigold);
-            color: var(--marigold);
+            border-color: var(--coral);
+            color: var(--coral-soft);
+            transform: translateY(-2px);
         }
         .btn-success {
-            background: var(--teal-stamp);
-            color: var(--paper);
+            background: linear-gradient(135deg, var(--teal), #245f45);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(46, 125, 91, 0.25);
         }
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(46, 125, 91, 0.35);
+            box-shadow: 0 10px 32px var(--teal-glow);
         }
         .btn-sm {
-            padding: 7px 16px;
+            padding: 8px 18px;
             font-size: 0.8rem;
+            border-radius: var(--radius-pill);
         }
         .btn-block {
             width: 100%;
@@ -119,19 +153,22 @@
             position: sticky;
             top: 0;
             z-index: 50;
-            background: var(--navy-deep);
-            border-bottom: 1px solid var(--line);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            padding: 16px 16px 0;
         }
         .nav-inner {
-            max-width: 1040px;
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
+            background: rgba(9, 9, 10, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-pill);
+            padding: 9px 10px 9px 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
         }
         .brand {
             display: flex;
@@ -139,45 +176,59 @@
             gap: 10px;
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             letter-spacing: 0.01em;
         }
         .brand-mark {
             width: 34px;
             height: 34px;
             border-radius: 50%;
-            background: var(--marigold);
-            color: var(--navy-deep);
+            background: linear-gradient(135deg, var(--coral-soft), var(--marigold));
+            color: #14100a;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: var(--font-mono);
             font-weight: 600;
-            font-size: 0.8rem;
-            border: 2px solid var(--paper);
+            font-size: 0.85rem;
             flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(230, 73, 60, 0.35);
         }
         .back-link {
-            color: var(--paper-dim);
-            font-size: 0.9rem;
-            display: flex;
+            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            border: none;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
         }
         .back-link:hover {
-            color: var(--marigold);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px var(--coral-glow);
             text-decoration: none;
         }
 
         section {
             padding: 32px 0;
+            position: relative;
+            z-index: 1;
         }
         .lesson-shell {
-            background: var(--paper);
+            background: var(--bg-elev);
             color: var(--ink);
-            border-radius: 20px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
             padding: 28px;
-            box-shadow: 0 20px 50px var(--shadow);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 1;
         }
         .lesson-top {
             display: flex;
@@ -191,7 +242,7 @@
             font-size: 0.65rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--teal-stamp);
+            color: var(--coral-soft);
         }
         .lesson-top h2 {
             margin: 4px 0 0;
@@ -206,24 +257,24 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: #e3d9b8;
-            transition: background 0.3s;
+            background: var(--line);
+            transition: background 0.3s var(--ease);
         }
         .dot.active {
-            background: var(--teal-stamp);
+            background: var(--coral);
         }
         .dot.done {
-            background: var(--teal-stamp);
-            opacity: 0.5;
+            background: var(--teal);
+            opacity: 0.7;
         }
 
         /* ===== SPREADSHEET STYLES ===== */
         .spreadsheet-container {
-            background: #fff;
-            border-radius: 12px;
+            background: var(--bg-elev);
+            border-radius: var(--radius-md);
             padding: 16px;
             margin: 12px 0;
-            border: 1.5px solid #d8cfae;
+            border: 1.5px solid var(--line);
             overflow-x: auto;
         }
         .spreadsheet-container table {
@@ -233,18 +284,19 @@
         }
         .spreadsheet-container th,
         .spreadsheet-container td {
-            border: 1px solid #b5aa8a;
+            border: 1px solid var(--line);
             padding: 0;
             text-align: center;
             height: 32px;
             min-width: 48px;
             font-family: var(--font-mono);
             font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.02);
         }
         .spreadsheet-container th {
-            background: #f0ebe0;
+            background: var(--glass-strong);
             font-weight: 600;
-            color: #1a1a1a;
+            color: var(--ink-dim);
             font-size: 0.7rem;
             text-transform: uppercase;
         }
@@ -258,20 +310,21 @@
             font-size: 0.85rem;
             padding: 0 4px;
             outline: none;
+            color: var(--ink);
         }
         .spreadsheet-container td input:focus {
-            background: #fcf8f0;
-            box-shadow: inset 0 0 0 2px var(--marigold);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 0 0 2px var(--coral);
         }
         .spreadsheet-container td .cell-formula {
             font-size: 0.65rem;
-            color: #8a806c;
+            color: var(--ink-faint);
             display: block;
             margin-top: -2px;
         }
         .spreadsheet-container .selected-cell {
-            background: #eef6f1;
-            box-shadow: inset 0 0 0 2px var(--teal-stamp);
+            background: rgba(230, 73, 60, 0.1);
+            box-shadow: inset 0 0 0 2px var(--coral), 0 0 16px var(--coral-glow);
         }
         .spreadsheet-toolbar {
             display: flex;
@@ -283,40 +336,43 @@
         .spreadsheet-toolbar .formula-bar {
             flex: 1;
             min-width: 150px;
-            padding: 6px 10px;
-            border: 1.5px solid #d8cfae;
-            border-radius: 6px;
+            padding: 8px 12px;
+            border: 1.5px solid var(--line);
+            border-radius: 8px;
             font-family: var(--font-mono);
             font-size: 0.85rem;
-            background: #faf8f2;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--ink);
+            transition: border-color 0.2s var(--ease);
         }
         .spreadsheet-toolbar .formula-bar:focus {
-            border-color: var(--teal-stamp);
+            border-color: var(--coral);
             outline: none;
         }
         .spreadsheet-step {
-            background: #faf8f2;
-            border-radius: 8px;
+            background: var(--glass);
+            border-radius: var(--radius-md);
             padding: 12px 16px;
             margin-top: 12px;
+            border: 1px solid var(--line);
             border-left: 4px solid var(--marigold);
         }
         .spreadsheet-step .step-instruction {
             font-weight: 600;
-            color: #1a1a1a;
+            color: var(--ink);
             font-size: 0.95rem;
         }
         .spreadsheet-step .step-status {
             font-size: 0.85rem;
-            color: #5b6b63;
+            color: var(--ink-dim);
             margin-top: 4px;
         }
         .spreadsheet-step .step-status.done {
-            color: var(--teal-stamp);
+            color: var(--teal);
             font-weight: 600;
         }
         .spreadsheet-step .step-status.error {
-            color: var(--coral);
+            color: var(--coral-soft);
         }
         .spreadsheet-controls {
             display: flex;
@@ -337,8 +393,8 @@
             width: 88px;
             height: 88px;
             border-radius: 50%;
-            border: 3px solid var(--teal-stamp);
-            color: var(--teal-stamp);
+            border: 3px solid var(--teal);
+            color: var(--teal);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -348,7 +404,8 @@
             font-size: 0.75rem;
             flex-direction: column;
             transform: rotate(-6deg);
-            background: rgba(46, 125, 91, 0.06);
+            background: rgba(46, 125, 91, 0.08);
+            box-shadow: 0 0 28px var(--teal-glow);
         }
         .big-stamp .stamp-icon {
             font-size: 1.6rem;
@@ -357,8 +414,10 @@
         footer {
             padding: 32px 0 44px;
             border-top: 1px solid var(--line);
-            color: var(--paper-dim);
+            color: var(--ink-faint);
             font-size: 0.78rem;
+            position: relative;
+            z-index: 1;
         }
         footer .wrap {
             display: flex;
@@ -372,19 +431,21 @@
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--navy-deep);
-            color: var(--paper);
-            padding: 12px 24px;
-            border-radius: 40px;
+            background: rgba(10, 10, 10, 0.92);
+            color: var(--ink);
+            padding: 13px 26px;
+            border-radius: var(--radius-pill);
             font-size: 0.85rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
             z-index: 100;
             opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
+            transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
             pointer-events: none;
             max-width: 90%;
             text-align: center;
             border: 1px solid var(--line);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
         .toast.show {
             opacity: 1;
@@ -392,7 +453,7 @@
             pointer-events: auto;
         }
         .toast.success {
-            border-color: var(--teal-stamp);
+            border-color: var(--teal);
         }
         .toast.error {
             border-color: var(--coral);
@@ -400,6 +461,8 @@
     </style>
 </head>
 <body>
+
+    <div class="page-bg" aria-hidden="true"></div>
 
     <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
@@ -769,10 +832,10 @@
                         </div>
                     </div>
                     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-                        <span style="font-size:0.8rem;background:var(--teal-stamp);color:#fff;padding:2px 12px;border-radius:12px;">
+                        <span style="font-size:0.8rem;background:linear-gradient(135deg, var(--coral-soft), var(--coral));color:#fff;padding:2px 12px;border-radius:12px;">
                             Step ${currentItemIndex+1} of ${totalSteps}
                         </span>
-                        <span style="font-size:0.8rem;background:var(--paper-dim);color:var(--ink);padding:2px 12px;border-radius:12px;">
+                        <span style="font-size:0.8rem;background:var(--glass-strong);border:1px solid var(--line);color:var(--ink-dim);padding:2px 12px;border-radius:12px;">
                             ${currentStep.instruction}
                         </span>
                     </div>
@@ -962,8 +1025,8 @@
                             ✓
                         </div>
                         <h2>🎯 Lesson complete!</h2>
-                        <p style="color:#5b6b63;">You've mastered spreadsheet basics — SUM, AVERAGE, MAX, and MIN!</p>
-                        <p style="color:var(--teal-stamp);font-weight:600;margin-top:8px;">✅ Stamp saved to your Passport!</p>
+                        <p style="color:var(--ink-dim);">You've mastered spreadsheet basics — SUM, AVERAGE, MAX, and MIN!</p>
+                        <p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Stamp saved to your Passport!</p>
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
                             <a href="index1.html" class="btn btn-primary">Back to Home</a>
                             <button class="btn btn-secondary" id="resetLessonBtn">🔄 Start Over</button>

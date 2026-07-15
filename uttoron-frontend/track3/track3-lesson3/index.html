@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 3: Data Cleaning &amp; Validation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../shared/theme.css" />
+    <link rel="stylesheet" href="lesson3.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/data-accuracy.html" class="nav-btn" style="text-decoration:none;">🧹 Data Accuracy</a>
+                <a href="../track3-lesson2/index.html" class="nav-btn" style="text-decoration:none;">✏️ Lesson 2</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📘 Track 3 · Data Accuracy &amp; Quality Assurance — Lesson 3 of 4</span>
+            <h1>Data Cleaning &amp; Validation</h1>
+            <p class="lede">Seven hands-on modules: remove duplicates, fill in missing information, standardize formats, cross-check records against a second source, run validation rules, and assemble a full cleaning pipeline in the right order.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🧹</div>
+                <div>
+                    <strong>Lesson 3 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">All 7 modules complete. Head back to your passport to see it.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- MODULE 1 -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Module 1 · Removing Duplicates</div>
+            <h2>Find the duplicate inventory entries</h2>
+            <p class="module-intro">This batch has exact duplicates and near-duplicates (typos, extra spaces, different casing). Check every record that's a duplicate of an earlier one in the list — the one you'd merge away, not the one you'd keep.</p>
+
+            <div class="dup-grid" id="m1-grid"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);">Uses Levenshtein distance + Union-Find clustering under the hood.</span>
+                    <button class="btn btn-primary btn-sm" id="m1-check">Reveal clusters &amp; check</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Module 2 · Filling Missing Information</div>
+            <h2>Fill in the blanks using the master lists</h2>
+            <p class="module-intro">These records are missing a required field. Look up the correct value in the matching master list by ID, then fill it in.</p>
+
+            <div class="ledger" id="m2-roster-ledger"></div>
+            <div class="ledger" id="m2-attendance"></div>
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <button class="btn btn-secondary btn-sm" id="m2a-lookup">🔎 Look up roster</button>
+                    <button class="btn btn-primary btn-sm" id="m2a-check">Check name</button>
+                </div>
+                <div class="feedback" id="m2a-feedback"></div>
+            </div>
+
+            <div class="ledger" style="margin-top:18px;" id="m2-customers-ledger"></div>
+            <div class="ledger" id="m2-invoice"></div>
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <button class="btn btn-secondary btn-sm" id="m2b-lookup">🔎 Look up customer</button>
+                    <button class="btn btn-primary btn-sm" id="m2b-check">Check customer name</button>
+                </div>
+                <div class="feedback" id="m2b-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Module 3 · Standardizing Formats</div>
+            <h2>Run each field through a cleaning pipeline</h2>
+            <p class="module-intro">Pick which cleaning steps to apply to each field, in order — they run left to right, one function feeding the next, exactly like a real data-cleaning pipeline.</p>
+
+            <div class="ledger" id="m3-record"></div>
+
+            <div class="check-panel">
+                <button class="btn btn-primary btn-sm" id="m3-check">Run pipeline &amp; check</button>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 4 -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Module 4 · Removing Extra Spaces</div>
+            <h2>Clean up whitespace across a batch</h2>
+            <p class="module-intro">Same pipeline idea as Module 3, focused on just one problem: leading, trailing, and doubled-up spaces.</p>
+
+            <div class="ledger" id="m4-record"></div>
+
+            <div class="check-panel">
+                <button class="btn btn-primary btn-sm" id="m4-check">Run whitespace cleanup &amp; check</button>
+                <div class="feedback" id="m4-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 5 -->
+        <div class="module-panel" id="panel-5" data-module="5">
+            <div class="task-line">Module 5 · Cross-checking Records</div>
+            <h2>Confirm a value against a second data source</h2>
+            <p class="module-intro">Join this invoice to the customer master list by ID, and confirm the address on file actually matches.</p>
+
+            <div class="ledger">
+                <div class="ledger-title">Customer master list</div>
+                <table class="roster-table">
+                    <thead><tr><th>Customer ID</th><th>Name</th><th>Address</th></tr></thead>
+                    <tbody id="m5-customers"></tbody>
+                </table>
+            </div>
+            <div class="ledger" id="m5-invoice"></div>
+
+            <div class="check-panel">
+                <button class="btn btn-primary btn-sm" id="m5-check">Cross-check address</button>
+                <div class="crosscheck-result" id="m5-result"></div>
+                <div class="feedback" id="m5-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 6 -->
+        <div class="module-panel" id="panel-6" data-module="6">
+            <div class="task-line">Module 6 · Logical Validation</div>
+            <h2>Run the rule engine and fix what fails</h2>
+            <p class="module-intro">Each record below is checked against a set of business rules. Read why a rule failed, fix the record, then re-run validation.</p>
+
+            <div id="m6-records"></div>
+
+            <div class="check-panel">
+                <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m6-status">0 of 3 records fully valid.</span>
+                <div class="feedback" id="m6-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 7 -->
+        <div class="module-panel" id="panel-7" data-module="7">
+            <div class="task-line">Module 7 · Data Cleaning Challenge</div>
+            <h2>Put the cleaning steps in the right order</h2>
+            <p class="module-intro">You're given a messy batch. Arrange these four steps in the order you'd actually run them, then run the pipeline. Order matters — a duplicate check run too early can miss a match a later standardize step would have caught.</p>
+
+            <ul class="step-list" id="m7-steps"></ul>
+
+            <div class="check-panel">
+                <button class="btn btn-primary btn-sm" id="m7-run">▶ Run pipeline in this order</button>
+                <div class="pipeline-log" id="m7-log" style="display:none;"></div>
+                <div class="feedback" id="m7-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Track 3 · Data Accuracy &amp; Quality Assurance</span>
+        </div>
+    </footer>
+
+    <script src="../shared/engines/stateMachine.js"></script>
+    <script src="../shared/engines/commandStack.js"></script>
+    <script src="../shared/engines/diffEngine.js"></script>
+    <script src="../shared/engines/instructionParser.js"></script>
+    <script src="../shared/engines/hashLookup.js"></script>
+    <script src="../shared/engines/errorInjection.js"></script>
+    <script src="../shared/engines/fuzzyMatchEngine.js"></script>
+    <script src="../shared/engines/ruleEngine.js"></script>
+    <script src="../shared/engines/formatPipeline.js"></script>
+    <script src="../shared/data/records.js"></script>
+    <script src="lesson3.js"></script>
+</body>
+</html>
