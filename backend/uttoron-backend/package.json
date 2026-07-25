@@ -33,8 +33,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "pnpm": {
-    "onlyBuiltDependencies": ["bcrypt"]
-  }
+  "description": ""
 }
