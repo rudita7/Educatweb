@@ -16,6 +16,11 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
+# Belt-and-suspenders: force bcrypt's native build explicitly, in case the
+# onlyBuiltDependencies setting above isn't honored the same way by every
+# pnpm version — this is a deliberate, direct action that isn't subject to
+# the automatic-install-time approval gate.
+RUN pnpm rebuild bcrypt
 
 COPY . .
 RUN pip3 install --break-system-packages -r scripts/requirements.txt
