@@ -6,7 +6,11 @@ FROM node:22-slim
 RUN apt-get update && apt-get install -y python3 python3-pip --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g pnpm
+# Pinned to the exact version this project has been developed/tested
+# against — an unpinned "latest" pnpm can add new strict-by-default
+# behaviors (like the native-build-script approval gate below) that never
+# showed up locally.
+RUN npm install -g pnpm@11.10.0
 
 WORKDIR /app
 
