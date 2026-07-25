@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 3: Slide Structure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson2/index.html" class="nav-btn" style="text-decoration:none;">🎨 Lesson 2</a>
+                <a href="../lesson4/index.html" class="nav-btn" style="text-decoration:none;">✍️ Lesson 4</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🗂️ Presentation Skills · Lesson 3 of 13</span>
+            <h1>Building Your Slide Structure</h1>
+            <p class="lede">A good talk has a shape: open, tell them the plan, make your points, close. Build that skeleton in the Slide Sorter, then learn to spot a broken structure.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🗂️</div>
+                <div>
+                    <strong>Lesson 3 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Next: writing text that actually works, in Lesson 4.</div>
+                </div>
+                <a href="../lesson4/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Go to Lesson 4 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — PRACTICE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Practice</span>
+            <div class="task-line">Step 1 · Build a 5-Slide Skeleton</div>
+            <h2>Add slides, then put them in order</h2>
+            <p class="step-intro">Add one of each slide type until you have the classic five: <strong>Title → Agenda → Content → Content → Closing</strong>. Reorder with the ▲ ▼ buttons (or drag), then check.</p>
+
+            <div class="layout-picker" id="layoutPicker"></div>
+            <div class="sorter-grid" id="buildSorter"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m1-status">0 slides added</span>
+                    <button class="btn btn-primary btn-sm" id="m1-check">Check structure</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — CHECKPOINT -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Checkpoint</span>
+            <div class="task-line">Step 2 · Spot the Structure Problem</div>
+            <h2>Fix this jumbled deck</h2>
+            <p class="step-intro">This 4-slide deck is out of order — it opens on the wrong slide and ends in the wrong place. Reorder it into a sequence that makes sense, then check.</p>
+
+            <div class="sorter-grid" id="fixSorter"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check order</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 3 — DO IT FOR REAL -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <span class="skill-pill">Do It For Real</span>
+            <div class="task-line">Step 3 · Real PowerPoint</div>
+            <h2>Build the skeleton in your file</h2>
+            <p class="step-intro">Use the template file from Lesson 2.</p>
+
+            <div class="real-step">
+                <h3>🎯 Your task</h3>
+                <ol>
+                    <li>Open your file from Lesson 2.</li>
+                    <li>Use <strong>Home → New Slide</strong> to create five slides.</li>
+                    <li>Make them: Title, Agenda, two Content slides, and a Closing.</li>
+                    <li>Switch to the <strong>View → Slide Sorter</strong> and confirm the order.</li>
+                </ol>
+                <a class="real-link" href="https://www.office.com/launch/powerpoint" target="_blank" rel="noopener noreferrer">↗ Open PowerPoint for the web</a>
+                <label class="real-confirm">
+                    <input type="checkbox" id="m3-done" />
+                    <span>I built a 5-slide skeleton in my real file.</span>
+                </label>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m3-finish">Finish lesson</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 3 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../shared/mockPPT.js"></script>
+    <script src="lesson3.js"></script>
+</body>
+</html>

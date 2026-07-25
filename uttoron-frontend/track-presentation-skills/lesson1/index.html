@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 1: Getting Started</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson2/index.html" class="nav-btn" style="text-decoration:none;">🎨 Lesson 2</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🖥️ Presentation Skills · Lesson 1 of 13</span>
+            <h1>Getting Started: Opening PowerPoint &amp; Picking a Starting Point</h1>
+            <p class="lede">Launch PowerPoint and choose how to begin — a blank presentation or a ready-made template. Practice on the simulator, then do it for real.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🖥️</div>
+                <div>
+                    <strong>Lesson 1 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">On to choosing a template that fits, in Lesson 2.</div>
+                </div>
+                <a href="../lesson2/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Go to Lesson 2 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — EXPLORE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Explore</span>
+            <div class="task-line">Step 1 · The Start Screen</div>
+            <h2>Where every presentation begins</h2>
+            <p class="step-intro">When PowerPoint opens, it shows a start screen. Two clicks matter here. Follow the glowing highlight: first open a <strong>Blank Presentation</strong>, then look at <strong>New from Template</strong>.</p>
+
+            <div class="ppt-window" id="startWindow"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m1-progress">0 of 2 explored</span>
+                    <button class="btn btn-primary btn-sm" id="m1-continue" disabled>Continue →</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — CHECKPOINT -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Checkpoint</span>
+            <div class="task-line">Step 2 · Blank vs. Template</div>
+            <h2>Which starting point fits?</h2>
+            <p class="step-intro">Two quick questions. Pick the best answer for each.</p>
+
+            <div class="ledger">
+                <div id="mcqContainer"></div>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m2-progress">0 of 2 correct</span>
+                    <button class="btn btn-primary btn-sm" id="m2-continue" disabled>Continue →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3 — DO IT FOR REAL -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <span class="skill-pill">Do It For Real</span>
+            <div class="task-line">Step 3 · Real PowerPoint</div>
+            <h2>Now do it in the real software</h2>
+            <p class="step-intro">The simulator builds recognition. This step builds muscle memory in the real tool.</p>
+
+            <div class="real-step">
+                <h3>🎯 Your task</h3>
+                <ol>
+                    <li>Open PowerPoint on a computer, or go to the free web version.</li>
+                    <li>Choose <strong>Blank Presentation</strong>.</li>
+                    <li>Save it (give it a name like <em>"My First Deck"</em>) — you'll reuse this file in later lessons.</li>
+                </ol>
+                <a class="real-link" href="https://www.office.com/launch/powerpoint" target="_blank" rel="noopener noreferrer">↗ Open PowerPoint for the web</a>
+                <label class="real-confirm">
+                    <input type="checkbox" id="m3-done" />
+                    <span>I opened PowerPoint and saved a new blank presentation.</span>
+                </label>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m3-finish">Finish lesson</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 1 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../shared/mockPPT.js"></script>
+    <script src="lesson1.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+/* Capstone-specific styles only. The module shell (hero, rail, panels,
+   ledger, feedback) lives in track3/shared/theme.css. */
+
+/* Inspect (stage 1) -- a ledger per record plus a flag toggle */
+.inspect-card { margin-bottom: 14px; }
+.inspect-card .ledger { margin-bottom: 8px; }
+.inspect-card .flag-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.flag-pill {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+}
+.flag-pill.flagged { background: rgba(226,89,58,0.18); color: var(--coral); }
+
+/* Correct (stage 2) */
+.correct-card { margin-bottom: 14px; }
+.flag-only-note {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.7);
+    padding: 12px 16px;
+    border: 1.5px dashed var(--coral);
+    border-radius: 12px;
+    margin-bottom: 14px;
+    background: rgba(226,89,58,0.06);
+}
+
+/* Validate (stage 3) */
+.rule-result-list, .dup-group-list { list-style: none; }
+.rule-result-item, .dup-group-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e3d9b8;
+    font-size: 0.85rem;
+}
+.rule-result-item:last-child, .dup-group-row:last-child { border-bottom: none; }
+.rule-result-item .badge, .dup-group-row .badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+.rule-result-item .badge.pass { background: #d4e8dd; color: var(--teal-stamp); }
+.rule-result-item .badge.fail { background: #f8d9d0; color: var(--coral); }
+.rule-result-item .badge.expected-fail { background: var(--paper-dim); color: #8a7c58; }
+.dup-group-row .badge { background: rgba(232,163,61,0.35); color: #7a5a10; }
+
+/* Submit (stage 4) -- score breakdown + report */
+.score-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+@media (min-width: 640px) { .score-grid { grid-template-columns: repeat(4, 1fr); } }
+.score-stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+}
+.score-stat .num { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700; color: var(--marigold); }
+.score-stat .label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+}
+.composite-banner {
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+    text-align: center;
+}
+.composite-banner .composite-num { font-family: var(--font-mono); font-size: 2.2rem; font-weight: 700; }
+.composite-banner .composite-label { font-size: 0.82rem; margin-top: 4px; }
+.composite-banner.pass { background: rgba(46,125,91,0.15); border: 1px solid var(--teal-stamp); }
+.composite-banner.pass .composite-num, .composite-banner.pass .composite-label { color: var(--teal-stamp); }
+.composite-banner.fail { background: rgba(226,89,58,0.12); border: 1px solid var(--coral); }
+.composite-banner.fail .composite-num, .composite-banner.fail .composite-label { color: var(--coral); }
+
+.report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+@media (min-width: 640px) { .report-grid { grid-template-columns: repeat(4, 1fr); } }
+.report-stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+}
+.report-stat .num { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 700; color: var(--marigold); }
+.report-stat .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+}

@@ -15,6 +15,42 @@ class Module4 {
         this.active = false;
     }
 
+    // Not every (errorType, field) pair is actually supported by the injection
+    // engine (e.g. logical-violation only understands invoice "total" and
+    // attendance "checkOut") -- unsupported combos silently no-op and return a
+    // null groundTruthDiff. Retry with a fresh random pair until one actually
+    // produces a corruption, so a record marked hasError never ships with
+    // nothing actually wrong with it (which would make it unflaggable and
+    // silently tank the learner's accuracy score).
+    injectRandom(record, errorTypes, fields) {
+        for (let attempt = 0; attempt < 30; attempt++) {
+            const errorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+            const field = fields[Math.floor(Math.random() * fields.length)];
+            let result;
+            switch (errorType) {
+                case 'typo':
+                    result = this.errorInjectionEngine.injectTypo(record, field);
+                    break;
+                case 'missing':
+                    result = this.errorInjectionEngine.injectMissingField(record, field);
+                    break;
+                case 'format':
+                    result = this.errorInjectionEngine.injectFormatInconsistency(record, field);
+                    break;
+                case 'whitespace':
+                    result = this.errorInjectionEngine.injectExtraWhitespace(record, field);
+                    break;
+                case 'logical':
+                    result = this.errorInjectionEngine.injectLogicalViolation(record, field);
+                    break;
+            }
+            if (result && result.groundTruthDiff) return result;
+        }
+        // injectMissingField always succeeds for any field, so this is a
+        // guaranteed-safe fallback if 30 random attempts all missed.
+        return this.errorInjectionEngine.injectMissingField(record, fields[0]);
+    }
+
     generateChallenge(numRecords = 8) {
         this.records = [];
         const domains = ['invoice', 'attendance', 'inventory'];
@@ -29,28 +65,8 @@ class Module4 {
 
             if (hasError) {
                 const errorTypes = ['typo', 'missing', 'format', 'whitespace', 'logical'];
-                const errorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
                 const fields = Object.keys(record).filter(k => k !== 'id' && k !== 'status' && k !== 'lineItems');
-                const field = fields[Math.floor(Math.random() * fields.length)];
-
-                let result;
-                switch (errorType) {
-                    case 'typo':
-                        result = this.errorInjectionEngine.injectTypo(record, field);
-                        break;
-                    case 'missing':
-                        result = this.errorInjectionEngine.injectMissingField(record, field);
-                        break;
-                    case 'format':
-                        result = this.errorInjectionEngine.injectFormatInconsistency(record, field);
-                        break;
-                    case 'whitespace':
-                        result = this.errorInjectionEngine.injectExtraWhitespace(record, field);
-                        break;
-                    case 'logical':
-                        result = this.errorInjectionEngine.injectLogicalViolation(record, field);
-                        break;
-                }
+                const result = this.injectRandom(record, errorTypes, fields);
                 corruptedRecord = result.corruptedRecord;
                 groundTruthDiff = result.groundTruthDiff;
             }

@@ -55,100 +55,24 @@ body {
     min-height: 100vh;
 }
 
-.container {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 0 20px 40px;
+/* Module switch transition — mirrors the home page's .view fadeUp */
+.module { animation: fadeUp 0.4s ease; }
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* ============================================================
-   3. NAVIGATION (Uttoron style)
+   3. NAVIGATION & HERO
+   Nav bar (.navbar) and title hero (.lesson-hero, .eyebrow, .lede)
+   markup/styling live in shared/theme.css, matching every other
+   Track 3 page and the home landing page.
    ============================================================ */
-.top-nav {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 12px 20px;
-    margin: 0 -20px 25px -20px;
-    border-radius: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.top-nav .brand {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--paper);
-}
-
-.top-nav .brand span {
-    color: var(--marigold);
-}
-
-.top-nav a {
-    color: var(--marigold);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-    padding: 7px 0;
-}
-
-.top-nav a:hover {
-    color: #fff;
-    text-decoration: none;
-}
-
-.top-nav .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.top-nav .nav-links .separator {
-    color: rgba(255, 255, 255, 0.15);
-    margin: 0 4px;
-}
-
-.top-nav .nav-links .current {
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-/* ============================================================
-   4. HEADER / TITLE
-   ============================================================ */
-header {
-    margin-bottom: var(--spacing-xl);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: var(--spacing-lg);
-}
-
 h1 {
     font-family: 'Instrument Serif', serif;
-    font-size: 2.5rem;
     font-weight: 700;
     color: var(--paper);
     margin-bottom: var(--spacing-sm);
-}
-
-h1#lessonTitle {
-    font-family: 'Instrument Serif', serif;
-    font-size: 2.2rem;
-    color: var(--paper);
-}
-
-.subtitle {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
 }
 
 h2 {
@@ -179,13 +103,13 @@ p {
    ============================================================ */
 .lesson-nav {
     display: flex;
-    gap: 12px;
-    margin-bottom: var(--spacing-xl);
+    gap: 10px;
+    margin-top: var(--spacing-lg);
     flex-wrap: wrap;
     background: rgba(255, 255, 255, 0.03);
-    padding: 12px 20px;
+    padding: 14px 16px;
     border-radius: var(--radius);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .module-btn {
@@ -211,6 +135,14 @@ p {
     background: var(--marigold);
     color: #000;
     border-color: var(--marigold);
+}
+
+.module-btn.done:not(.active) {
+    color: var(--teal-stamp);
+    border-color: var(--teal-stamp);
+}
+.module-btn.done:not(.active)::before {
+    content: '✓ ';
 }
 
 /* ============================================================
@@ -476,6 +408,11 @@ button.secondary:hover {
     color: var(--paper);
 }
 
+.record-item:hover {
+    border-color: var(--marigold);
+    transform: translateY(-2px);
+}
+
 .record-item strong {
     color: var(--paper);
 }
@@ -511,12 +448,13 @@ button.secondary:hover {
     justify-content: space-between;
     align-items: center;
     color: var(--paper);
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
 
 .priority-item:hover {
     border-color: var(--marigold);
     background: rgba(232, 163, 61, 0.05);
+    transform: translateY(-2px);
 }
 
 .priority-rank {
@@ -571,6 +509,7 @@ button.secondary:hover {
 .error-type-card:hover {
     border-color: var(--marigold);
     color: var(--paper);
+    transform: translateY(-2px);
 }
 
 .error-type-card.active {
@@ -589,45 +528,18 @@ button.secondary:hover {
 
 /* ============================================================
    16. FOOTER
+   Footer markup/styling (bare `footer` element + `.wrap`) lives in
+   shared/theme.css, matching every other Track 3 page.
    ============================================================ */
-.footer {
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    text-align: center;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.78rem;
-}
-
-.footer p {
-    color: rgba(255, 255, 255, 0.3);
-    margin-bottom: 4px;
-}
 
 /* ============================================================
    17. RESPONSIVE
    ============================================================ */
 @media (max-width: 600px) {
-    .top-nav {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 12px 16px;
-        margin: 0 -16px 20px -16px;
-    }
-    
-    .top-nav .nav-links {
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    
-    .top-nav .nav-links .separator {
-        display: none;
-    }
-    
-    h1, h1#lessonTitle {
+    h1 {
         font-size: 1.7rem;
     }
-    
+
     .lesson-nav {
         padding: 10px 14px;
         gap: 8px;

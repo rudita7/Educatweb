@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Presentation Skills - Uttoron</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --bg: #050505;
+            --bg-elev: #0b0b0c;
+            --ink: #F5F1E6;
+            --ink-dim: rgba(245, 241, 230, 0.62);
+            --ink-faint: rgba(245, 241, 230, 0.36);
+            --coral: #E6493C;
+            --coral-soft: #FF6B57;
+            --coral-glow: rgba(230, 73, 60, 0.45);
+            --marigold: #E8A33D;
+            --teal: #2E7D5B;
+            --teal-glow: rgba(46, 125, 91, 0.4);
+            --line: rgba(255, 255, 255, 0.09);
+            --line-soft: rgba(255, 255, 255, 0.05);
+            --glass: rgba(255, 255, 255, 0.035);
+            --glass-strong: rgba(255, 255, 255, 0.065);
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-pill: 999px;
+            --shadow-lg: 0 30px 70px rgba(0, 0, 0, 0.55);
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-serif: 'Instrument Serif', serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            position: relative;
+        }
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 60% 45% at 82% 0%, rgba(232, 163, 61, 0.14), transparent 60%),
+                linear-gradient(180deg, #0d0805 0%, #050505 60%, #030202 100%);
+        }
+        .wrap {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        a {
+            color: var(--marigold);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================================
+           NAVIGATION BAR
+           ============================================================ */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 16px 16px 0;
+        }
+        .nav-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(9, 9, 10, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-pill);
+            padding: 9px 10px 9px 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        .brand-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--marigold), var(--coral-soft));
+            color: #14100a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(232, 163, 61, 0.35);
+        }
+        .nav-btn, .back-link {
+            background: linear-gradient(135deg, var(--marigold), var(--coral-soft));
+            border: none;
+            color: #14100a;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-btn:hover, .back-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(232, 163, 61, 0.4);
+            text-decoration: none;
+        }
+
+        /* ============================================================
+           HERO
+           ============================================================ */
+        .hero {
+            padding: 40px 0 30px;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: 2.2rem;
+            line-height: 1.08;
+            margin: 0 0 8px;
+            font-weight: 700;
+            font-family: 'Instrument Serif', serif;
+        }
+        .hero h1 em {
+            font-style: italic;
+            color: var(--marigold);
+        }
+        .hero .lede {
+            font-size: 1rem;
+            color: var(--ink-dim);
+            max-width: 50ch;
+            margin: 0 0 16px;
+        }
+        .eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--marigold);
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .section-head {
+            max-width: 58ch;
+            margin-bottom: 28px;
+        }
+        .section-head h2 {
+            font-size: 1.5rem;
+            margin: 0 0 6px;
+            font-family: 'Instrument Serif', serif;
+        }
+        .section-head p {
+            color: var(--ink-dim);
+        }
+
+        /* ============================================================
+           LESSON GRID
+           ============================================================ */
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 760px) {
+            .lesson-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .lesson-card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            color: var(--ink);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--line);
+            transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
+        }
+        .lesson-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--marigold);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+        }
+        .lesson-card.disabled {
+            opacity: 0.55;
+        }
+        .lesson-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .lesson-card .lesson-number {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            background: rgba(232, 163, 61, 0.12);
+            padding: 2px 12px;
+            border-radius: var(--radius-pill);
+            color: var(--marigold);
+            font-weight: 600;
+            border: 1px solid rgba(232, 163, 61, 0.3);
+        }
+        .lesson-card .status-badge {
+            font-family: var(--font-mono);
+            font-size: 0.6rem;
+            padding: 2px 12px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+        }
+        .status-badge.available {
+            background: rgba(46, 125, 91, 0.18);
+            color: #6fd6ab;
+            border: 1px solid rgba(46, 125, 91, 0.4);
+        }
+        .status-badge.coming-soon {
+            background: transparent;
+            color: var(--ink-faint);
+            border: 1px dashed var(--line);
+        }
+        .lesson-card h3 {
+            font-size: 1.2rem;
+            margin: 0 0 8px;
+            font-family: var(--font-display);
+            color: var(--ink);
+        }
+        .lesson-card p {
+            color: var(--ink-dim);
+            font-size: 0.9rem;
+            margin: 0 0 12px;
+        }
+        .lesson-card .module-list {
+            font-size: 0.82rem;
+            color: var(--ink-faint);
+            margin-bottom: 16px;
+            list-style: none;
+            padding: 0;
+        }
+        .lesson-card .module-list li {
+            padding: 2px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lesson-card .module-list li::before {
+            content: "●";
+            color: var(--teal);
+            font-size: 0.5rem;
+        }
+
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 26px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            font-size: 0.92rem;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s var(--ease), box-shadow 0.25s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+            font-family: var(--font-body);
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--marigold), var(--coral-soft));
+            color: #14100a;
+            box-shadow: 0 8px 24px rgba(232, 163, 61, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(232, 163, 61, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--ink);
+            border: 1.5px solid var(--line);
+        }
+        .btn-secondary:hover {
+            border-color: var(--marigold);
+            color: var(--marigold);
+            transform: translateY(-2px);
+        }
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ============================================================
+           CAPSTONE SECTION
+           ============================================================ */
+        .capstone-section {
+            margin-top: 40px;
+            padding: 28px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            border: 1px dashed var(--line);
+        }
+        .capstone-section h2 {
+            font-family: var(--font-serif);
+            color: var(--marigold);
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .capstone-section p {
+            color: var(--ink-dim);
+        }
+        .capstone-section .locked {
+            color: var(--ink-faint);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        footer {
+            padding: 32px 0 24px;
+            border-top: 1px solid var(--line-soft);
+            color: var(--ink-faint);
+            font-size: 0.78rem;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        footer .wrap {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* How-it-works strip */
+        .how-strip {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+        @media (min-width: 720px) { .how-strip { grid-template-columns: repeat(3, 1fr); } }
+        .how-card {
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+        }
+        .how-card .how-icon { font-size: 1.4rem; margin-bottom: 8px; }
+        .how-card h4 { font-size: 0.98rem; color: var(--ink); margin-bottom: 6px; }
+        .how-card p { font-size: 0.84rem; color: var(--ink-faint); margin: 0; }
+
+        /* Compact cards for the not-yet-built lessons */
+        .lesson-card.compact { padding: 16px 18px; }
+        .lesson-card.compact h3 { font-size: 1rem; margin-bottom: 6px; }
+        .lesson-card.compact p { font-size: 0.82rem; margin: 0; }
+        .fb-badge {
+            display: inline-block; font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.08em;
+            text-transform: uppercase; color: #6fd6ab; background: rgba(46,125,91,0.15);
+            border: 1px solid rgba(46,125,91,0.4); padding: 2px 8px; border-radius: 10px; margin-top: 8px;
+        }
+        .subsection-head { margin: 8px 0 18px; }
+        .subsection-head h3 { font-size: 1.1rem; color: var(--ink); font-family: 'Instrument Serif', serif; }
+        .subsection-head p { color: var(--ink-faint); font-size: 0.86rem; }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.7rem;
+            }
+            .lesson-card {
+                padding: 18px;
+            }
+            .capstone-section {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-bg" aria-hidden="true"></div>
+
+    <!-- ============================================================
+    NAVIGATION
+    ============================================================ -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div>
+                <a href="index1.html" class="nav-btn">🏠 Home</a>
+                <a href="../track-presentation-skills/passport/index.html" class="nav-btn">📖 My Feedback Passport</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+    MAIN CONTENT
+    ============================================================ -->
+    <div class="wrap">
+
+        <!-- HERO -->
+        <section class="hero">
+            <span class="eyebrow">🖥️ Presentation Skills</span>
+            <h1>Presentation <em>Skills</em></h1>
+            <p class="lede">Learn PowerPoint the hands-on way: practice each step on a built-in simulator, then do it for real in actual PowerPoint. Along the way, real reviewers give you feedback on what you build and how you deliver it — not just an auto-graded quiz.</p>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section style="padding-top: 8px;">
+            <div class="how-strip">
+                <div class="how-card">
+                    <div class="how-icon">🖱️</div>
+                    <h4>Practice on a simulator</h4>
+                    <p>Each lesson uses a simulated PowerPoint ribbon — click the real buttons, get instant feedback, no install needed.</p>
+                </div>
+                <div class="how-card">
+                    <div class="how-icon">🎯</div>
+                    <h4>Do it for real</h4>
+                    <p>Every lesson ends by sending you into actual PowerPoint (desktop or the free web version) to repeat the action for real.</p>
+                </div>
+                <div class="how-card">
+                    <div class="how-icon">🧑‍🏫</div>
+                    <h4>Real human feedback</h4>
+                    <p>Three checkpoints (Lessons 9, 12 &amp; 13) send your work to a real reviewer — structure, design, pacing, and delivery.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- LESSONS 1-13 (ALL AVAILABLE) -->
+        <section style="padding-top: 0;">
+            <div class="section-head">
+                <h2>📚 Lessons</h2>
+                <p>A 13-lesson path from opening PowerPoint to delivering a real presentation, all the way through.</p>
+            </div>
+
+            <div class="lesson-grid">
+
+                <!-- LESSON 1 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🖥️</span>
+                        <span>
+                            <span class="status-badge available">✓ Available</span>
+                            <span class="lesson-number">~10 min</span>
+                        </span>
+                    </div>
+                    <h3>Lesson 1: Getting Started</h3>
+                    <p>Open PowerPoint and choose your starting point — blank or template.</p>
+                    <ul class="module-list">
+                        <li>Explore: the start screen</li>
+                        <li>Checkpoint: blank vs. template</li>
+                        <li>Do It For Real: save a blank deck</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson1/index.html" class="btn btn-primary btn-block">Start Lesson 1 →</a>
+                </div>
+
+                <!-- LESSON 2 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🎨</span>
+                        <span>
+                            <span class="status-badge available">✓ Available</span>
+                            <span class="lesson-number">~12 min</span>
+                        </span>
+                    </div>
+                    <h3>Lesson 2: Choosing a Template That Fits</h3>
+                    <p>Use the Design tab and pick a template that fits your audience.</p>
+                    <ul class="module-list">
+                        <li>Explore: the Design tab gallery</li>
+                        <li>Practice: match templates to scenarios</li>
+                        <li>Do It For Real: apply a template</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson2/index.html" class="btn btn-primary btn-block">Start Lesson 2 →</a>
+                </div>
+
+                <!-- LESSON 3 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🗂️</span>
+                        <span>
+                            <span class="status-badge available">✓ Available</span>
+                            <span class="lesson-number">~15 min</span>
+                        </span>
+                    </div>
+                    <h3>Lesson 3: Building Your Slide Structure</h3>
+                    <p>Add slides, choose layouts, and order them in the Slide Sorter.</p>
+                    <ul class="module-list">
+                        <li>Practice: build a 5-slide skeleton</li>
+                        <li>Checkpoint: spot the structure problem</li>
+                        <li>Do It For Real: build the skeleton</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson3/index.html" class="btn btn-primary btn-block">Start Lesson 3 →</a>
+                </div>
+
+                <!-- LESSON 4 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">✍️</span>
+                        <span>
+                            <span class="status-badge available">✓ Available</span>
+                            <span class="lesson-number">~15 min</span>
+                        </span>
+                    </div>
+                    <h3>Lesson 4: Writing Text That Actually Works</h3>
+                    <p>Bullet discipline — short lines the audience reads in a glance.</p>
+                    <ul class="module-list">
+                        <li>Practice: paragraph → 3 tight bullets</li>
+                        <li>Do It For Real: write real slide text</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson4/index.html" class="btn btn-primary btn-block">Start Lesson 4 →</a>
+                </div>
+
+                <!-- LESSON 5 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">📊</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~18 min</span></span>
+                    </div>
+                    <h3>Lesson 5: Adding Visuals — Images &amp; Charts</h3>
+                    <p>Insert pictures and pick the right chart type for your data.</p>
+                    <ul class="module-list">
+                        <li>Explore &amp; Practice: Insert tab, image + chart</li>
+                        <li>Checkpoint: match chart type to data</li>
+                        <li>Do It For Real: insert a real image &amp; chart</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson5/index.html" class="btn btn-primary btn-block">Start Lesson 5 →</a>
+                </div>
+
+                <!-- LESSON 6 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">✨</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~12 min</span></span>
+                    </div>
+                    <h3>Lesson 6: Transitions &amp; Animations</h3>
+                    <p>Bring slides to life — and know when to stop.</p>
+                    <ul class="module-list">
+                        <li>Practice: one transition, one animation</li>
+                        <li>Checkpoint: too much, or just right?</li>
+                        <li>Do It For Real: add motion, cap it there</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson6/index.html" class="btn btn-primary btn-block">Start Lesson 6 →</a>
+                </div>
+
+                <!-- LESSON 7 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🗒️</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~12 min</span></span>
+                    </div>
+                    <h3>Lesson 7: Speaker Notes &amp; Presenter View</h3>
+                    <p>Write cues, and learn what the audience does and doesn't see.</p>
+                    <ul class="module-list">
+                        <li>Practice: a cue for each slide</li>
+                        <li>Checkpoint: cue or full script?</li>
+                        <li>Do It For Real: add real speaker notes</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson7/index.html" class="btn btn-primary btn-block">Start Lesson 7 →</a>
+                </div>
+
+                <!-- LESSON 8 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🔍</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~10 min</span></span>
+                    </div>
+                    <h3>Lesson 8: Polishing — Review &amp; Proofread</h3>
+                    <p>Spelling, grammar, and a consistency pass.</p>
+                    <ul class="module-list">
+                        <li>Practice: find 6 planted errors</li>
+                        <li>Do It For Real: run a real spelling check</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson8/index.html" class="btn btn-primary btn-block">Start Lesson 8 →</a>
+                </div>
+
+                <!-- LESSON 9 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🧑‍🏫</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~5 min</span></span>
+                    </div>
+                    <h3>Lesson 9: Structural Feedback Checkpoint</h3>
+                    <p>Submit your deck; a real reviewer flags structure &amp; design.</p>
+                    <ul class="module-list">
+                        <li>Context: what gets reviewed here</li>
+                        <li>Submit your .pptx for feedback</li>
+                    </ul>
+                    <span class="fb-badge">Feedback checkpoint 1 of 3</span>
+                    <a href="../track-presentation-skills/lesson9/index.html" class="btn btn-primary btn-block" style="margin-top:12px;">Start Lesson 9 →</a>
+                </div>
+
+                <!-- LESSON 10 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">💾</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~10 min</span></span>
+                    </div>
+                    <h3>Lesson 10: Saving, Exporting &amp; Sharing</h3>
+                    <p>.pptx vs. PDF, cloud save, and sharing by link or email.</p>
+                    <ul class="module-list">
+                        <li>Practice: format &amp; method decision tree</li>
+                        <li>Do It For Real: save both formats, share one</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson10/index.html" class="btn btn-primary btn-block">Start Lesson 10 →</a>
+                </div>
+
+                <!-- LESSON 11 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">▶️</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~12 min</span></span>
+                    </div>
+                    <h3>Lesson 11: Running the Slideshow Like a Pro</h3>
+                    <p>Presenter View, keyboard navigation, confident timing.</p>
+                    <ul class="module-list">
+                        <li>Practice: start, navigate, Presenter View</li>
+                        <li>Checkpoint: 8 slides in under 60 seconds</li>
+                        <li>Do It For Real: run your real deck</li>
+                    </ul>
+                    <a href="../track-presentation-skills/lesson11/index.html" class="btn btn-primary btn-block">Start Lesson 11 →</a>
+                </div>
+
+                <!-- LESSON 12 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🎤</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">~20 min</span></span>
+                    </div>
+                    <h3>Lesson 12: Delivery &amp; Vocal Practice</h3>
+                    <p>Record a sample; submit it for feedback on pacing &amp; delivery.</p>
+                    <ul class="module-list">
+                        <li>Context: flat vs. paced delivery</li>
+                        <li>Record &amp; self-review (manual, no auto-detection)</li>
+                        <li>Submit your recording for feedback</li>
+                    </ul>
+                    <span class="fb-badge">Feedback checkpoint 2 of 3</span>
+                    <a href="../track-presentation-skills/lesson12/index.html" class="btn btn-primary btn-block" style="margin-top:12px;">Start Lesson 12 →</a>
+                </div>
+
+                <!-- LESSON 13 -->
+                <div class="lesson-card">
+                    <div class="card-header">
+                        <span style="font-size: 1.5rem;">🎯</span>
+                        <span><span class="status-badge available">✓ Available</span><span class="lesson-number">45-60 min</span></span>
+                    </div>
+                    <h3>Lesson 13: Capstone — Deliver the Real Thing</h3>
+                    <p>Build a real deck, deliver it, and submit deck + recording for a full review.</p>
+                    <ul class="module-list">
+                        <li>Upload your final .pptx</li>
+                        <li>Deliver for real, 2-4 minutes, recorded</li>
+                        <li>Submit both together for full review</li>
+                    </ul>
+                    <span class="fb-badge">Feedback checkpoint 3 of 3 · Capstone</span>
+                    <a href="../track-presentation-skills/lesson13/index.html" class="btn btn-primary btn-block" style="margin-top:12px;">Start Lesson 13 →</a>
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · 13 lessons · 3 feedback checkpoints · <a href="../track-presentation-skills/reviewer/index.html" style="opacity:0.5;">Reviewer queue</a></span>
+        </div>
+    </footer>
+
+</body>
+</html>

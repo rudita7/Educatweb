@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Spreadsheet Mastery: Lesson 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../shared/theme.css" />
+</head>
+<body>
+
+    <div class="page-bg" aria-hidden="true"></div>
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn">🏠 Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📊 Spreadsheet Mastery — Lesson 1 of 4</span>
+            <h1>Spreadsheet Fundamentals &amp; Data Entry</h1>
+            <p class="lede">Five hands-on modules using real workplace records — invoices, attendance sheets, and inventory logs: navigate a grid like a pro, enter and edit data safely, write your first arithmetic formulas, understand relative vs. absolute references, and fill a formula down a whole column in one move.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">📊</div>
+                <div>
+                    <strong>Lesson 1 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">All 5 modules complete. Head back to your passport to see it.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- MODULE 1 -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Module 1 · Navigating the Grid</div>
+            <h2>Move around the grid without touching the mouse</h2>
+            <p class="module-intro">Below is an inventory log. Click a cell to select it, use your arrow keys to move around, and Tab or Enter to confirm an entry and move to the next cell. This should feel familiar if you've used any spreadsheet before — it's a quick warm-up, not new ground.</p>
+
+            <div class="instruction-card" id="m1-instruction"></div>
+            <div class="spreadsheet-container"><div id="m1-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m1-progress-text">0 of 2 done.</span>
+                    <button class="btn btn-secondary btn-sm" id="m1-reset">↺ Reset</button>
+                    <button class="btn btn-primary btn-sm" id="m1-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Module 2 · Entering &amp; Editing Data</div>
+            <h2>Fill in today's attendance sheet</h2>
+            <p class="module-intro">The front desk called in today's attendance. Enter the blank cells, and <strong>overwrite</strong> the one check-in time that was logged wrong. Dates and times are validated as you type — a red border means the format is wrong before you even submit it.</p>
+
+            <div class="instruction-card" id="m2-call"></div>
+            <div class="spreadsheet-container"><div id="m2-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <button class="btn btn-secondary btn-sm" id="m2-undo">↶ Undo</button>
+                    <button class="btn btn-secondary btn-sm" id="m2-redo">↷ Redo</button>
+                    <span style="flex:1;"></span>
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Module 3 · Basic Arithmetic Formulas</div>
+            <h2>Write your first real formulas</h2>
+            <p class="module-intro">This invoice needs its numbers calculated. Instead of a named function, write plain arithmetic directly — e.g. <span class="mono">=A2*B2</span> — the same way you'd calculate it by hand, just with cell references instead of numbers.</p>
+
+            <div class="instruction-card" id="m3-instruction"></div>
+            <div class="formula-bar-row">
+                <span class="cell-tag" id="m3-cell-tag">—</span>
+                <input type="text" id="m3-formula-bar" class="formula-bar mono" placeholder="Select a cell, then type a formula here (e.g. =A2*B2)" />
+            </div>
+            <div class="spreadsheet-container"><div id="m3-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m3-progress-text">0 of 6 formulas correct.</span>
+                    <button class="btn btn-primary btn-sm" id="m3-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 4 -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Module 4 · Relative vs. Absolute References</div>
+            <h2>One tax rate, many line items</h2>
+            <p class="module-intro">Cell <span class="mono">F1</span> holds this invoice's tax rate — one fixed number every line item needs. If you reference it normally (<span class="mono">F1</span>) and later copy the formula to another row, the reference would drift. Lock it with dollar signs (<span class="mono">$F$1</span>) so it stays put no matter where the formula goes.</p>
+
+            <div class="instruction-card" id="m4-instruction"></div>
+            <div class="instruction-card info" id="m4-why"></div>
+            <div class="formula-bar-row">
+                <span class="cell-tag" id="m4-cell-tag">—</span>
+                <input type="text" id="m4-formula-bar" class="formula-bar mono" placeholder="Select a cell, then type a formula here" />
+            </div>
+            <div class="spreadsheet-container"><div id="m4-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m4-progress-text">Step 1 of 2</span>
+                    <button class="btn btn-primary btn-sm" id="m4-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m4-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 5 -->
+        <div class="module-panel" id="panel-5" data-module="5">
+            <div class="task-line">Module 5 · AutoFill / Fill-Down</div>
+            <h2>Write it once, fill it down the column</h2>
+            <p class="module-intro">This inventory log needs the same formula on every row: units received minus the reorder buffer in <span class="mono">E1</span>. Write it once in row 2, then drag the small handle at the corner of the cell down the column — or use the Fill Down button — and watch the relative reference update on its own while <span class="mono">$E$1</span> stays fixed.</p>
+
+            <div class="instruction-card" id="m5-instruction"></div>
+            <div class="formula-bar-row">
+                <span class="cell-tag" id="m5-cell-tag">—</span>
+                <input type="text" id="m5-formula-bar" class="formula-bar mono" placeholder="Select C2, then type a formula here" />
+            </div>
+            <div class="spreadsheet-container"><div id="m5-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <label style="font-size:0.82rem;color:var(--ink-dim);display:flex;align-items:center;gap:6px;">
+                        Fill down through row
+                        <select id="m5-fill-target" class="mono" style="background:var(--glass-strong);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px;"></select>
+                    </label>
+                    <button class="btn btn-secondary btn-sm" id="m5-fill-btn" disabled>▾ Fill Down</button>
+                    <span style="flex:1;"></span>
+                    <button class="btn btn-primary btn-sm" id="m5-check">Check my work</button>
+                </div>
+                <div class="ledger-legend">
+                    <span><span class="dot" style="background:var(--coral);"></span>Selected cell</span>
+                    <span><span class="dot" style="background:var(--teal);"></span>Fill preview</span>
+                </div>
+                <div class="feedback" id="m5-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Spreadsheet Mastery · Lesson 1 of 4</span>
+        </div>
+    </footer>
+
+    <script src="../engines/cellModel.js"></script>
+    <script src="../engines/formulaEngine.js"></script>
+    <script src="../engines/fillEngine.js"></script>
+    <script src="../shared/lessonKit.js"></script>
+    <script src="lesson1.js"></script>
+</body>
+</html>

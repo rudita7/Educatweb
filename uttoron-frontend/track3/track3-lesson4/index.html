@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 4: Workplace Quality Assurance Project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../shared/theme.css" />
+    <link rel="stylesheet" href="lesson4.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/data-accuracy.html" class="nav-btn" style="text-decoration:none;">🧹 Data Accuracy</a>
+                <a href="../track3-lesson3/index.html" class="nav-btn" style="text-decoration:none;">🧹 Lesson 3</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📘 Track 3 · Data Accuracy &amp; Quality Assurance — Lesson 4 of 4</span>
+            <h1>Workplace Quality Assurance Project</h1>
+            <p class="lede">The bridge into the Capstone. One mixed batch of records carries through all four stages: inspect it, correct what you can, run it through full validation, and generate the final Quality Report — the actual artifact a QA role hands off at the end of a shift.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🎯</div>
+                <div>
+                    <strong>Lesson 4 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">All 4 modules complete, with a passing Quality Report. Head back to your passport to see it.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- MODULE 1 -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Module 1 · Inspect Records</div>
+            <h2>Review the full batch and flag suspected errors</h2>
+            <p class="module-intro">A mixed batch just came in — invoices, attendance sheets, and inventory logs together. Scan each record and flag anything you believe is wrong, the same skill from Lesson 1, now applied across every record type at once. Duplicates aren't part of this pass — that gets its own check later.</p>
+
+            <div id="m1-records"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m1-status">0 of 7 records flagged.</span>
+                    <button class="btn btn-primary btn-sm" id="m1-check">Check my flags</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Module 2 · Correct Records</div>
+            <h2>Fix what's fixable, flag what isn't</h2>
+            <p class="module-intro">Three records below have a verifiable issue you can fix directly. One can't be confirmed from the data on hand — leave it flagged for a supervisor rather than guessing. Undo is always available if a correction goes wrong.</p>
+
+            <div id="m2-records"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m2-status"></span>
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check corrections</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Module 3 · Validate Before Submission</div>
+            <h2>Run the full validation pass</h2>
+            <p class="module-intro">Before anything ships, run the same two checks a real QA pass would: a business-rule engine across every record, and a duplicate scan across the batch. Read what fails and why — a failure on the record you flagged for a supervisor is expected, not something to fix yourself.</p>
+
+            <div class="check-panel" style="margin-bottom:18px;">
+                <button class="btn btn-primary btn-sm" id="m3-run">▶ Run validation</button>
+            </div>
+
+            <div class="ledger" id="m3-rules" style="display:none;"></div>
+            <div class="ledger" id="m3-dupes" style="display:none;margin-top:14px;"></div>
+
+            <div class="check-panel">
+                <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m3-status">Run validation to see results.</span>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 4 -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Module 4 · Final Submission Report</div>
+            <h2>Generate the Quality Report</h2>
+            <p class="module-intro">Roll everything from this batch into one report: what was reviewed, what was wrong, what got fixed, what got flagged, and whether the batch is fit to submit. This is the actual artifact a QA role hands off — and the Track 3 stamp only comes with a passing report, not just clicking the button.</p>
+
+            <div class="check-panel" style="margin-bottom:18px;">
+                <button class="btn btn-primary btn-sm" id="m4-generate">Generate report</button>
+            </div>
+
+            <div id="m4-report"></div>
+
+            <div class="check-panel" id="m4-actions" style="display:none;">
+                <button class="btn btn-secondary btn-sm" id="m4-download">⬇ Download report (JSON)</button>
+                <div class="feedback" id="m4-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Track 3 · Data Accuracy &amp; Quality Assurance</span>
+        </div>
+    </footer>
+
+    <script src="../shared/engines/stateMachine.js"></script>
+    <script src="../shared/engines/commandStack.js"></script>
+    <script src="../shared/engines/diffEngine.js"></script>
+    <script src="../shared/engines/instructionParser.js"></script>
+    <script src="../shared/engines/hashLookup.js"></script>
+    <script src="../shared/engines/errorInjection.js"></script>
+    <script src="../shared/engines/fuzzyMatchEngine.js"></script>
+    <script src="../shared/engines/ruleEngine.js"></script>
+    <script src="../shared/engines/formatPipeline.js"></script>
+    <script src="../shared/data/records.js"></script>
+    <script src="lesson4.js"></script>
+</body>
+</html>

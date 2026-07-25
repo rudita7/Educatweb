@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Spreadsheet Mastery: Lesson 3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../shared/theme.css" />
+</head>
+<body>
+
+    <div class="page-bg" aria-hidden="true"></div>
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn">🏠 Home</a>
+                <a href="../lesson2/index.html" class="nav-btn">← Lesson 2</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📊 Spreadsheet Mastery — Lesson 3 of 4</span>
+            <h1>Organizing &amp; Finding Data</h1>
+            <p class="lede">Five modules: sort a log by more than one column, filter a sheet down to just the records that matter, cross-reference one sheet against another with LOOKUP, and set up (then fix) data validation so bad entries can't sneak in.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">📊</div>
+                <div>
+                    <strong>Lesson 3 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">All 5 modules complete. Ready for Lesson 4.</div>
+                </div>
+                <a href="../lesson4/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Continue to Lesson 4 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- MODULE 1 -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Module 1 · Sorting</div>
+            <h2>Sort by quantity, then by location</h2>
+            <p class="module-intro">Click a column header to sort by it. <strong>Shift-click</strong> a second header to add it as a tie-breaker for rows where the first column matches. Click a header again to flip ascending/descending.</p>
+
+            <div class="instruction-card">Sort this inventory log by <strong>Quantity</strong> (ascending), then by <strong>Location</strong> (ascending) as the tie-breaker.</div>
+            <div id="m1-table"></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <button class="btn btn-secondary btn-sm" id="m1-reset">↺ Reset order</button>
+                    <span style="flex:1;"></span>
+                    <button class="btn btn-primary btn-sm" id="m1-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Module 2 · Filtering</div>
+            <h2>Show only what needs attention</h2>
+            <p class="module-intro">Tick the statuses you want to see, then apply the filter. The full sheet isn't gone — you're just viewing a subset of it, exactly like a real spreadsheet filter.</p>
+
+            <div class="instruction-card">Filter this attendance sheet down to only <strong>Late</strong> or <strong>Absent</strong> records.</div>
+            <div class="check-panel" style="margin-top:0;margin-bottom:14px;">
+                <div id="m2-status-checks" style="display:flex;gap:16px;flex-wrap:wrap;font-size:0.88rem;"></div>
+                <div class="check-actions">
+                    <button class="btn btn-secondary btn-sm" id="m2-apply">Apply filter</button>
+                    <button class="btn btn-secondary btn-sm" id="m2-clear">Clear filter</button>
+                </div>
+            </div>
+            <div id="m2-table"></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m2-status-text">Showing all records.</span>
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Module 3 · Looking Up Values (LOOKUP)</div>
+            <h2>Cross-reference against a customer list</h2>
+            <p class="module-intro">The customer list on the left (columns A-B) and the invoices on the right (columns D-F) live on the same sheet. Use <span class="mono">LOOKUP(value, lookupRange, resultRange)</span> to pull each invoice's customer name from its Customer ID — the same idea as a hash-map lookup, expressed as a spreadsheet formula.</p>
+
+            <div class="spreadsheet-container"><div id="m3-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m3-progress-text">0 of 3 correct.</span>
+                    <button class="btn btn-primary btn-sm" id="m3-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 4 -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Module 4 · Data Validation — Restricting Entry</div>
+            <h2>Make it impossible to enter the wrong thing</h2>
+            <p class="module-intro">A dropdown only offers valid choices. A range restriction rejects a number that's out of bounds. Both of these fields below are locked down that way — try to break them, then fix them.</p>
+
+            <div class="instruction-card">The Status field only allows <strong>Present / Absent / Late</strong> (try opening the dropdown — nothing else is even an option). The Quantity field only allows <strong>0–500</strong> — it currently holds an out-of-range test value. Set it to a valid number to continue.</div>
+
+            <div class="check-panel" style="margin-top:0;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <div>
+                        <label style="font-size:0.8rem;color:var(--ink-dim);display:block;margin-bottom:6px;">Attendance Status</label>
+                        <select id="m4-status" class="field-select" style="width:100%;"></select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem;color:var(--ink-dim);display:block;margin-bottom:6px;">Inventory Quantity</label>
+                        <input type="number" id="m4-qty" class="field-select" style="width:100%;" value="9999" />
+                        <div class="field-hint" id="m4-qty-hint"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m4-progress-text">Set the quantity to a valid number (0-500).</span>
+                    <button class="btn btn-primary btn-sm" id="m4-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m4-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 5 -->
+        <div class="module-panel" id="panel-5" data-module="5">
+            <div class="task-line">Module 5 · Data Validation — Practice</div>
+            <h2>A batch just came in with some bad entries</h2>
+            <p class="module-intro">Not every record here is actually wrong — check each one against the rule before you change anything.</p>
+
+            <div id="m5-records"></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m5-progress-text">0 of 4 valid.</span>
+                    <button class="btn btn-primary btn-sm" id="m5-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m5-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Spreadsheet Mastery · Lesson 3 of 4</span>
+        </div>
+    </footer>
+
+    <script src="../engines/cellModel.js"></script>
+    <script src="../engines/formulaEngine.js"></script>
+    <script src="../engines/sortFilterEngine.js"></script>
+    <script src="../engines/validationEngine.js"></script>
+    <script src="../shared/lessonKit.js"></script>
+    <script src="lesson3.js"></script>
+</body>
+</html>

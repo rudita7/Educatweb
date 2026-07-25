@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 10: Saving, Exporting &amp; Sharing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson9/index.html" class="nav-btn" style="text-decoration:none;">🧑‍🏫 Lesson 9</a>
+                <a href="../lesson11/index.html" class="nav-btn" style="text-decoration:none;">▶️ Lesson 11</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">💾 Presentation Skills · Lesson 10 of 13</span>
+            <h1>Saving, Exporting &amp; Sharing</h1>
+            <p class="lede">Not every file should leave your hands the same way. The right format and sharing method depends entirely on who's receiving it, and what they need to do with it.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">💾</div>
+                <div>
+                    <strong>Lesson 10 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Next: running the slideshow like a pro.</div>
+                </div>
+                <a href="../lesson11/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Go to Lesson 11 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — PRACTICE (decision tree) -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Practice</span>
+            <div class="task-line">Step 1 · Pick the Right Format &amp; Method</div>
+            <h2>Three situations — what do you choose?</h2>
+            <p class="step-intro">Each situation needs a different combination of file format and sharing method.</p>
+
+            <div id="decisionTree"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m1-progress">0 of 3 correct</span>
+                    <button class="btn btn-primary btn-sm" id="m1-continue" disabled>Continue →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — DO IT FOR REAL -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Do It For Real</span>
+            <div class="task-line">Step 2 · Real PowerPoint</div>
+            <h2>Save two versions, share one</h2>
+            <p class="step-intro">Use the file you've been building.</p>
+
+            <div class="real-step">
+                <h3>🎯 Your task</h3>
+                <ol>
+                    <li>Open your file.</li>
+                    <li><strong>Save As</strong> — keep it as <strong>.pptx</strong> (editable).</li>
+                    <li><strong>Save As</strong> again — export a copy as <strong>PDF</strong> (locked, viewable anywhere).</li>
+                    <li>Share one of them — by email attachment or a cloud link.</li>
+                </ol>
+                <a class="real-link" href="https://www.office.com/launch/powerpoint" target="_blank" rel="noopener noreferrer">↗ Open PowerPoint for the web</a>
+                <label class="real-confirm">
+                    <input type="checkbox" id="m2-done" />
+                    <span>I saved my file as both .pptx and PDF, and shared one of them.</span>
+                </label>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m2-finish">Finish lesson</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 10 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="lesson10.js"></script>
+</body>
+</html>

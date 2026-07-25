@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Spreadsheet Mastery: Lesson 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../shared/theme.css" />
+</head>
+<body>
+
+    <div class="page-bg" aria-hidden="true"></div>
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn">🏠 Home</a>
+                <a href="../lesson1/index.html" class="nav-btn">← Lesson 1</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📊 Spreadsheet Mastery — Lesson 2 of 4</span>
+            <h1>Everyday Formulas &amp; Functions</h1>
+            <p class="lede">Six modules, each function practiced on at least two real record types — invoices, attendance sheets, and inventory logs — so the skill generalizes instead of being tied to one screen: SUM/AVERAGE, MIN/MAX/COUNT/COUNTA, IF, nested IF with AND/OR, COUNTIF/SUMIF, and reading &amp; fixing broken formulas.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">📊</div>
+                <div>
+                    <strong>Lesson 2 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">All 6 modules complete. Ready for Lesson 3.</div>
+                </div>
+                <a href="../lesson3/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Continue to Lesson 3 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- MODULE 1 -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Module 1 · Aggregate Functions: SUM &amp; AVERAGE</div>
+            <h2>Add it up, then find the average</h2>
+            <p class="module-intro">Two records, same two functions. <span class="mono">SUM(range)</span> adds every number in a range; <span class="mono">AVERAGE(range)</span> divides that sum by how many numbers there are.</p>
+
+            <h3>Invoice — line totals</h3>
+            <div class="spreadsheet-container"><div id="m1a-grid"></div></div>
+
+            <h3>Attendance — hours worked this week</h3>
+            <div class="spreadsheet-container"><div id="m1b-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m1-progress-text">0 of 4 correct.</span>
+                    <button class="btn btn-primary btn-sm" id="m1-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Module 2 · Aggregate Functions: MIN, MAX, COUNT, COUNTA</div>
+            <h2>Find extremes, and count what's actually there</h2>
+            <p class="module-intro"><span class="mono">MAX</span>/<span class="mono">MIN</span> find the highest/lowest number in a range. <span class="mono">COUNT</span> counts only numeric cells; <span class="mono">COUNTA</span> counts every non-blank cell, numbers or text. They're not the same — watch what happens with a text entry mixed into a number column.</p>
+
+            <h3>Inventory — quantities on hand</h3>
+            <div class="spreadsheet-container"><div id="m2a-grid"></div></div>
+
+            <h3>Attendance — days late this month (one employee on full leave, marked "N/A")</h3>
+            <div class="spreadsheet-container"><div id="m2b-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m2-progress-text">0 of 5 correct.</span>
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Module 3 · Logical Functions: IF</div>
+            <h2>Let the formula decide</h2>
+            <p class="module-intro"><span class="mono">IF(condition, valueIfTrue, valueIfFalse)</span> — the condition is a comparison, and each branch can be text, not just a number.</p>
+
+            <h3>Attendance — flag late check-ins (after 09:00)</h3>
+            <div class="spreadsheet-container"><div id="m3a-grid"></div></div>
+
+            <h3>Inventory — flag items below reorder level (qty &lt; 20)</h3>
+            <div class="spreadsheet-container"><div id="m3b-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m3-progress-text">0 of 6 correct.</span>
+                    <button class="btn btn-primary btn-sm" id="m3-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 4 -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Module 4 · Nested Logic: AND / OR / nested IF</div>
+            <h2>More than one condition at once</h2>
+            <p class="module-intro">Combine conditions with <span class="mono">AND(...)</span>/<span class="mono">OR(...)</span> inside an IF, or nest one IF inside another for more than two outcomes.</p>
+
+            <h3>Invoice — flag Overdue only if unpaid AND past due</h3>
+            <div class="spreadsheet-container"><div id="m4a-grid"></div></div>
+
+            <h3>Attendance — three-tier day type from hours worked</h3>
+            <div class="spreadsheet-container"><div id="m4b-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m4-progress-text">0 of 6 correct.</span>
+                    <button class="btn btn-primary btn-sm" id="m4-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m4-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 5 -->
+        <div class="module-panel" id="panel-5" data-module="5">
+            <div class="task-line">Module 5 · Conditional Aggregates: COUNTIF &amp; SUMIF</div>
+            <h2>Count or sum only what matches</h2>
+            <p class="module-intro"><span class="mono">COUNTIF(range, criteria)</span> counts matching cells; <span class="mono">SUMIF(range, criteria, sumRange)</span> sums a parallel range wherever the criteria matches. Criteria can be a plain value ("Late") or a comparison ("&gt;10000").</p>
+
+            <h3>Attendance — how many records are "Late"?</h3>
+            <div class="spreadsheet-container"><div id="m5a-grid"></div></div>
+
+            <h3>Invoice — total of Paid invoices, and how many exceed ৳10,000</h3>
+            <div class="spreadsheet-container"><div id="m5b-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m5-progress-text">0 of 3 correct.</span>
+                    <button class="btn btn-primary btn-sm" id="m5-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m5-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 6 -->
+        <div class="module-panel" id="panel-6" data-module="6">
+            <div class="task-line">Module 6 · Reading &amp; Fixing Formula Errors</div>
+            <h2>Something's broken — find it, don't just retype it</h2>
+            <p class="module-intro">Three records, three broken formulas, three different visible errors. Click each error cell, read what it's actually telling you, and edit the formula so it evaluates correctly — don't just overwrite it with a plain number.</p>
+
+            <h3>Invoice — Subtotal</h3>
+            <div class="spreadsheet-container"><div id="m6a-grid"></div></div>
+
+            <h3>Attendance — Total Hours</h3>
+            <div class="spreadsheet-container"><div id="m6b-grid"></div></div>
+
+            <h3>Inventory — Combined Quantity</h3>
+            <div class="spreadsheet-container"><div id="m6c-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m6-progress-text">0 of 3 fixed.</span>
+                    <button class="btn btn-primary btn-sm" id="m6-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m6-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Spreadsheet Mastery · Lesson 2 of 4</span>
+        </div>
+    </footer>
+
+    <script src="../engines/cellModel.js"></script>
+    <script src="../engines/formulaEngine.js"></script>
+    <script src="../shared/lessonKit.js"></script>
+    <script src="lesson2.js"></script>
+</body>
+</html>

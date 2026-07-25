@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Spreadsheet Mastery: Lesson 4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../shared/theme.css" />
+    <style>
+        .format-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .format-toolbar .btn.active-format { border-color: var(--marigold); color: var(--marigold); }
+    </style>
+</head>
+<body>
+
+    <div class="page-bg" aria-hidden="true"></div>
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn">🏠 Home</a>
+                <a href="../lesson3/index.html" class="nav-btn">← Lesson 3</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📊 Spreadsheet Mastery — Lesson 4 of 4</span>
+            <h1>Presenting Data Professionally</h1>
+            <p class="lede">Four modules: format cells so a sheet is actually readable, highlight what needs attention automatically with conditional formatting, turn a range into a chart, and put all of it together on one complete sheet.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🏆</div>
+                <div>
+                    <strong>Lesson 4 stamp earned — Spreadsheet Mastery complete!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">All four lessons done. Head back to your passport.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- MODULE 1 -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Module 1 · Cell Formatting</div>
+            <h2>Bold the headers, format the numbers</h2>
+            <p class="module-intro">Click a cell to select it, or click one cell and <strong>Shift-click</strong> another to select a whole range — then apply a format to everything selected at once.</p>
+
+            <div class="instruction-card">1) Select <span class="mono">A1:D1</span> and make it <strong>Bold</strong>. 2) Select <span class="mono">D2:D3</span> and apply <strong>Currency</strong>. 3) Select <span class="mono">B4</span> and apply <strong>Percentage</strong>.</div>
+
+            <div class="format-toolbar">
+                <button class="btn btn-secondary btn-sm" id="m1-bold">𝐁 Bold</button>
+                <button class="btn btn-secondary btn-sm" id="m1-currency">৳ Currency</button>
+                <button class="btn btn-secondary btn-sm" id="m1-percentage">% Percentage</button>
+                <button class="btn btn-secondary btn-sm" id="m1-general">General</button>
+            </div>
+            <div class="spreadsheet-container"><div id="m1-grid"></div></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m1-progress-text">0 of 3 formats applied.</span>
+                    <button class="btn btn-primary btn-sm" id="m1-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Module 2 · Conditional Formatting</div>
+            <h2>Let the sheet flag problems for you</h2>
+            <p class="module-intro">These highlights aren't manual — a rule re-evaluates every record and applies the style automatically. That's the payoff of the style model from Lesson 4 Module 1 and the same rule-engine pattern used elsewhere in Uttoron.</p>
+
+            <h3>Invoices — highlight rule: status is "Overdue"</h3>
+            <div id="m2a-table"></div>
+            <div class="check-panel" style="margin-top:0;">
+                <label style="font-size:0.85rem;color:var(--ink-dim);">How many invoices are highlighted? <input type="number" id="m2a-count" class="field-select" style="width:70px;margin-left:8px;" /></label>
+            </div>
+
+            <h3>Inventory — highlight rule: quantity below a threshold</h3>
+            <div class="check-panel" style="margin-top:0;margin-bottom:14px;">
+                <label style="font-size:0.85rem;color:var(--ink-dim);">Reorder threshold: <input type="number" id="m2b-threshold" class="field-select" style="width:80px;margin-left:8px;" value="5" /></label>
+                <span style="font-size:0.82rem;color:var(--ink-faint);margin-left:10px;">Find a threshold that highlights exactly Stapler and Whiteboard Marker — nothing else.</span>
+            </div>
+            <div id="m2b-table"></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m2-progress-text"></span>
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Module 3 · Creating a Chart</div>
+            <h2>Turn a range into a picture</h2>
+            <p class="module-intro">A chart makes a pattern obvious at a glance in a way a column of numbers doesn't.</p>
+
+            <div class="spreadsheet-container"><div id="m3-grid"></div></div>
+            <div class="check-actions" style="margin:12px 0;">
+                <button class="btn btn-secondary btn-sm" id="m3-generate">📊 Generate Chart from B2:B6</button>
+            </div>
+            <div class="chart-card" id="m3-chart"><p style="color:var(--ink-faint);font-size:0.85rem;">No chart yet — click "Generate Chart" above.</p></div>
+
+            <div class="check-panel">
+                <label style="font-size:0.85rem;color:var(--ink-dim);display:block;margin-bottom:8px;">Looking at your chart: which item has the highest quantity?</label>
+                <select id="m3-answer" class="field-select" style="width:100%;max-width:280px;"><option value="">Select an item…</option></select>
+                <div class="check-actions">
+                    <span style="flex:1;"></span>
+                    <button class="btn btn-primary btn-sm" id="m3-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- MODULE 4 -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Module 4 · Putting It Together</div>
+            <h2>Format and chart a complete sheet</h2>
+            <p class="module-intro">No new mechanics here — just applying everything from this lesson to one real sheet, start to finish.</p>
+
+            <div class="instruction-card">1) Bold the header row <span class="mono">A1:D1</span>. 2) Apply <strong>Currency</strong> to <span class="mono">D2:D5</span> (the Value column). 3) Generate a chart from the Qty column.</div>
+
+            <div class="format-toolbar">
+                <button class="btn btn-secondary btn-sm" id="m4-bold">𝐁 Bold</button>
+                <button class="btn btn-secondary btn-sm" id="m4-currency">৳ Currency</button>
+                <button class="btn btn-secondary btn-sm" id="m4-general">General</button>
+            </div>
+            <div class="spreadsheet-container"><div id="m4-grid"></div></div>
+            <div class="check-actions" style="margin:12px 0;">
+                <button class="btn btn-secondary btn-sm" id="m4-generate">📊 Generate Chart from B2:B5</button>
+            </div>
+            <div class="chart-card" id="m4-chart"><p style="color:var(--ink-faint);font-size:0.85rem;">No chart yet.</p></div>
+
+            <div class="check-panel">
+                <div class="check-actions">
+                    <span style="font-size:0.85rem;color:var(--ink-dim);flex:1;" id="m4-progress-text"></span>
+                    <button class="btn btn-primary btn-sm" id="m4-check">Check my work</button>
+                </div>
+                <div class="feedback" id="m4-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Spreadsheet Mastery · Lesson 4 of 4</span>
+        </div>
+    </footer>
+
+    <script src="../engines/cellModel.js"></script>
+    <script src="../engines/formulaEngine.js"></script>
+    <script src="../engines/conditionalFormatEngine.js"></script>
+    <script src="../engines/chartRenderer.js"></script>
+    <script src="../shared/lessonKit.js"></script>
+    <script src="lesson4.js"></script>
+</body>
+</html>

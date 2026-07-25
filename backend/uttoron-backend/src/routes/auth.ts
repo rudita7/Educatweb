@@ -25,11 +25,11 @@ router.post('/register', async (req, res) => {
     }
 
     const hashedPin = await bcrypt.hash(pin, SALT_ROUNDS);
-    
+
     const [newUser] = await db.insert(users).values({
       username,
       pin: hashedPin,
-    }).returning({ id: users.id, username: users.username });
+    }).returning({ id: users.id, username: users.username, role: users.role });
 
     res.status(201).json({ user: newUser });
   } catch (error) {
@@ -60,9 +60,9 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or PIN' });
     }
 
-    res.json({ 
-      message: 'Login successful', 
-      user: { id: user.id, username: user.username } 
+    res.json({
+      message: 'Login successful',
+      user: { id: user.id, username: user.username, role: user.role }
     });
   } catch (error) {
     console.error('Login error:', error);

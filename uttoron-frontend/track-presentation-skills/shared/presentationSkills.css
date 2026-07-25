@@ -1,0 +1,389 @@
+/* Presentation Skills track — shared styles (v3, simulated-ribbon edition).
+   Layered on top of track3/shared/theme.css (module rail, ledger, feedback,
+   buttons, toast). This file adds:
+     1. small generic lesson helpers (bilingual labels, step intro, checklists)
+     2. the "mock PowerPoint" chrome — a light app-window surface that sits on
+        the dark Uttoron page (same light-paper-on-dark idiom the rest of the
+        app already uses for ledgers/cards), styled to read as PowerPoint so
+        the Explore/Practice steps teach a recognizable UI.
+   Everything here is presentation-only; no network, no external assets. */
+
+.hidden { display: none !important; }
+
+/* ============================================================
+   Bilingual label helper (spec §10 — English + Bangla on key UI).
+   Bangla shown as a smaller second line under the English label.
+   ============================================================ */
+.bi { display: inline-flex; flex-direction: column; line-height: 1.15; }
+.bi .bn { font-size: 0.82em; opacity: 0.7; font-weight: 500; }
+
+/* Step intro / skill line shown at the top of a step */
+.step-intro { color: rgba(255,255,255,0.6); max-width: 66ch; margin-bottom: 18px; font-size: 0.94rem; }
+.skill-pill {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--marigold); background: rgba(232,163,61,0.1);
+    border: 1px solid rgba(232,163,61,0.3); padding: 3px 12px; border-radius: 20px; margin-bottom: 12px;
+}
+
+/* Generic instruction card already exists in theme.css (.instruction-card). */
+
+/* ============================================================
+   Multiple-choice / matching checkpoints
+   ============================================================ */
+.mcq-block { margin-bottom: 18px; }
+.mcq-q { font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+.mcq-options { display: flex; flex-direction: column; gap: 8px; }
+.mcq-opt {
+    text-align: left; padding: 11px 16px; border-radius: 10px; border: 1.5px solid #d8cfae;
+    background: #fff; color: var(--ink); cursor: pointer; font-size: 0.9rem; font-family: var(--font-body);
+    transition: border-color 0.15s, background 0.15s;
+}
+.mcq-opt:hover { border-color: var(--teal-stamp); }
+.mcq-opt.chosen { border-color: var(--teal-stamp); background: #eef6f1; }
+.mcq-opt.correct { border-color: var(--teal-stamp); background: #dff0e6; }
+.mcq-opt.wrong { border-color: var(--coral); background: #f8e0da; }
+.mcq-explain { font-size: 0.82rem; color: #5b6b63; background: #f5f1e6; border-radius: 8px; padding: 10px 12px; margin-top: 8px; display: none; }
+.mcq-explain.show { display: block; }
+
+/* Drag/select matching */
+.match-grid { display: flex; flex-direction: column; gap: 12px; }
+.match-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; background: #fff; border: 1.5px solid #d8cfae; border-radius: 10px; padding: 12px 14px; }
+.match-row .scenario { color: var(--ink); font-size: 0.9rem; }
+.match-row select { padding: 8px 10px; border-radius: 8px; border: 1.5px solid #d8cfae; font-family: var(--font-body); font-size: 0.85rem; background: #fff; color: var(--ink); }
+.match-row.correct { border-color: var(--teal-stamp); background: #eef6f1; }
+.match-row.wrong { border-color: var(--coral); background: #f8e0da; }
+
+/* ============================================================
+   "Do It For Real" step
+   ============================================================ */
+.real-step {
+    background: linear-gradient(135deg, rgba(46,125,91,0.12), rgba(232,163,61,0.08));
+    border: 1.5px solid rgba(46,125,91,0.35); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px;
+}
+.real-step h3 { color: var(--paper); font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 10px; }
+.real-step ol { margin: 0 0 14px 20px; color: rgba(255,255,255,0.8); font-size: 0.92rem; }
+.real-step ol li { margin-bottom: 6px; }
+.real-step .real-link {
+    display: inline-flex; align-items: center; gap: 8px; background: var(--teal-stamp); color: #fff;
+    padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; margin-bottom: 14px;
+}
+.real-step .real-link:hover { text-decoration: none; filter: brightness(1.08); }
+.real-confirm { display: flex; align-items: flex-start; gap: 10px; font-size: 0.92rem; color: rgba(255,255,255,0.85); }
+.real-confirm input { margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; }
+
+/* ============================================================
+   MOCK POWERPOINT WINDOW
+   ============================================================ */
+:root {
+    --ppt-orange: #C43E1C;
+    --ppt-orange-soft: #D35230;
+    --ppt-gray: #f3f2f1;
+    --ppt-gray-line: #e1dfdd;
+    --ppt-ink: #201f1e;
+}
+.ppt-window {
+    background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,0,0,0.1); color: var(--ppt-ink); margin-bottom: 16px;
+}
+.ppt-titlebar {
+    background: var(--ppt-orange); color: #fff; padding: 8px 14px; display: flex; align-items: center; gap: 10px;
+    font-size: 0.82rem; font-weight: 600;
+}
+.ppt-titlebar .ppt-logo {
+    width: 22px; height: 22px; border-radius: 4px; background: #fff; color: var(--ppt-orange);
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; flex-shrink: 0;
+}
+.ppt-titlebar .ppt-filename { flex: 1; }
+.ppt-titlebar .ppt-dots { display: flex; gap: 6px; }
+.ppt-titlebar .ppt-dots span { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.55); }
+
+.ppt-tabs { display: flex; gap: 2px; background: var(--ppt-orange); padding: 0 8px; overflow-x: auto; }
+.ppt-tab {
+    padding: 8px 14px; font-size: 0.8rem; color: rgba(255,255,255,0.85); background: transparent; border: none;
+    cursor: pointer; white-space: nowrap; border-top-left-radius: 6px; border-top-right-radius: 6px; font-family: var(--font-body);
+}
+.ppt-tab:hover { background: rgba(255,255,255,0.15); }
+.ppt-tab.active { background: var(--ppt-gray); color: var(--ppt-ink); font-weight: 600; }
+.ppt-tab.hotspot { animation: pptPulse 1.4s ease-in-out infinite; }
+
+.ppt-ribbon {
+    background: var(--ppt-gray); border-bottom: 1px solid var(--ppt-gray-line); padding: 10px 12px;
+    display: flex; gap: 4px; align-items: stretch; overflow-x: auto; min-height: 76px;
+}
+.ppt-group { display: flex; flex-direction: column; align-items: center; padding: 0 10px; border-right: 1px solid var(--ppt-gray-line); }
+.ppt-group:last-child { border-right: none; }
+.ppt-group-btns { display: flex; gap: 6px; flex: 1; align-items: center; }
+.ppt-group-label { font-size: 0.62rem; color: #605e5c; margin-top: 4px; }
+.ppt-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 8px; border-radius: 6px;
+    background: transparent; border: 1px solid transparent; cursor: pointer; font-family: var(--font-body);
+    color: var(--ppt-ink); min-width: 46px;
+}
+.ppt-btn:hover { background: #fff; border-color: var(--ppt-gray-line); }
+.ppt-btn .ppt-btn-icon { font-size: 1.1rem; }
+.ppt-btn .ppt-btn-label { font-size: 0.6rem; text-align: center; line-height: 1.1; color: #605e5c; }
+.ppt-btn.hotspot { animation: pptPulse 1.4s ease-in-out infinite; }
+.ppt-btn.big { min-width: 60px; }
+
+@keyframes pptPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(196,62,28,0.45); border-color: var(--ppt-orange); background: #fff; }
+    50% { box-shadow: 0 0 0 6px rgba(196,62,28,0); border-color: var(--ppt-orange); background: #ffe9e2; }
+}
+
+.ppt-body { display: grid; grid-template-columns: 150px 1fr; min-height: 300px; }
+@media (max-width: 640px) { .ppt-body { grid-template-columns: 90px 1fr; } }
+.ppt-slide-panel { background: #faf9f8; border-right: 1px solid var(--ppt-gray-line); padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 420px; }
+.ppt-thumb {
+    background: #fff; border: 1.5px solid var(--ppt-gray-line); border-radius: 4px; aspect-ratio: 16/9; padding: 6px;
+    font-size: 0.55rem; color: #605e5c; position: relative; cursor: pointer; display: flex; flex-direction: column;
+}
+.ppt-thumb .thumb-num { position: absolute; top: 2px; left: 4px; font-size: 0.55rem; color: #a19f9d; }
+.ppt-thumb.active { border-color: var(--ppt-orange); box-shadow: 0 0 0 2px rgba(196,62,28,0.2); }
+.ppt-thumb .thumb-title { font-weight: 700; font-size: 0.6rem; color: var(--ppt-ink); margin: 10px 4px 2px; }
+
+.ppt-canvas-wrap { padding: 20px; background: #edebe9; display: flex; align-items: center; justify-content: center; }
+.ppt-canvas {
+    background: #fff; width: 100%; max-width: 560px; aspect-ratio: 16/9; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    border-radius: 4px; padding: 28px 32px; display: flex; flex-direction: column; overflow: hidden;
+}
+.ppt-canvas .slide-title { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; color: var(--ppt-ink); margin-bottom: 12px; }
+.ppt-canvas .slide-title.placeholder, .ppt-canvas .slide-sub.placeholder { color: #b9b7b4; font-style: italic; font-weight: 500; }
+.ppt-canvas .slide-sub { font-size: 0.95rem; color: #605e5c; }
+.ppt-canvas ul { margin: 0; padding-left: 18px; }
+.ppt-canvas ul li { font-size: 0.92rem; color: var(--ppt-ink); margin-bottom: 6px; line-height: 1.4; }
+
+/* ============================================================
+   Start screen (Lesson 1 backstage "New")
+   ============================================================ */
+.ppt-start { padding: 24px; background: #faf9f8; }
+.ppt-start h4 { color: var(--ppt-ink); font-size: 1rem; margin-bottom: 14px; font-family: var(--font-display); }
+.ppt-start-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
+.ppt-start-tile {
+    background: #fff; border: 1.5px solid var(--ppt-gray-line); border-radius: 6px; overflow: hidden; cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+}
+.ppt-start-tile:hover { transform: translateY(-2px); }
+.ppt-start-tile.hotspot { animation: pptPulse 1.4s ease-in-out infinite; }
+.ppt-start-tile.selected { border-color: var(--ppt-orange); box-shadow: 0 0 0 2px rgba(196,62,28,0.25); }
+.ppt-start-preview { aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+.ppt-start-blank .ppt-start-preview { background: #fff; border-bottom: 1px solid var(--ppt-gray-line); color: #a19f9d; }
+.ppt-start-tile .ppt-start-name { padding: 8px 10px; font-size: 0.78rem; color: var(--ppt-ink); font-weight: 600; }
+
+/* ============================================================
+   Template gallery (Lesson 2 Design tab)
+   ============================================================ */
+.template-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; padding: 16px; background: #faf9f8; }
+.template-swatch {
+    border: 2px solid var(--ppt-gray-line); border-radius: 6px; overflow: hidden; cursor: pointer; background: #fff;
+    transition: border-color 0.15s, transform 0.15s;
+}
+.template-swatch:hover { transform: translateY(-2px); }
+.template-swatch.active { border-color: var(--ppt-orange); box-shadow: 0 0 0 2px rgba(196,62,28,0.2); }
+.template-preview { aspect-ratio: 16/9; padding: 12px; display: flex; flex-direction: column; justify-content: center; }
+.template-preview .tp-bar { height: 8px; border-radius: 3px; margin-bottom: 5px; }
+.template-preview .tp-line { height: 4px; border-radius: 2px; background: rgba(0,0,0,0.14); margin-bottom: 4px; width: 80%; }
+.template-name { padding: 7px 9px; font-size: 0.72rem; font-weight: 600; color: var(--ppt-ink); border-top: 1px solid var(--ppt-gray-line); }
+
+/* ============================================================
+   Insert tab: image placeholder + chart canvas (Lesson 5)
+   ============================================================ */
+.ppt-img-placeholder {
+    flex: 1; min-height: 90px; border: 2px dashed #c8c6c4; border-radius: 6px; background: #faf9f8;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #a19f9d; font-size: 0.78rem;
+}
+.ppt-img-placeholder .icon { font-size: 1.8rem; }
+.ppt-chart-canvas { flex: 1; min-height: 140px; display: flex; align-items: center; justify-content: center; }
+.chart-data-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.chart-data-row { display: grid; grid-template-columns: 1fr 90px; gap: 8px; }
+.chart-data-row input { padding: 8px 10px; border-radius: 8px; border: 1.5px solid #d8cfae; font-family: var(--font-body); font-size: 0.85rem; background: #fff; color: var(--ink); }
+.chart-type-picker { display: flex; gap: 8px; margin-bottom: 12px; }
+.chart-type-picker button { padding: 8px 16px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); color: rgba(255,255,255,0.7); cursor: pointer; font-size: 0.82rem; }
+.chart-type-picker button.active { border-color: var(--marigold); background: rgba(232,163,61,0.15); color: #fff; }
+
+/* Animation-preview demo (Lesson 6) */
+.demo-appear { animation: pptAppear 0.5s ease; }
+.demo-flyIn { animation: pptFlyIn 0.5s ease; }
+.demo-zoom { animation: pptZoom 0.5s ease; }
+@keyframes pptAppear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pptFlyIn { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes pptZoom { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+
+/* Checkpoint "rate the slide" (Lesson 6) */
+.rate-card { background: #fff; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+.rate-card .rate-buttons { display: flex; gap: 8px; margin-top: 10px; }
+.rate-card .rate-buttons button { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid #d8cfae; background: #fff; color: var(--ink); cursor: pointer; font-size: 0.82rem; font-weight: 600; }
+.rate-card .rate-buttons button.chosen.correct { border-color: var(--teal-stamp); background: #eef6f1; color: var(--teal-stamp); }
+.rate-card .rate-buttons button.chosen.wrong { border-color: var(--coral); background: #f8e0da; color: var(--coral); }
+.anim-badge-demo { position: absolute; top: 6px; right: 8px; font-size: 0.65rem; background: rgba(196,62,28,0.1); color: var(--ppt-orange); padding: 2px 8px; border-radius: 8px; font-weight: 700; }
+
+/* Speaker notes pane (Lesson 7) */
+.ppt-notes-pane { border-top: 1px solid var(--ppt-gray-line); background: #faf9f8; padding: 10px 16px; }
+.ppt-notes-pane textarea { width: 100%; border: 1px solid var(--ppt-gray-line); border-radius: 6px; padding: 8px 10px; font-family: var(--font-body); font-size: 0.82rem; color: var(--ppt-ink); resize: vertical; min-height: 44px; }
+.ppt-notes-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: #a19f9d; margin-bottom: 4px; }
+.note-good { border: 1.5px solid #d8cfae; }
+
+/* Proofread checkpoint (Lesson 8) */
+.proof-slide { background: #fff; border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; position: relative; }
+.proof-slide .proof-title { font-family: var(--font-display); font-weight: 700; color: var(--ppt-ink); margin-bottom: 8px; }
+.proof-slide ul { margin: 0; padding-left: 18px; color: var(--ppt-ink); font-size: 0.9rem; }
+.proof-slide li { margin-bottom: 4px; }
+.proof-word { cursor: pointer; border-bottom: 2px dotted var(--marigold); }
+.proof-word.found { background: rgba(46,125,91,0.2); border-bottom-color: var(--teal-stamp); border-radius: 3px; }
+.proof-word.missed { background: rgba(232,163,61,0.3); border-bottom-color: var(--marigold); border-radius: 3px; }
+
+/* ============================================================
+   Slide sorter (Lesson 3)
+   ============================================================ */
+.sorter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.sorter-card {
+    background: #fff; border: 1.5px solid var(--ppt-gray-line); border-radius: 6px; overflow: hidden; cursor: grab;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25); position: relative;
+}
+.sorter-card.dragging { opacity: 0.45; }
+.sorter-card .sorter-num { position: absolute; top: 4px; left: 6px; font-family: var(--font-mono); font-size: 0.65rem; color: #a19f9d; }
+.sorter-card .sorter-canvas { aspect-ratio: 16/9; padding: 16px 12px 10px; display: flex; flex-direction: column; justify-content: center; }
+.sorter-card .sorter-role { font-weight: 700; font-size: 0.82rem; color: var(--ppt-ink); }
+.sorter-card .sorter-desc { font-size: 0.66rem; color: #605e5c; margin-top: 3px; }
+.sorter-card .sorter-move { display: flex; border-top: 1px solid var(--ppt-gray-line); }
+.sorter-card .sorter-move button { flex: 1; border: none; background: #faf9f8; cursor: pointer; padding: 5px; font-size: 0.75rem; color: #605e5c; }
+.sorter-card .sorter-move button:hover:not(:disabled) { background: #fff3ef; color: var(--ppt-orange); }
+.sorter-card .sorter-move button:disabled { opacity: 0.3; cursor: not-allowed; }
+.sorter-card .sorter-move button + button { border-left: 1px solid var(--ppt-gray-line); }
+
+.layout-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.layout-opt {
+    padding: 8px 14px; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.03);
+    color: rgba(255,255,255,0.7); cursor: pointer; font-size: 0.82rem; font-family: var(--font-body);
+}
+.layout-opt:hover { border-color: var(--marigold); color: #fff; }
+
+/* ============================================================
+   Bullet-rewrite practice (Lesson 4)
+   ============================================================ */
+.para-source { background: #fff; color: var(--ink); border-radius: 10px; padding: 16px 18px; font-size: 0.92rem; line-height: 1.6; margin-bottom: 16px; border-left: 4px solid var(--coral); }
+.bullet-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.bullet-input-row .bullet-dot { color: var(--marigold); font-size: 1.2rem; flex-shrink: 0; }
+.bullet-input-row input { flex: 1; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #d8cfae; font-family: var(--font-body); font-size: 0.92rem; background: #fff; color: var(--ink); }
+.bullet-input-row input:focus { outline: none; border-color: var(--teal-stamp); }
+.bullet-input-row input.over { border-color: var(--coral); background: rgba(226,89,59,0.06); }
+.bullet-count { font-family: var(--font-mono); font-size: 0.72rem; min-width: 68px; text-align: right; color: #8a7c58; }
+.bullet-count.over { color: var(--coral); font-weight: 600; }
+
+/* ============================================================
+   Rule / self-check list (reused look)
+   ============================================================ */
+.check-list { list-style: none; }
+.check-list li { padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 6px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.75); }
+.check-list li.pass { color: #6fdba8; border-color: rgba(46,125,91,0.4); background: rgba(46,125,91,0.08); }
+.check-list li.fail { color: #ff9d84; border-color: rgba(226,89,58,0.4); background: rgba(226,89,58,0.08); }
+
+/* Feedback-checkpoint note used on the hub + inside relevant lessons */
+.fb-note { background: rgba(232,163,61,0.08); border: 1.5px dashed var(--marigold); border-radius: 12px; padding: 12px 16px; font-size: 0.84rem; color: rgba(255,255,255,0.8); }
+
+/* ============================================================
+   Submission / feedback-checkpoint UI (Lessons 9/12/13 + reviewer queue)
+   ============================================================ */
+.upload-zone {
+    border: 2px dashed #d8cfae; border-radius: 12px; padding: 28px 20px; text-align: center;
+    background: #fff; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--teal-stamp); background: #f5faf7; }
+.upload-zone .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+.upload-zone .upload-hint { font-size: 0.78rem; color: #8a7c58; margin-top: 4px; }
+.upload-zone input[type=file] { display: none; }
+.file-chip {
+    display: inline-flex; align-items: center; gap: 10px; background: #eef6f1; border: 1.5px solid var(--teal-stamp);
+    border-radius: 10px; padding: 10px 14px; font-size: 0.85rem; color: var(--ink); margin-top: 12px;
+}
+.file-chip .remove-file { background: none; border: none; color: var(--coral); cursor: pointer; font-weight: 700; }
+
+.submission-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+    padding: 16px 18px; margin-bottom: 14px;
+}
+.submission-card .sub-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.submission-card .sub-file { font-weight: 600; color: var(--paper); font-size: 0.9rem; }
+.submission-card .sub-meta { font-family: var(--font-mono); font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+.status-chip { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 10px; }
+.status-chip.pending { background: rgba(232,163,61,0.15); color: var(--marigold); border: 1px solid rgba(232,163,61,0.4); }
+.status-chip.reviewed { background: rgba(46,125,91,0.18); color: #6fd6ab; border: 1px solid rgba(46,125,91,0.4); }
+
+.tag-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 14px; font-size: 0.78rem; margin: 3px 5px 3px 0; }
+.tag-chip.positive { background: rgba(46,125,91,0.15); color: #6fd6ab; border: 1px solid rgba(46,125,91,0.35); }
+.tag-chip.constructive { background: rgba(232,163,61,0.15); color: var(--marigold); border: 1px solid rgba(232,163,61,0.35); }
+.reviewer-comment { margin-top: 10px; padding: 10px 12px; background: rgba(255,255,255,0.03); border-left: 3px solid var(--marigold); border-radius: 6px; font-size: 0.85rem; color: rgba(255,255,255,0.8); font-style: italic; }
+/* Feedback-stuck tracking: plain before/after numbers, deliberately neutral — no color implying "good" or "bad". */
+.metric-comparison { margin-top: 8px; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.15); border-radius: 6px; font-family: var(--font-mono); font-size: 0.76rem; color: rgba(255,255,255,0.65); }
+
+/* Reviewer queue page */
+.queue-card { background: var(--glass, rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px 22px; margin-bottom: 16px; }
+.queue-card .q-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.queue-card .q-student { font-weight: 700; color: var(--paper); }
+.queue-card .q-meta { font-family: var(--font-mono); font-size: 0.72rem; color: rgba(255,255,255,0.45); }
+.tag-picker-grid { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+.tag-cat-group .tag-cat-label { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+.tag-opt { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 14px; font-size: 0.8rem; border: 1.5px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.65); cursor: pointer; margin: 3px 6px 3px 0; }
+.tag-opt.selected.positive { border-color: var(--teal-stamp); background: rgba(46,125,91,0.18); color: #6fd6ab; }
+.tag-opt.selected.constructive { border-color: var(--marigold); background: rgba(232,163,61,0.18); color: var(--marigold); }
+.empty-queue { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.4); }
+.pin-gate { max-width: 360px; margin: 60px auto; }
+.pin-gate h2 { margin-bottom: 4px; }
+.pin-gate .sub { color: #5b6b63; font-size: 0.88rem; margin-bottom: 18px; }
+.pin-gate .field { margin-bottom: 16px; text-align: left; }
+.pin-gate .field label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 5px; color: #3d4a44; }
+.pin-gate .field input { width: 100%; padding: 10px 14px; border-radius: 9px; border: 1.5px solid #d8cfae; font-size: 1rem; background: #fff; color: var(--ink); }
+.pin-gate .field input:focus { outline: none; border-color: var(--teal-stamp); }
+.pin-gate .form-msg { font-size: 0.85rem; margin: 10px 0 0; min-height: 1.2em; padding: 8px; border-radius: 6px; }
+.pin-gate .form-msg.error { color: var(--coral); background: rgba(226,89,58,0.08); }
+.pin-gate .form-msg.ok { color: var(--teal-stamp); background: rgba(46,125,91,0.08); }
+
+/* ============================================================
+   Present Mode / Presenter View overlay (Lesson 11)
+   ============================================================ */
+.present-overlay {
+    position: fixed; inset: 0; z-index: 500; background: #0a0a0a;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 30px;
+}
+.present-overlay .ppt-canvas { width: min(80vw, 720px); font-size: 1.2rem; box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+.present-overlay .slide-title { font-size: 2rem; }
+.present-controls { margin-top: 18px; display: flex; align-items: center; gap: 16px; color: rgba(255,255,255,0.6); font-family: var(--font-mono); font-size: 0.85rem; }
+.present-controls button { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.1rem; }
+.present-controls button:hover { border-color: var(--marigold); }
+.present-exit { position: absolute; top: 20px; right: 24px; }
+.present-timer { position: absolute; top: 22px; left: 24px; font-family: var(--font-mono); color: var(--marigold); font-size: 1.1rem; }
+
+.presenter-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; width: min(92vw, 1000px); }
+@media (max-width: 700px) { .presenter-grid { grid-template-columns: 1fr; } }
+.presenter-current .ppt-canvas { width: 100%; }
+.presenter-side { display: flex; flex-direction: column; gap: 12px; }
+.presenter-next .ppt-canvas { width: 100%; transform: scale(0.92); transform-origin: top left; font-size: 0.85rem; }
+.presenter-label { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+.presenter-notes-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.8); min-height: 60px; }
+
+/* ============================================================
+   In-browser recorder (Lessons 12/13)
+   ============================================================ */
+.recorder-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px 22px; }
+.record-btn {
+    width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--coral); color: #fff; font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px rgba(226,89,58,0.4);
+}
+.record-btn.recording { animation: recPulse 1.2s ease-in-out infinite; }
+@keyframes recPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(226,89,58,0.5); } 50% { box-shadow: 0 0 0 14px rgba(226,89,58,0); } }
+.record-row { display: flex; align-items: center; gap: 16px; }
+.record-timer { font-family: var(--font-mono); font-size: 1.3rem; color: var(--marigold); min-width: 60px; }
+.record-status { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+.recorder-playback { margin-top: 14px; }
+.recorder-playback audio, .recorder-playback video { width: 100%; border-radius: 8px; }
+.self-review-list { list-style: none; margin-top: 14px; }
+.self-review-list li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.88rem; color: rgba(255,255,255,0.8); }
+.self-review-list li:last-child { border-bottom: none; }
+.self-review-list input[type=checkbox] { margin-top: 3px; }
+.filler-tally-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.filler-tally-row input { width: 70px; padding: 8px; border-radius: 8px; border: 1.5px solid #d8cfae; font-family: var(--font-mono); text-align: center; }
+.waveform-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+@media (max-width: 640px) { .waveform-compare { grid-template-columns: 1fr; } }
+.waveform-card { background: #fff; border-radius: 10px; padding: 14px; }
+.waveform-card .wf-label { font-size: 0.78rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.waveform-card .wf-desc { font-size: 0.76rem; color: #5b6b63; margin-top: 8px; }

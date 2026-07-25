@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 9: Structural Feedback Checkpoint</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson8/index.html" class="nav-btn" style="text-decoration:none;">🔍 Lesson 8</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🧑‍🏫 Presentation Skills · Lesson 9 of 13 · Feedback checkpoint 1 of 3</span>
+            <h1>Structural Feedback Checkpoint</h1>
+            <p class="lede">Your deck's content, visuals, and consistency are locked in. Before you spend more time on saving, running the slideshow, and delivery — a real person checks the structure while it's still cheap to fix.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🧑‍🏫</div>
+                <div>
+                    <strong>Lesson 9 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Your deck is in the review queue. Check back here for feedback.</div>
+                </div>
+                <a href="../../webapp/presentation-skills.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Back to track →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — CONTEXT -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Context</span>
+            <div class="task-line">Step 1 · Why a Human Checks This</div>
+            <h2>What gets reviewed here — and what doesn't</h2>
+            <div class="ledger">
+                <p style="margin-bottom:10px;">A real reviewer looks at your <strong>deck file only</strong> — no recording needed here. They're checking two things:</p>
+                <ul style="margin:0 0 12px 20px;color:var(--ink);">
+                    <li><strong>Structure</strong> — is the flow clear and logical?</li>
+                    <li><strong>Visual design</strong> — are fonts, colors, and alignment consistent?</li>
+                </ul>
+                <p style="font-size:0.88rem;color:#5b6b63;">This is meant to be a fast skim, not a deep review — so it gets back to you quickly and doesn't hold up the rest of the track.</p>
+            </div>
+            <div class="fb-note">🎓 Free platforms hand you a quiz. This hands your actual work to an actual person.</div>
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m1-continue">Continue →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — SUBMIT + STATUS -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Submit</span>
+            <div class="task-line">Step 2 · Submit Your Deck</div>
+            <h2>Upload the .pptx file you've been building</h2>
+            <p class="step-intro">This is the same file from Lessons 1–8. Nothing else is needed for this checkpoint.</p>
+
+            <div id="submitArea"></div>
+
+            <div id="statusArea" style="margin-top:24px;"></div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 9 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../engines/submissionStore.js"></script>
+    <script src="lesson9.js"></script>
+</body>
+</html>

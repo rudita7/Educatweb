@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Capstone: A Day in the Records Department</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../shared/theme.css" />
+    <link rel="stylesheet" href="capstone.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/data-accuracy.html" class="nav-btn" style="text-decoration:none;">🧹 Data Accuracy</a>
+                <a href="../track3-lesson4/index.html" class="nav-btn" style="text-decoration:none;">🎯 Lesson 4</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🎓 Track 3 · Capstone</span>
+            <h1>A Day in the Records Department</h1>
+            <p class="lede">A complete simulated workday. One larger, mixed batch of invoices, attendance sheets, and inventory logs — all containing real, intentionally seeded errors — carries through the full pipeline: inspect, correct, validate, and submit. This works best after finishing Lessons 1–4, but you're welcome to dive in anytime.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🎓</div>
+                <div>
+                    <strong>Track 3 Capstone stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Composite score met the passing threshold. Head back to your passport to see it.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STAGE 1 -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Stage 1 · Inspect</div>
+            <h2>Review the full batch and flag suspected errors</h2>
+            <p class="module-intro">This is the largest batch you've worked yet — invoices, attendance sheets, and inventory logs together, some clean, some not. Flag anything you believe is wrong. Duplicates aren't part of this pass.</p>
+
+            <div id="s1-records"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="s1-status">0 of 10 records flagged.</span>
+                    <button class="btn btn-primary btn-sm" id="s1-check">Check my flags</button>
+                </div>
+                <div class="feedback" id="s1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STAGE 2 -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Stage 2 · Correct</div>
+            <h2>Fix everything correctable, safely</h2>
+            <p class="module-intro">Six records below have a verifiable issue you can fix directly. One can't be confirmed from the data on hand — leave it flagged for a supervisor. Undo is always available.</p>
+
+            <div id="s2-records"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="s2-status"></span>
+                    <button class="btn btn-primary btn-sm" id="s2-check">Check corrections</button>
+                </div>
+                <div class="feedback" id="s2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STAGE 3 -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Stage 3 · Validate</div>
+            <h2>Run the full validation pass</h2>
+            <p class="module-intro">Run the rule engine across every record and scan the whole batch for duplicates. A failure on the record you flagged for a supervisor is expected — that's exactly why it's flagged.</p>
+
+            <div class="check-panel" style="margin-bottom:18px;">
+                <button class="btn btn-primary btn-sm" id="s3-run">▶ Run validation</button>
+            </div>
+
+            <div class="ledger" id="s3-rules" style="display:none;"></div>
+            <div class="ledger" id="s3-dupes" style="display:none;margin-top:14px;"></div>
+
+            <div class="check-panel">
+                <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="s3-status">Run validation to see results.</span>
+                <div class="feedback" id="s3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STAGE 4 -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Stage 4 · Submit</div>
+            <h2>Score the day and submit the Quality Report</h2>
+            <p class="module-intro">Your composite score weighs four things equally: how many true errors you caught, how many you fixed correctly, how often you flagged something that wasn't actually wrong, and how clean the batch is under independent rule validation. The Capstone stamp needs a composite score of 80% or higher — this isn't awarded for just clicking through.</p>
+
+            <div class="check-panel" style="margin-bottom:18px;">
+                <button class="btn btn-primary btn-sm" id="s4-generate">Score my day &amp; generate report</button>
+            </div>
+
+            <div id="s4-report"></div>
+
+            <div class="check-panel" id="s4-actions" style="display:none;">
+                <button class="btn btn-secondary btn-sm" id="s4-download">⬇ Download report (JSON)</button>
+                <div class="feedback" id="s4-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Track 3 · Capstone — A Day in the Records Department</span>
+        </div>
+    </footer>
+
+    <script src="../shared/engines/stateMachine.js"></script>
+    <script src="../shared/engines/commandStack.js"></script>
+    <script src="../shared/engines/diffEngine.js"></script>
+    <script src="../shared/engines/instructionParser.js"></script>
+    <script src="../shared/engines/hashLookup.js"></script>
+    <script src="../shared/engines/errorInjection.js"></script>
+    <script src="../shared/engines/fuzzyMatchEngine.js"></script>
+    <script src="../shared/engines/ruleEngine.js"></script>
+    <script src="../shared/engines/formatPipeline.js"></script>
+    <script src="../shared/data/records.js"></script>
+    <script src="capstone.js"></script>
+</body>
+</html>

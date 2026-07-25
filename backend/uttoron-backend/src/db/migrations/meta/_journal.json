@@ -8,6 +8,20 @@
       "when": 1783585926141,
       "tag": "0000_striped_darwin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784481679251,
+      "tag": "0001_thankful_darkstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784803359007,
+      "tag": "0002_ordinary_baron_zemo",
+      "breakpoints": true
     }
   ]
 }

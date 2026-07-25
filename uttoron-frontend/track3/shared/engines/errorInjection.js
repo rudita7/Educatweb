@@ -77,6 +77,27 @@
         return { corruptedRecord: corrupted, groundTruthDiff: { field: refField, errorType: 'cross-reference-mismatch', original: original, corrupted: badRef } };
     }
 
+    // Clones a record into a near-identical duplicate rather than corrupting
+    // the record in place -- feeds the duplicate/fuzzy-match engine (§2.4)
+    // instead of a "spot the error" check. mutation: { field, transform(value) }
+    // tweaks one field on the clone (default: pad it with whitespace) so the
+    // duplicate is a near-match, not byte-identical -- exercising the fuzzy
+    // side of clusterDuplicates(), not just exact-match hashing.
+    function injectDuplicate(record, mutation) {
+        mutation = mutation || {};
+        const field = mutation.field || null;
+        const transform = mutation.transform || (v => '  ' + String(v) + '  ');
+        const duplicate = clone(record);
+        if (duplicate.id) duplicate.id = duplicate.id + '-DUP';
+        if (field && duplicate[field] != null) {
+            duplicate[field] = transform(duplicate[field]);
+        }
+        return {
+            corruptedRecord: duplicate,
+            groundTruthDiff: { field: field || 'id', errorType: 'duplicate', original: record.id, corrupted: duplicate.id, message: 'Near-duplicate of record ' + record.id + '.' }
+        };
+    }
+
     global.T3 = global.T3 || {};
     global.T3.inject = {
         mulberry32: mulberry32,
@@ -85,6 +106,7 @@
         injectFormatInconsistency: injectFormatInconsistency,
         injectExtraWhitespace: injectExtraWhitespace,
         injectLogicalViolation: injectLogicalViolation,
-        injectCrossReferenceMismatch: injectCrossReferenceMismatch
+        injectCrossReferenceMismatch: injectCrossReferenceMismatch,
+        injectDuplicate: injectDuplicate
     };
 })(window);

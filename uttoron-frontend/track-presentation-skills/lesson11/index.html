@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 11: Running the Slideshow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson10/index.html" class="nav-btn" style="text-decoration:none;">💾 Lesson 10</a>
+                <a href="../lesson12/index.html" class="nav-btn" style="text-decoration:none;">🎤 Lesson 12</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">▶️ Presentation Skills · Lesson 11 of 13</span>
+            <h1>Running the Slideshow Like a Pro</h1>
+            <p class="lede">Fumbling with the remote or losing your place kills momentum fast. Practice starting the show, navigating with confidence, and using Presenter View — until it's automatic.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">▶️</div>
+                <div>
+                    <strong>Lesson 11 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Next: delivery and vocal practice — your second feedback checkpoint.</div>
+                </div>
+                <a href="../lesson12/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Go to Lesson 12 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — PRACTICE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Practice</span>
+            <div class="task-line">Step 1 · Start &amp; Navigate</div>
+            <h2>Run the slideshow, then check Presenter View</h2>
+            <p class="step-intro">Start the mock slideshow, navigate through it with the arrow keys or the on-screen buttons, then open Presenter View to see what only you see.</p>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn btn-primary btn-sm" id="startPresent">▶ Start Slideshow</button>
+                <button class="btn btn-secondary btn-sm" id="startPresenter">🖥️ Open Presenter View</button>
+            </div>
+
+            <div class="check-panel" style="margin-top:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m1-status">0 of 6 slides viewed · Presenter View not opened yet</span>
+                    <button class="btn btn-primary btn-sm" id="m1-continue" disabled>Continue →</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — CHECKPOINT -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Checkpoint</span>
+            <div class="task-line">Step 2 · Timed Navigation Drill</div>
+            <h2>Advance through 8 slides in under 60 seconds</h2>
+            <p class="step-intro">Confident navigation should feel automatic, not hesitant. Click Start, then use the arrow keys or click through all 8 slides as fast as you can.</p>
+
+            <button class="btn btn-primary btn-sm" id="startDrill">⏱ Start Drill</button>
+            <div class="check-panel" style="margin-top:16px;">
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 3 — DO IT FOR REAL -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <span class="skill-pill">Do It For Real</span>
+            <div class="task-line">Step 3 · Real PowerPoint</div>
+            <h2>Run your real deck, start to finish</h2>
+            <p class="step-intro">Use the file you've been building.</p>
+
+            <div class="real-step">
+                <h3>🎯 Your task</h3>
+                <ol>
+                    <li>Open your file.</li>
+                    <li>Start the slideshow from the beginning (<strong>Slide Show → From Beginning</strong>, or F5).</li>
+                    <li>Go through every slide, once, alone — practice the navigation, not the speech yet.</li>
+                </ol>
+                <a class="real-link" href="https://www.office.com/launch/powerpoint" target="_blank" rel="noopener noreferrer">↗ Open PowerPoint for the web</a>
+                <label class="real-confirm">
+                    <input type="checkbox" id="m3-done" />
+                    <span>I ran my real deck as a slideshow from start to finish.</span>
+                </label>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m3-finish">Finish lesson</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Present Mode overlay -->
+    <div id="presentOverlay" class="present-overlay hidden">
+        <button class="btn btn-secondary btn-sm present-exit" id="presentExit">✕ Exit</button>
+        <div id="presentSlide"></div>
+        <div class="present-controls">
+            <button id="presentPrev" type="button">‹</button>
+            <span id="presentCounter" class="mono">1 / 6</span>
+            <button id="presentNext" type="button">›</button>
+        </div>
+    </div>
+
+    <!-- Presenter View overlay -->
+    <div id="presenterOverlay" class="present-overlay hidden">
+        <button class="btn btn-secondary btn-sm present-exit" id="presenterExit">✕ Exit</button>
+        <div class="presenter-grid">
+            <div class="presenter-current">
+                <div class="presenter-label">Current slide (audience sees this)</div>
+                <div id="presenterCurrent"></div>
+            </div>
+            <div class="presenter-side">
+                <div>
+                    <div class="presenter-label">Next slide</div>
+                    <div id="presenterNext"></div>
+                </div>
+                <div>
+                    <div class="presenter-label">Speaker notes</div>
+                    <div class="presenter-notes-box" id="presenterNotes"></div>
+                </div>
+            </div>
+        </div>
+        <div class="present-controls">
+            <button id="presenterPrev" type="button">‹</button>
+            <span id="presenterCounter" class="mono">1 / 6</span>
+            <button id="presenterNextBtn" type="button">›</button>
+        </div>
+    </div>
+
+    <!-- Timed drill overlay -->
+    <div id="drillOverlay" class="present-overlay hidden">
+        <span class="present-timer" id="drillTimer">0.0s</span>
+        <button class="btn btn-secondary btn-sm present-exit" id="drillExit">✕ Exit</button>
+        <div id="drillSlide"></div>
+        <div class="present-controls">
+            <button id="drillPrev" type="button">‹</button>
+            <span id="drillCounter" class="mono">1 / 8</span>
+            <button id="drillNext" type="button">›</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 11 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../shared/mockPPT.js"></script>
+    <script src="lesson11.js"></script>
+</body>
+</html>

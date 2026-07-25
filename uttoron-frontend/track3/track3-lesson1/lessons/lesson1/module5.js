@@ -61,7 +61,9 @@ class Module5 {
         // Shuffle the errors for display
         const shuffled = errors.sort(() => Math.random() - 0.5);
         this.priorityQueue = new PriorityQueue(shuffled);
-        this.userOrder = [];
+        // Default to the on-screen shuffled order (not empty) so checking
+        // without dragging anything is evaluated against what's actually shown.
+        this.userOrder = shuffled.map(e => e.id);
 
         return shuffled;
     }
@@ -73,21 +75,21 @@ class Module5 {
     checkOrder() {
         const correctOrder = [6, 1, 2, 5, 3, 4]; // Critical, Critical, High, High, Medium, Low
 
-        let isCorrect = true;
+        // Re-point the priority queue at the learner's actual submitted order,
+        // then let it genuinely dequeue/validate that order (ties between
+        // same-severity items allowed) rather than checking its own untouched
+        // internal state, which the constructor already auto-sorts correctly.
+        this.priorityQueue.reorder(this.userOrder);
+        const isCorrect = this.priorityQueue.checkOrder();
+
         let score = 0;
-
         for (let i = 0; i < Math.min(correctOrder.length, this.userOrder.length); i++) {
-            if (this.userOrder[i] === correctOrder[i]) {
-                score++;
-            } else {
-                isCorrect = false;
-            }
+            if (this.userOrder[i] === correctOrder[i]) score++;
         }
-
         this.score = Math.round((score / correctOrder.length) * 100);
 
         return {
-            isCorrect: this.priorityQueue.checkOrder(),
+            isCorrect: isCorrect,
             userOrder: this.userOrder,
             correctOrder: correctOrder,
             score: this.score,

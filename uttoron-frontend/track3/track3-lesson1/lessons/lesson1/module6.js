@@ -14,6 +14,30 @@ class Module6 {
         this.score = 0;
     }
 
+    // See Module 3/4 for why this retries: not every (errorType, field) pair is
+    // supported by the injection engine, so a naive single attempt can silently
+    // no-op and hand back an uncorrupted record while the caller still expects one.
+    injectRandom(record, errorTypes, fields) {
+        for (let attempt = 0; attempt < 30; attempt++) {
+            const errorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+            const field = fields[Math.floor(Math.random() * fields.length)];
+            let result;
+            switch (errorType) {
+                case 'typo':
+                    result = this.errorInjectionEngine.injectTypo(record, field);
+                    break;
+                case 'missing':
+                    result = this.errorInjectionEngine.injectMissingField(record, field);
+                    break;
+                case 'logical':
+                    result = this.errorInjectionEngine.injectLogicalViolation(record, field);
+                    break;
+            }
+            if (result && result.groundTruthDiff) return result;
+        }
+        return this.errorInjectionEngine.injectMissingField(record, fields[0]);
+    }
+
     generateBatch(numRecords = 5) {
         const domains = ['invoice', 'attendance', 'inventory'];
         const records = [];
@@ -25,22 +49,8 @@ class Module6 {
             // Inject errors into some records
             if (Math.random() > 0.5) {
                 const errorTypes = ['typo', 'missing', 'logical'];
-                const errorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
                 const fields = Object.keys(record).filter(k => k !== 'id' && k !== 'status' && k !== 'lineItems');
-                const field = fields[Math.floor(Math.random() * fields.length)];
-
-                let result;
-                switch (errorType) {
-                    case 'typo':
-                        result = this.errorInjectionEngine.injectTypo(record, field);
-                        break;
-                    case 'missing':
-                        result = this.errorInjectionEngine.injectMissingField(record, field);
-                        break;
-                    case 'logical':
-                        result = this.errorInjectionEngine.injectLogicalViolation(record, field);
-                        break;
-                }
+                const result = this.injectRandom(record, errorTypes, fields);
                 records.push(result.corruptedRecord);
             } else {
                 records.push(record);

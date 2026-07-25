@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 12: Delivery &amp; Vocal Practice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson11/index.html" class="nav-btn" style="text-decoration:none;">▶️ Lesson 11</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🎤 Presentation Skills · Lesson 12 of 13 · Feedback checkpoint 2 of 3</span>
+            <h1>Delivery &amp; Vocal Practice</h1>
+            <p class="lede">The pivot from software to communication. Record yourself reading a short script, review it honestly, then send it to a real reviewer for feedback on pacing and delivery.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🎤</div>
+                <div>
+                    <strong>Lesson 12 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Your recording is in the review queue. Next: the capstone.</div>
+                </div>
+                <a href="../lesson13/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Go to Lesson 13 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — WHAT GOOD DELIVERY SOUNDS LIKE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Context</span>
+            <div class="task-line">Step 1 · Flat vs. Paced</div>
+            <h2>The same words, delivered two different ways</h2>
+            <p class="step-intro">Same script, same speaker. The only difference is pacing and pausing — but it changes everything about how it lands.</p>
+
+            <div class="waveform-compare">
+                <div class="waveform-card">
+                    <div class="wf-label">❌ Flat &amp; rushed</div>
+                    <svg viewBox="0 0 280 60" width="100%" height="60"><polyline points="0,30 10,20 20,38 30,22 40,34 50,24 60,32 70,26 80,30 90,28 100,32 110,26 120,30 130,28 140,32 150,26 160,30 170,28 180,32 190,26 200,30 210,28 220,32 230,26 240,30 250,28 260,32 270,26 280,30" fill="none" stroke="#E2593B" stroke-width="2"/></svg>
+                    <p class="wf-desc">No gaps, constant volume — everything runs together with no room to absorb a point.</p>
+                </div>
+                <div class="waveform-card">
+                    <div class="wf-label">✅ Paced &amp; varied</div>
+                    <svg viewBox="0 0 280 60" width="100%" height="60"><polyline points="0,30 8,10 16,45 24,15 32,40 40,30 48,30 56,30 64,20 72,42 80,12 88,30 96,30 104,30 112,30 120,25 128,38 136,18 144,30 152,30 160,30 168,30 176,15 184,45 192,20 200,30 208,30 216,30 224,30 232,22 240,40 248,16 256,30 264,30 272,30 280,30" fill="none" stroke="#2E7D5B" stroke-width="2"/></svg>
+                    <p class="wf-desc">Clear pauses (the flat stretches) after key points, with natural rises and falls in energy.</p>
+                </div>
+            </div>
+            <div class="instruction-card">Pace, pausing, tone, projection — those four things separate delivery that lands from delivery that doesn't. You can't fix what you can't hear in your own voice, which is why you're about to record yourself.</div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m1-continue">Continue →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — RECORD + SELF-REVIEW -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Practice</span>
+            <div class="task-line">Step 2 · Record Your Sample</div>
+            <h2>Read this paragraph aloud, then listen back</h2>
+            <p class="step-intro">About 60 seconds at a natural pace. Read it once, all the way through.</p>
+
+            <div class="ledger">
+                <div class="ledger-title">Your script</div>
+                <p style="color:var(--ink);line-height:1.7;">"Good afternoon, everyone. Thank you for taking the time to be here today. Over the next few minutes, I want to walk you through a simple idea that could change how our shop handles payments. Right now, every cash-only sale means a customer who might walk away if they don't have exact change. By accepting mobile payments, we remove that barrier completely — checkout gets faster, and we stop losing sales we never even notice we're losing. I'll show you exactly what this would look like, and what it would take to get started. Let's begin."</p>
+            </div>
+
+            <div class="recorder-box" id="recorderBox"></div>
+
+            <div id="selfReviewArea" style="margin-top:16px;"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m2-continue" disabled>Continue →</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 3 — SUBMIT FOR FEEDBACK -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <span class="skill-pill">Submit</span>
+            <div class="task-line">Step 3 · Send It to a Reviewer</div>
+            <h2>Submit your recording for feedback</h2>
+            <p class="step-intro">A reviewer will listen and tag your <strong>pacing</strong> and <strong>vocal delivery</strong> — nothing else at this checkpoint.</p>
+
+            <div id="submitArea"></div>
+            <div id="statusArea" style="margin-top:24px;"></div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 12 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../engines/recorder.js"></script>
+    <script src="../engines/submissionStore.js"></script>
+    <script src="lesson12.js"></script>
+</body>
+</html>

@@ -7,6 +7,7 @@ export interface AuthRequest extends Request {
   user?: {
     id: number;
     username: string;
+    role: string;
   };
 }
 
@@ -29,10 +30,19 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     req.user = {
       id: user.id,
       username: user.username,
+      role: user.role,
     };
     next();
   } catch (error) {
     console.error('Auth error:', error);
     res.status(500).json({ error: 'Internal server error during authentication' });
   }
+};
+
+// Reviewer-only endpoints (queue, feedback submission) — must run after `authenticate`.
+export const requireReviewer = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user || req.user.role !== 'reviewer') {
+    return res.status(403).json({ error: 'Forbidden: reviewer role required' });
+  }
+  next();
 };

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 5: Adding Visuals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson4/index.html" class="nav-btn" style="text-decoration:none;">✍️ Lesson 4</a>
+                <a href="../lesson6/index.html" class="nav-btn" style="text-decoration:none;">✨ Lesson 6</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📊 Presentation Skills · Lesson 5 of 13</span>
+            <h1>Adding Visuals: Images &amp; Charts</h1>
+            <p class="lede">A picture or a chart can say in one glance what a paragraph of bullets can't. Use the Insert tab to add both — and learn which chart type actually fits your data.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">📊</div>
+                <div>
+                    <strong>Lesson 5 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Next: bringing slides to life with transitions &amp; animations.</div>
+                </div>
+                <a href="../lesson6/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Go to Lesson 6 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — EXPLORE + PRACTICE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Explore &amp; Practice</span>
+            <div class="task-line">Step 1 · The Insert Tab</div>
+            <h2>Add a picture, then build a chart</h2>
+            <p class="step-intro">Open the glowing <strong>Insert</strong> tab. Click <strong>Pictures</strong> to drop in a placeholder image, then click <strong>Chart</strong> and build a bar chart from 3 sample numbers.</p>
+
+            <div class="ppt-window" id="insertWindow"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m1-progress">Open the Insert tab to begin</span>
+                    <button class="btn btn-primary btn-sm" id="m1-continue" disabled>Continue →</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — CHECKPOINT -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Checkpoint</span>
+            <div class="task-line">Step 2 · The Right Chart for the Data</div>
+            <h2>Match the data to the chart type</h2>
+            <p class="step-intro">Line, bar, or pie — each is built for a different kind of comparison. Pick the best fit for each scenario.</p>
+
+            <div class="ledger">
+                <div class="match-grid" id="chartMatch"></div>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <button class="btn btn-secondary btn-sm" id="m2-reset">Reset</button>
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check answers</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 3 — DO IT FOR REAL -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <span class="skill-pill">Do It For Real</span>
+            <div class="task-line">Step 3 · Real PowerPoint</div>
+            <h2>Insert a real image and a real chart</h2>
+            <p class="step-intro">Use the file you've been building since Lesson 1.</p>
+
+            <div class="real-step">
+                <h3>🎯 Your task</h3>
+                <ol>
+                    <li>Open your file.</li>
+                    <li>On one slide, insert a picture (<strong>Insert → Pictures</strong>).</li>
+                    <li>On another slide, insert a chart (<strong>Insert → Chart</strong>) and pick a type that fits your data.</li>
+                    <li>Save the file.</li>
+                </ol>
+                <a class="real-link" href="https://www.office.com/launch/powerpoint" target="_blank" rel="noopener noreferrer">↗ Open PowerPoint for the web</a>
+                <label class="real-confirm">
+                    <input type="checkbox" id="m3-done" />
+                    <span>I inserted a real image and a real chart into my deck.</span>
+                </label>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m3-finish">Finish lesson</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 5 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../shared/mockPPT.js"></script>
+    <script src="lesson5.js"></script>
+</body>
+</html>

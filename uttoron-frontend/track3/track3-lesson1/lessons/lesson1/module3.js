@@ -15,6 +15,37 @@ class Module3 {
         this.attempts = 0;
     }
 
+    // Not every (errorType, field) pair is actually supported by the injection
+    // engine (e.g. format-inconsistency only understands invoiceDate/checkIn) --
+    // unsupported combos silently no-op and return a null groundTruthDiff. Retry
+    // with a fresh random pair until one actually produces a corruption, instead
+    // of ever handing back a "corrupted" record with nothing wrong with it.
+    injectRandom(record, errorTypes, fields) {
+        for (let attempt = 0; attempt < 30; attempt++) {
+            const errorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+            const field = fields[Math.floor(Math.random() * fields.length)];
+            let result;
+            switch (errorType) {
+                case 'typo':
+                    result = this.errorInjectionEngine.injectTypo(record, field);
+                    break;
+                case 'missing':
+                    result = this.errorInjectionEngine.injectMissingField(record, field);
+                    break;
+                case 'format':
+                    result = this.errorInjectionEngine.injectFormatInconsistency(record, field);
+                    break;
+                case 'whitespace':
+                    result = this.errorInjectionEngine.injectExtraWhitespace(record, field);
+                    break;
+            }
+            if (result && result.groundTruthDiff) return result;
+        }
+        // injectMissingField always succeeds for any field, so this is a
+        // guaranteed-safe fallback if 30 random attempts all missed.
+        return this.errorInjectionEngine.injectMissingField(record, fields[0]);
+    }
+
     generateActivity() {
         // Select a random record domain
         const domains = ['invoice', 'attendance', 'inventory'];
@@ -28,22 +59,8 @@ class Module3 {
         if (this.difficulty === 1) {
             // Single error
             const errorTypes = ['typo', 'missing', 'format'];
-            const errorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
             const fields = Object.keys(record).filter(k => k !== 'id' && k !== 'status' && k !== 'lineItems');
-            const field = fields[Math.floor(Math.random() * fields.length)];
-
-            let result;
-            switch (errorType) {
-                case 'typo':
-                    result = this.errorInjectionEngine.injectTypo(record, field);
-                    break;
-                case 'missing':
-                    result = this.errorInjectionEngine.injectMissingField(record, field);
-                    break;
-                case 'format':
-                    result = this.errorInjectionEngine.injectFormatInconsistency(record, field);
-                    break;
-            }
+            const result = this.injectRandom(record, errorTypes, fields);
             corruptedRecord = result.corruptedRecord;
             groundTruthDiff = result.groundTruthDiff;
         } else if (this.difficulty >= 2) {
@@ -53,23 +70,9 @@ class Module3 {
             const fields = Object.keys(record).filter(k => k !== 'id' && k !== 'status' && k !== 'lineItems');
 
             for (let i = 0; i < numErrors && fields.length > 0; i++) {
-                const errorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
                 const fieldIdx = Math.floor(Math.random() * fields.length);
-                const field = fields[fieldIdx];
-                fields.splice(fieldIdx, 1);
-
-                let result;
-                switch (errorType) {
-                    case 'typo':
-                        result = this.errorInjectionEngine.injectTypo(corruptedRecord, field);
-                        break;
-                    case 'missing':
-                        result = this.errorInjectionEngine.injectMissingField(corruptedRecord, field);
-                        break;
-                    case 'whitespace':
-                        result = this.errorInjectionEngine.injectExtraWhitespace(corruptedRecord, field);
-                        break;
-                }
+                const field = fields.splice(fieldIdx, 1)[0];
+                const result = this.injectRandom(corruptedRecord, errorTypes, [field]);
                 corruptedRecord = result.corruptedRecord;
                 if (i === numErrors - 1) {
                     groundTruthDiff = result.groundTruthDiff;

@@ -3,185 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lesson 1: Finding & Identifying Errors - Uttoron</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --color-ink: #1a1a1a;
-            --color-paper: #faf8f3;
-            --color-teal: #2d8a8a;
-            --color-stamp: #d4a574;
-            --color-error: #c84e4e;
-            --color-success: #5a8a5a;
-            --color-warning: #d4a574;
-            --color-border: #d4c5b9;
-            --color-bg-light: #f5f2ed;
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 1.5rem;
-            --spacing-lg: 2rem;
-            --spacing-xl: 3rem;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--color-paper); color: var(--color-ink); line-height: 1.6; padding: var(--spacing-lg); }
-        .container { max-width: 900px; margin: 0 auto; }
-
-        /* ============================================================
-           NAVIGATION BAR - Added for Uttoron site integration
-           ============================================================ */
-        .top-nav {
-            background: #1a1a1a;
-            color: white;
-            padding: 15px 20px;
-            margin-bottom: 25px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .top-nav .brand {
-            font-weight: 700;
-            font-size: 1.1rem;
-            font-family: 'Fraunces', serif;
-        }
-        .top-nav .brand span {
-            color: #d4a574;
-        }
-        .top-nav a {
-            color: #d4a574;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-        }
-        .top-nav a:hover {
-            color: #e8c99e;
-            text-decoration: underline;
-        }
-        .top-nav .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .top-nav .nav-links .separator {
-            color: #555;
-            margin: 0 4px;
-        }
-        .top-nav .nav-links .current {
-            color: #999;
-            font-size: 0.9rem;
-        }
-        @media (max-width: 600px) {
-            .top-nav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .top-nav .nav-links {
-                flex-wrap: wrap;
-            }
-        }
-
-        header { margin-bottom: var(--spacing-xl); border-bottom: 2px solid var(--color-border); padding-bottom: var(--spacing-lg); }
-        h1 { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 700; color: var(--color-ink); margin-bottom: var(--spacing-sm); }
-        .subtitle { font-size: 1.1rem; color: #666; font-style: italic; }
-        .lesson-nav { display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-xl); flex-wrap: wrap; }
-        .module-btn { padding: var(--spacing-sm) var(--spacing-md); border: 2px solid var(--color-border); background-color: var(--color-paper); color: var(--color-ink); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 500; border-radius: 4px; transition: all 0.3s ease; }
-        .module-btn:hover { background-color: var(--color-bg-light); border-color: var(--color-teal); }
-        .module-btn.active { background-color: var(--color-teal); color: var(--color-paper); border-color: var(--color-teal); }
-        .module { display: none; animation: fadeIn 0.3s ease; }
-        .module.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        h2 { font-family: 'Fraunces', serif; font-size: 1.8rem; font-weight: 600; color: var(--color-ink); margin-bottom: var(--spacing-md); }
-        h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 600; color: var(--color-ink); margin-top: var(--spacing-md); margin-bottom: var(--spacing-sm); }
-        p { margin-bottom: var(--spacing-md); line-height: 1.7; }
-        .instruction { background-color: var(--color-bg-light); padding: var(--spacing-md); border-left: 4px solid var(--color-teal); margin-bottom: var(--spacing-lg); border-radius: 4px; }
-        .record-card { background-color: var(--color-paper); border: 1px solid var(--color-border); padding: var(--spacing-md); margin-bottom: var(--spacing-md); border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; }
-        .record-field { display: flex; justify-content: space-between; padding: var(--spacing-sm) 0; border-bottom: 1px solid var(--color-border); }
-        .record-field:last-child { border-bottom: none; }
-        .field-label { font-weight: 600; color: var(--color-teal); min-width: 150px; }
-        .field-value { flex: 1; text-align: right; word-break: break-word; }
-        .field-value.error { color: var(--color-error); font-weight: 600; }
-        .clickable-field { cursor: pointer; padding: 2px 5px; border-radius: 3px; transition: all 0.2s ease; }
-        .clickable-field:hover { background-color: #fff3cd; }
-        .clickable-field.selected { background-color: #d4edda; border: 1px solid var(--color-success); }
-        .clickable-field.incorrect { background-color: #f8d7da; border: 1px solid var(--color-error); }
-        .button-group { display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md); flex-wrap: wrap; }
-        button { padding: var(--spacing-sm) var(--spacing-md); background-color: var(--color-teal); color: var(--color-paper); border: none; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
-        button:hover { background-color: #1f6666; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-        button.secondary { background-color: var(--color-paper); color: var(--color-ink); border: 2px solid var(--color-border); }
-        .feedback { padding: var(--spacing-md); border-radius: 4px; margin-top: var(--spacing-md); display: none; }
-        .feedback.show { display: block; animation: slideDown 0.3s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .feedback.success { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
-        .feedback.error { background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
-        .timer { font-family: 'IBM Plex Mono', monospace; font-size: 1.5rem; font-weight: 600; color: var(--color-teal); margin-bottom: var(--spacing-md); }
-        .records-list { display: grid; gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
-        .record-item { border: 1px solid var(--color-border); padding: var(--spacing-md); border-radius: 4px; background-color: var(--color-paper); transition: all 0.3s ease; }
-        .record-item.flagged { border-left: 4px solid var(--color-error); background-color: #fff5f5; }
-        .priority-list { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); }
-        .priority-item { background-color: var(--color-bg-light); padding: var(--spacing-md); border: 2px solid var(--color-border); border-radius: 4px; cursor: grab; display: flex; justify-content: space-between; align-items: center; }
-        .priority-item:hover { border-color: var(--color-teal); background-color: #e8f4f4; }
-        .priority-rank { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; color: var(--color-teal); min-width: 40px; }
-        .priority-severity { padding: var(--spacing-xs) var(--spacing-sm); background-color: var(--color-warning); color: var(--color-paper); border-radius: 3px; font-size: 0.8rem; font-weight: 600; }
-        .state-machine { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--spacing-sm); margin-top: var(--spacing-md); }
-        .state-btn { padding: var(--spacing-xs); border: 1px solid var(--color-border); background-color: var(--color-paper); border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        .state-btn.active { background-color: var(--color-teal); color: var(--color-paper); border-color: var(--color-teal); }
-        .footer { margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 2px solid var(--color-border); text-align: center; color: #999; font-size: 0.9rem; }
-        .error-type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md); margin-bottom: var(--spacing-lg); }
-        .error-type-card { border: 2px solid var(--color-border); padding: var(--spacing-md); border-radius: 4px; cursor: pointer; }
-        .error-type-card.active { border-color: var(--color-teal); background-color: #e8f4f4; }
-    </style>
+    <title>Uttoron — Lesson 1: Finding &amp; Identifying Errors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/theme.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
 
-        <!-- ============================================================
-             NAVIGATION BAR - Added for Uttoron site integration
-             ============================================================ -->
-        <nav class="top-nav">
-            <div class="brand">🕌 <span>Uttoron</span></div>
-            <div class="nav-links">
-                <a href="../../webapp/index1.html">🏠 Home</a>
-                <span class="separator">|</span>
-                <a href="../../webapp/data-accuracy.html">🧹 Data Accuracy</a>
-                <span class="separator">|</span>
-                <span class="current">📖 Lesson 1: Find Errors</span>
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
             </div>
-        </nav>
-
-        <header>
-            <h1 id="lessonTitle">Lesson 1: Finding & Identifying Errors</h1>
-            <p class="subtitle" id="lessonSubtitle">Learn to spot and categorize data quality issues in real records</p>
-        </header>
-
-        <div class="lesson-nav" id="lessonNav">
-            <button class="module-btn active" data-module="1">1. Why Accuracy Matters</button>
-            <button class="module-btn" data-module="2">2. Types of Errors</button>
-            <button class="module-btn" data-module="3">3. Spot the Error</button>
-            <button class="module-btn" data-module="4">4. Error Hunt Challenge</button>
-            <button class="module-btn" data-module="5">5. Prioritizing Errors</button>
-            <button class="module-btn" data-module="6">6. Workplace Simulation</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/data-accuracy.html" class="nav-btn" style="text-decoration:none;">🧹 Data Accuracy</a>
+                <span class="nav-btn" style="opacity:0.55;cursor:default;">📖 Lesson 1</span>
+            </div>
         </div>
+    </nav>
 
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">📖 Track 3 · Data Accuracy &amp; Quality Assurance — Lesson 1 of 4</span>
+            <h1>Finding &amp; Identifying Errors</h1>
+            <p class="lede">Learn to spot and categorize data quality issues in real records.</p>
+
+            <div class="lesson-nav" id="lessonNav">
+                <button class="module-btn active" data-module="1">1. Why Accuracy Matters</button>
+                <button class="module-btn" data-module="2">2. Types of Errors</button>
+                <button class="module-btn" data-module="3">3. Spot the Error</button>
+                <button class="module-btn" data-module="4">4. Error Hunt Challenge</button>
+                <button class="module-btn" data-module="5">5. Prioritizing Errors</button>
+                <button class="module-btn" data-module="6">6. Workplace Simulation</button>
+            </div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🔍</div>
+                <div>
+                    <strong>Lesson 1 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">All 6 modules complete. Head back to your passport to see it.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
         <div id="moduleContent"></div>
-
-        <div class="footer">
-            <p>Uttoron — Vocational Digital Skills for Underprivileged Youth in Bangladesh</p>
-            <p>Track 3: Data Accuracy & Quality Assurance</p>
-        </div>
     </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Vocational Digital Skills for Underprivileged Youth in Bangladesh</span>
+            <span>Track 3 · Data Accuracy &amp; Quality Assurance — Lesson 1 of 4</span>
+        </div>
+    </footer>
 
     <script type="module">
         import { errorInjectionEngine, sampleRecords } from './data/errorInjection/errorInjectionEngine.js';
         import { Lesson1 } from './lessons/lesson1/Lesson1.js';
 
+        // ============================================================
+        //  STORAGE — same schema as index1.html / lesson2.js / lesson3.js / lesson4.js
+        // ============================================================
+        const Storage = {
+            get(key) { try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; } catch { return null; } },
+            set(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch { return false; } }
+        };
+
+        const LESSON_ID = 'lesson1-find-errors';
+
+        function loadSession() {
+            const data = Storage.get('uttoron:session');
+            if (data && data.num) {
+                const user = Storage.get('user:' + data.num);
+                if (user) return { num: data.num, nickname: user.nickname };
+            }
+            return null;
+        }
+        const session = loadSession();
+
+        function logEvent(moduleNum, event, meta) {
+            const log = Storage.get('analytics:events') || [];
+            log.push({ ts: Date.now(), num: session ? session.num : null, track: 'track3-data-accuracy', lesson: 'lesson1', module: moduleNum, event, meta: meta || null });
+            if (log.length > 500) log.shift();
+            Storage.set('analytics:events', log);
+        }
+
+        const moduleDone = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+
+        function awardStampIfComplete() {
+            if (![1, 2, 3, 4, 5, 6].every(n => moduleDone[n])) return;
+            if (session) {
+                const progress = Storage.get('progress:' + session.num) || {};
+                progress[LESSON_ID] = true;
+                Storage.set('progress:' + session.num, progress);
+            }
+            document.getElementById('lessonStampBanner').classList.add('show');
+            logEvent('all', 'lesson_completed', null);
+        }
+
+        let toastTimer = null;
+        function showToast(msg, type) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'toast show ' + (type || '');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { el.className = 'toast'; }, 3200);
+        }
+
+        function markModuleDone(n) {
+            if (moduleDone[n]) return;
+            moduleDone[n] = true;
+            const module = lesson.getModuleByNumber(n);
+            if (module && module.markComplete) module.markComplete();
+            logEvent(n, 'module_completed', null);
+            document.querySelectorAll('.module-btn').forEach(btn => {
+                btn.classList.toggle('done', !!moduleDone[Number(btn.dataset.module)]);
+            });
+            showToast('Module ' + n + ' complete!', 'success');
+            awardStampIfComplete();
+        }
+
         const lesson = new Lesson1(errorInjectionEngine, sampleRecords);
         const moduleContent = document.getElementById('moduleContent');
+        // Module 4's countdown interval, hoisted so switchModule() can always
+        // clear it on navigation -- not just via that module's own Back/Next
+        // buttons, but also the module-rail tabs, which call switchModule()
+        // directly and would otherwise leak a running interval.
+        let activeChallengeTimer = null;
 
         function renderModule(moduleNumber) {
             const module = lesson.getModuleByNumber(moduleNumber);
@@ -211,7 +167,7 @@
                     <div class="button-group"><button id="nextBtn">Next: Types of Errors →</button></div>
                 `;
                 moduleContent.appendChild(moduleDiv);
-                document.getElementById('nextBtn').onclick = () => switchModule(2);
+                document.getElementById('nextBtn').onclick = () => { markModuleDone(1); switchModule(2); };
             } else if (moduleNumber === 2) {
                 const types = module.getErrorTypes();
                 moduleDiv.innerHTML = `
@@ -245,7 +201,7 @@
                 });
                 
                 document.getElementById('prevBtn').onclick = () => switchModule(1);
-                document.getElementById('nextBtn').onclick = () => switchModule(3);
+                document.getElementById('nextBtn').onclick = () => { markModuleDone(2); switchModule(3); };
                 cards[0].click();
             } else if (moduleNumber === 3) {
                 const activity = module.generateActivity();
@@ -277,7 +233,9 @@
                     const fb = document.getElementById('feedback');
                     fb.className = `feedback show ${result.isCorrect ? 'success' : 'error'}`;
                     fb.innerHTML = result.message;
-                    if (!result.isCorrect) {
+                    if (result.isCorrect) {
+                        markModuleDone(3);
+                    } else {
                         fields.forEach(f => {
                             if (f.dataset.field === result.diff.field) f.classList.add('incorrect');
                         });
@@ -295,26 +253,55 @@
             } else if (moduleNumber === 4) {
                 moduleDiv.innerHTML = `
                     <h2>${module.title}</h2>
-                    <div class="instruction">Flag all erroneous records. Speed and accuracy matter!</div>
+                    <div class="instruction">Flag all erroneous records. Speed and accuracy matter — but you don't have to wait for the clock: click "Submit Now" whenever you're done.</div>
                     <div class="timer" id="timer">2:00</div>
                     <div id="challengeRecords" class="records-list"></div>
-                    <div class="button-group"><button id="startBtn">Start Challenge</button></div>
+                    <div class="button-group">
+                        <button id="startBtn">Start Challenge</button>
+                        <button class="secondary" id="submitNowBtn" style="display: none;">Submit Now</button>
+                    </div>
                     <div id="feedback" class="feedback"></div>
                     <div class="button-group" style="margin-top: 20px;"><button class="secondary" id="prevBtn">← Back</button><button id="nextBtn">Next: Priority →</button></div>
                 `;
                 moduleContent.appendChild(moduleDiv);
-                
+
                 const startBtn = document.getElementById('startBtn');
+                const submitNowBtn = document.getElementById('submitNowBtn');
                 const timerEl = document.getElementById('timer');
                 const recordsDiv = document.getElementById('challengeRecords');
-                let timerInterval;
+                let timeLeft = 120;
+
+                function stopTimer() {
+                    if (activeChallengeTimer) {
+                        clearInterval(activeChallengeTimer);
+                        activeChallengeTimer = null;
+                    }
+                }
+
+                function finishChallenge() {
+                    stopTimer();
+                    const stats = module.endChallenge(120 - Math.max(timeLeft, 0));
+                    const fb = document.getElementById('feedback');
+                    fb.className = 'feedback show success';
+                    fb.innerHTML = `<strong>Challenge Complete!</strong> Accuracy: ${stats.accuracy}%. Correct: ${stats.correctFlags}/${stats.totalErrors}.`;
+                    startBtn.disabled = false;
+                    startBtn.textContent = 'Start Challenge';
+                    submitNowBtn.style.display = 'none';
+                    recordsDiv.querySelectorAll('.flag-btn').forEach(btn => { btn.disabled = true; });
+                    markModuleDone(4);
+                }
 
                 startBtn.onclick = () => {
+                    stopTimer();
                     const records = module.generateChallenge();
                     module.startChallenge();
                     startBtn.disabled = true;
-                    let timeLeft = 120;
-                    
+                    startBtn.textContent = 'Challenge in progress…';
+                    submitNowBtn.style.display = 'inline-flex';
+                    document.getElementById('feedback').classList.remove('show');
+                    timeLeft = 120;
+                    timerEl.textContent = '2:00';
+
                     recordsDiv.innerHTML = records.map((r, i) => `
                         <div class="record-item" id="rec-${i}">
                             <strong>${r.id} (${r.domain})</strong><br>
@@ -322,7 +309,7 @@
                             <button class="secondary flag-btn" style="margin-top: 10px;" data-idx="${i}">Flag</button>
                         </div>
                     `).join('');
-                    
+
                     recordsDiv.querySelectorAll('.flag-btn').forEach(btn => {
                         btn.onclick = () => {
                             const idx = btn.dataset.idx;
@@ -332,22 +319,22 @@
                         };
                     });
 
-                    timerInterval = setInterval(() => {
+                    activeChallengeTimer = setInterval(() => {
                         timeLeft--;
                         const mins = Math.floor(timeLeft / 60);
                         const secs = timeLeft % 60;
                         timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
                         if (timeLeft <= 0) {
-                            clearInterval(timerInterval);
-                            const stats = module.endChallenge(120);
-                            const fb = document.getElementById('feedback');
-                            fb.className = 'feedback show success';
-                            fb.innerHTML = `<strong>Challenge Complete!</strong> Accuracy: ${stats.accuracy}%. Correct: ${stats.correctFlags}/${stats.totalErrors}.`;
-                            startBtn.disabled = false;
+                            finishChallenge();
                         }
                     }, 1000);
                 };
-                
+
+                submitNowBtn.onclick = () => {
+                    if (!activeChallengeTimer) return;
+                    finishChallenge();
+                };
+
                 document.getElementById('prevBtn').onclick = () => switchModule(3);
                 document.getElementById('nextBtn').onclick = () => switchModule(5);
             } else if (moduleNumber === 5) {
@@ -416,6 +403,7 @@
                     const fb = document.getElementById('feedback');
                     fb.className = `feedback show ${result.isCorrect ? 'success' : 'error'}`;
                     fb.innerHTML = result.message;
+                    if (result.isCorrect) markModuleDone(5);
                 };
 
                 document.getElementById('prevBtn').onclick = () => switchModule(4);
@@ -465,7 +453,7 @@
                     fb.className = `feedback show ${result.success ? 'success' : 'error'}`;
                     fb.innerHTML = result.message;
                     if (result.success) {
-                        alert('Congratulations! Lesson 1 Complete.');
+                        markModuleDone(6);
                     }
                 };
                 
@@ -474,6 +462,10 @@
         }
 
         function switchModule(moduleNumber) {
+            if (activeChallengeTimer) {
+                clearInterval(activeChallengeTimer);
+                activeChallengeTimer = null;
+            }
             lesson.switchToModule(moduleNumber);
             document.querySelectorAll('.module-btn').forEach(btn => {
                 btn.classList.toggle('active', parseInt(btn.dataset.module) === moduleNumber);
@@ -488,6 +480,9 @@
 
         // Start at module 1
         switchModule(1);
+        if (!session) {
+            showToast('You’re not signed in — progress here won’t save to a passport. Sign in from the home page first.', 'error');
+        }
     </script>
 </body>
 </html>

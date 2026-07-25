@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 2: Choosing a Template</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson1/index.html" class="nav-btn" style="text-decoration:none;">🖥️ Lesson 1</a>
+                <a href="../lesson3/index.html" class="nav-btn" style="text-decoration:none;">🗂️ Lesson 3</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🎨 Presentation Skills · Lesson 2 of 13</span>
+            <h1>Choosing a Template That Fits</h1>
+            <p class="lede">The Design tab is full of templates. The skill isn't picking a "nice" one — it's picking one that fits your <em>audience</em>. Explore the gallery, then match templates to real situations.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🎨</div>
+                <div>
+                    <strong>Lesson 2 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">Next: build your slide structure in Lesson 3.</div>
+                </div>
+                <a href="../lesson3/index.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Go to Lesson 3 →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — EXPLORE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Explore</span>
+            <div class="task-line">Step 1 · The Design Tab</div>
+            <h2>Browse the template gallery</h2>
+            <p class="step-intro">Click the glowing <strong>Design</strong> tab, then click each template thumbnail to preview it. Look at all six before moving on.</p>
+
+            <div class="ppt-window" id="designWindow"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <span style="font-size:0.85rem;color:rgba(255,255,255,0.6);" id="m1-progress">Open the Design tab to begin</span>
+                    <button class="btn btn-primary btn-sm" id="m1-continue" disabled>Continue →</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — PRACTICE -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Practice</span>
+            <div class="task-line">Step 2 · Match the Template to the Audience</div>
+            <h2>Which style fits which situation?</h2>
+            <p class="step-intro">Pick the best template style for each situation, then check your answers.</p>
+
+            <div class="ledger">
+                <div class="match-grid" id="matchGrid"></div>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <button class="btn btn-secondary btn-sm" id="m2-reset">Reset</button>
+                    <button class="btn btn-primary btn-sm" id="m2-check">Check answers</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 3 — DO IT FOR REAL -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <span class="skill-pill">Do It For Real</span>
+            <div class="task-line">Step 3 · Real PowerPoint</div>
+            <h2>Apply a template to your file</h2>
+            <p class="step-intro">Use the blank file you saved in Lesson 1.</p>
+
+            <div class="real-step">
+                <h3>🎯 Your task</h3>
+                <ol>
+                    <li>Open your saved file from Lesson 1.</li>
+                    <li>Go to the <strong>Design</strong> tab.</li>
+                    <li>Pick a template that would suit your topic and apply it.</li>
+                    <li>Save the file again.</li>
+                </ol>
+                <a class="real-link" href="https://www.office.com/launch/powerpoint" target="_blank" rel="noopener noreferrer">↗ Open PowerPoint for the web</a>
+                <label class="real-confirm">
+                    <input type="checkbox" id="m3-done" />
+                    <span>I applied a template to my file and saved it.</span>
+                </label>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m3-finish">Finish lesson</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 2 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../shared/mockPPT.js"></script>
+    <script src="lesson2.js"></script>
+</body>
+</html>

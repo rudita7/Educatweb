@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Capstone: Deliver the Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🗣️ Presentation Skills</a>
+                <a href="../lesson6/index.html" class="nav-btn" style="text-decoration:none;">🎤 Lesson 6</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🎯 Presentation Skills · Capstone</span>
+            <h1>Deliver the Pitch — Genuine Delivery Edition</h1>
+            <p class="lede">Unlike other capstones in this app, the core of this one happens outside the software, on purpose — that's the actual skill.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🎯</div>
+                <div>
+                    <strong>Capstone stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">You finished the full process, including a real delivery. Well done.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+        <div id="deckStatus"></div>
+
+        <!-- STEP 1: FINALIZE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <div class="task-line">Step 1 · Finalize</div>
+            <h2>Is your deck and practice actually ready?</h2>
+            <p class="module-intro">This checks the parts the software actually can verify: your deck passes its own quality checks, and you've completed your pacing practice.</p>
+            <ul class="checklist" id="finalize-checklist"></ul>
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m1-continue">Continue →</button>
+                </div>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2: PREPARE FOR QUESTIONS -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <div class="task-line">Step 2 · Prepare for Questions</div>
+            <h2>A short Q&amp;A readiness drill</h2>
+            <p class="module-intro">Three questions, loosely matched to your deck's topic. Answer for real — each response is scored by keyword/rubric match, not free-text grading.</p>
+            <div id="qa-drill"></div>
+            <div class="check-panel">
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 3: THE REAL THING -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <div class="task-line">Step 3 · The Real Thing</div>
+            <h2>Go deliver your presentation to a real audience</h2>
+            <div class="instruction-card">
+                Close this tab and actually present. A family member, a friend, a teacher, or a community group — anyone real. Use your deck, your practiced script, and what you just prepped in the Q&amp;A drill. This is a genuine real-world task, not a simulation.
+            </div>
+            <div class="honesty-note">
+                🔍 <strong>Why this is a checkbox, not a "grade":</strong> this app has no way to observe or verify what actually happens during a real, offline, in-person presentation — no camera, no microphone left running, nothing sent anywhere. So this step is an honest self-report, not a fabricated score. Only check this once you've actually done it.
+            </div>
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:0.92rem;margin:16px 0;">
+                <input type="checkbox" id="m3-delivered" style="margin-top:3px;" />
+                <span>I delivered my presentation to a real audience.</span>
+            </label>
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m3-continue">Continue →</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 4: REFLECT -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <div class="task-line">Step 4 · Reflect</div>
+            <h2>Guided reflection</h2>
+            <p class="module-intro">Only you know how the real delivery actually went. This reflection is the pedagogically real part of this step — not a grade.</p>
+
+            <div class="field-block">
+                <label for="r-went-well">What went well?</label>
+                <textarea class="reflection-textarea" id="r-went-well" rows="3"></textarea>
+            </div>
+            <div class="field-block">
+                <label for="r-change">What would you change next time?</label>
+                <textarea class="reflection-textarea" id="r-change" rows="3"></textarea>
+            </div>
+
+            <div class="ledger">
+                <div class="ledger-title">Self-rating (1 = needs work, 5 = strong)</div>
+                <div class="rubric-row"><label>Clarity</label><div class="rubric-scale" data-rubric="clarity"></div></div>
+                <div class="rubric-row"><label>Pacing</label><div class="rubric-scale" data-rubric="pacing"></div></div>
+                <div class="rubric-row"><label>Audience engagement</label><div class="rubric-scale" data-rubric="engagement"></div></div>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m4-submit">Submit reflection &amp; finish</button>
+                </div>
+                <div class="feedback" id="m4-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Capstone</span>
+        </div>
+    </footer>
+
+    <script src="../../track3/shared/engines/ruleEngine.js"></script>
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../engines/presentationStore.js"></script>
+    <script src="../engines/slideRuleEngine.js"></script>
+    <script src="../engines/chartRenderer.js"></script>
+    <script src="../data/icons.js"></script>
+    <script src="../shared/slideRenderer.js"></script>
+    <script src="../engines/qaStateMachine.js"></script>
+    <script src="capstone.js"></script>
+</body>
+</html>

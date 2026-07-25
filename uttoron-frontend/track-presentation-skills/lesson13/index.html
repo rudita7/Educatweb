@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 13: Capstone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand"><span class="brand-mark">উ</span>Uttoron</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson12/index.html" class="nav-btn" style="text-decoration:none;">🎤 Lesson 12</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">🎯 Presentation Skills · Lesson 13 of 13 · Feedback checkpoint 3 of 3 · Capstone</span>
+            <h1>Capstone: Deliver the Real Thing</h1>
+            <p class="lede">Everything from Lessons 1–10, for real: a real deck, a real delivery, submitted together for a full review across every category.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">🎯</div>
+                <div>
+                    <strong>Capstone stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">You've completed the Presentation Skills track. Your work is in the review queue.</div>
+                </div>
+                <a href="../../webapp/index1.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">View passport →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — REQUIREMENTS -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Overview</span>
+            <div class="task-line">Step 1 · What "The Real Thing" Means</div>
+            <h2>Build it, deliver it, submit it</h2>
+            <div class="ledger">
+                <ul class="check-list" style="color:var(--ink);">
+                    <li class="pass">✅ A real 5–8 slide deck built in actual PowerPoint, applying Lessons 1–10</li>
+                    <li class="pass">✅ A real delivery — recorded or live — 2 to 4 minutes long</li>
+                    <li class="pass">✅ Submit the deck file <strong>and</strong> the recording together</li>
+                </ul>
+            </div>
+            <div class="instruction-card">This time a reviewer sees <strong>all six categories</strong>: structure, visual design, restraint, pacing, vocal delivery, and time management.</div>
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m1-continue">Continue →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — UPLOAD DECK -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Your Deck</span>
+            <div class="task-line">Step 2 · Upload Your Final .pptx</div>
+            <h2>The real file, built across Lessons 1–10</h2>
+            <div id="deckUploadArea"></div>
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m2-continue" disabled>Continue →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3 — DELIVER -->
+        <div class="module-panel" id="panel-3" data-module="3">
+            <span class="skill-pill">Deliver</span>
+            <div class="task-line">Step 3 · Deliver It — For Real</div>
+            <h2>2 to 4 minutes, recorded or live</h2>
+            <p class="step-intro">Present your deck out loud, start to finish — to a camera, or to a real audience with someone recording. Then bring that recording here (or upload a file if you presented live and someone else recorded it).</p>
+
+            <div class="recorder-box" id="recorderBox"></div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m3-continue" disabled>Continue →</button>
+                </div>
+                <div class="feedback" id="m3-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 4 — SUBMIT -->
+        <div class="module-panel" id="panel-4" data-module="4">
+            <span class="skill-pill">Submit</span>
+            <div class="task-line">Step 4 · Submit for Full Review</div>
+            <h2>Deck + recording, together</h2>
+            <div id="submitArea"></div>
+            <div id="statusArea" style="margin-top:24px;"></div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 13 of 13 · Capstone</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../engines/recorder.js"></script>
+    <script src="../engines/submissionStore.js"></script>
+    <script src="lesson13.js"></script>
+</body>
+</html>

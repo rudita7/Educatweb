@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Uttoron — Lesson 4: Writing Text That Works</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../track3/shared/theme.css" />
+    <link rel="stylesheet" href="../shared/presentationSkills.css" />
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <div class="nav-inner">
+            <div class="brand">
+                <span class="brand-mark">উ</span>
+                Uttoron
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="../../webapp/index1.html" class="nav-btn" style="text-decoration:none;">🏠 Home</a>
+                <a href="../../webapp/presentation-skills.html" class="nav-btn" style="text-decoration:none;">🖥️ Presentation Skills</a>
+                <a href="../lesson3/index.html" class="nav-btn" style="text-decoration:none;">🗂️ Lesson 3</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="lesson-hero">
+        <div class="wrap">
+            <span class="eyebrow">✍️ Presentation Skills · Lesson 4 of 13</span>
+            <h1>Writing Text That Actually Works</h1>
+            <p class="lede">Slides are not documents. The skill is bullet discipline: short lines the audience can read in a glance while they listen to you — not paragraphs they have to read instead of listening.</p>
+
+            <div class="module-rail" id="moduleRail"></div>
+            <div class="lesson-stamp-banner" id="lessonStampBanner">
+                <div class="stamp-earn-pill">✍️</div>
+                <div>
+                    <strong>Lesson 4 stamp earned!</strong>
+                    <div style="opacity:0.85;font-size:0.85rem;">That's Lessons 1–4 done. More lessons are on the way.</div>
+                </div>
+                <a href="../../webapp/presentation-skills.html" class="btn btn-secondary btn-sm" style="margin-left:auto;border-color:rgba(255,255,255,0.4);">Back to track →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="wrap">
+
+        <!-- STEP 1 — PRACTICE -->
+        <div class="module-panel" id="panel-1" data-module="1">
+            <span class="skill-pill">Practice</span>
+            <div class="task-line">Step 1 · Cut It Down to Bullets</div>
+            <h2>Turn a paragraph into 3 short bullets</h2>
+            <p class="step-intro">Below is a dense paragraph nobody wants to read off a slide. Rewrite its main ideas as <strong>3 bullets, 8 words or fewer each</strong>. Watch the live word count and the slide preview.</p>
+
+            <div class="para-source" id="paraSource"></div>
+
+            <div class="editor-grid" style="display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start;">
+                <div>
+                    <div id="bulletInputs"></div>
+                    <p class="field-hint" id="bulletHint" style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-top:4px;">Each bullet must have at least one word and no more than 8.</p>
+                </div>
+                <div>
+                    <div style="font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.5);margin-bottom:8px;">Slide preview</div>
+                    <div class="ppt-window" id="previewWindow"></div>
+                </div>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m1-check">Check my bullets</button>
+                </div>
+                <ul class="check-list" id="m1-rules"></ul>
+                <div class="feedback" id="m1-feedback"></div>
+            </div>
+        </div>
+
+        <!-- STEP 2 — DO IT FOR REAL -->
+        <div class="module-panel" id="panel-2" data-module="2">
+            <span class="skill-pill">Do It For Real</span>
+            <div class="task-line">Step 2 · Real PowerPoint</div>
+            <h2>Write real text on your slides</h2>
+            <p class="step-intro">Use the 5-slide skeleton you built in Lesson 3.</p>
+
+            <div class="real-step">
+                <h3>🎯 Your task</h3>
+                <ol>
+                    <li>Open your file from Lesson 3.</li>
+                    <li>Add a clear title to each slide.</li>
+                    <li>On your content slides, write bullets — <strong>8 words or fewer each</strong>, no paragraphs.</li>
+                    <li>Save the file.</li>
+                </ol>
+                <a class="real-link" href="https://www.office.com/launch/powerpoint" target="_blank" rel="noopener noreferrer">↗ Open PowerPoint for the web</a>
+                <label class="real-confirm">
+                    <input type="checkbox" id="m2-done" />
+                    <span>I added short, bullet-style text to my real slides.</span>
+                </label>
+            </div>
+
+            <div class="check-panel">
+                <div style="display:flex;justify-content:flex-end;">
+                    <button class="btn btn-primary btn-sm" id="m2-finish">Finish lesson</button>
+                </div>
+                <div class="feedback" id="m2-feedback"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="wrap">
+            <span>Uttoron — Skills Passport for underprivileged youth</span>
+            <span>Presentation Skills · Lesson 4 of 13</span>
+        </div>
+    </footer>
+
+    <script src="../engines/lessonShell.js"></script>
+    <script src="../shared/mockPPT.js"></script>
+    <script src="lesson4.js"></script>
+</body>
+</html>
