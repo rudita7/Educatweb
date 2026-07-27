@@ -23,4 +23,4 @@ ENV PORT=3000
 ENV PYTHON_BIN=python3
 EXPOSE 3000
 
-CMD ["pnpm", "run", "start"]
+CMD ["node", "dist/server.js"]
