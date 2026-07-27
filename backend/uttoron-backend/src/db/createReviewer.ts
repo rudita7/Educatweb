@@ -1,9 +1,9 @@
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
-// One-time setup for a teacher/reviewer account — run once per reviewer via:
+// One-time setup for a teacher/reviewer account - run once per reviewer via:
 //   pnpm exec tsx src/db/createReviewer.ts <username> <pin>
 // Promotes an existing account to role='reviewer' if the username already
 // exists (e.g. the site owner's own student passport), otherwise creates one.

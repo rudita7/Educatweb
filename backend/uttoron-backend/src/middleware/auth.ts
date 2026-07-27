@@ -39,7 +39,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
-// Reviewer-only endpoints (queue, feedback submission) — must run after `authenticate`.
+// Reviewer-only endpoints (queue, feedback submission) - must run after `authenticate`.
 export const requireReviewer = (req: AuthRequest, res: Response, next: NextFunction) => {
   if (!req.user || req.user.role !== 'reviewer') {
     return res.status(403).json({ error: 'Forbidden: reviewer role required' });

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const router = Router();
 const SALT_ROUNDS = Number(process.env.PIN_SALT_ROUNDS) || 10;
