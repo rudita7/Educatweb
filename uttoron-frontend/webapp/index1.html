@@ -579,7 +579,7 @@
 <body>
 
     <div class="cosmic-bg" aria-hidden="true">
-        <img class="photo" src="assets/hero-classroom.jpg" alt="" />
+        <img class="photo" src="/webapp/assets/hero-classroom.jpg" alt="" />
         <div class="scrim"></div>
     </div>
 
@@ -595,7 +595,7 @@
                 <a href="#" id="navHomeLink">Home</a>
                 <a href="#" id="navLessonsLink">Lessons</a>
                 <a href="#" id="navSignupLink">Sign Up</a>
-                <a href="analytics.html">📊 Analytics</a>
+                <a href="/webapp/analytics.html">📊 Analytics</a>
             </div>
             <div class="nav-actions">
                 <button class="nav-btn" id="navAuthBtn">Sign in</button>
@@ -615,7 +615,7 @@
                     <div class="hero-ctas">
                         <button class="btn btn-primary" id="heroSignupBtn">Get your passport</button>
                         <button class="btn btn-secondary" id="heroSigninBtn">I already have one</button>
-                        <a href="analytics.html" class="btn btn-secondary">📊 Analytics</a>
+                        <a href="/webapp/analytics.html" class="btn btn-secondary">📊 Analytics</a>
                     </div>
                     <div class="ticket">
                         <div>
@@ -704,9 +704,9 @@
                         <p>Practice typing with finger placement, learn spreadsheet formulas, or master data quality assurance in a live simulation.</p>
                     </div>
                     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                        <a href="typing-lesson.html" class="btn btn-secondary">⌨️ Typing Lesson</a>
-                        <a href="spreadsheet-lesson.html" class="btn btn-secondary">📊 Spreadsheet Lesson</a>
-                        <a href="data-accuracy.html" class="btn btn-secondary">🧹 Data Accuracy Lab</a>
+                        <a href="/webapp/typing-lesson.html" class="btn btn-secondary">⌨️ Typing Lesson</a>
+                        <a href="/webapp/spreadsheet-lesson.html" class="btn btn-secondary">📊 Spreadsheet Lesson</a>
+                        <a href="/webapp/data-accuracy.html" class="btn btn-secondary">🧹 Data Accuracy Lab</a>
                     </div>
                 </div>
             </div>
@@ -853,9 +853,9 @@
                         </div>
                         <div class="stamp-grid" id="dashStampGrid"></div>
                         <div class="dashboard-actions">
-                            <a href="typing-lesson.html" class="btn btn-outline-dark btn-sm">⌨️ Typing Lesson</a>
-                            <a href="spreadsheet-lesson.html" class="btn btn-outline-dark btn-sm">📊 Spreadsheet Lesson</a>
-                            <a href="data-accuracy.html" class="btn btn-outline-dark btn-sm">🧹 Data Accuracy Lab</a>
+                            <a href="/webapp/typing-lesson.html" class="btn btn-outline-dark btn-sm">⌨️ Typing Lesson</a>
+                            <a href="/webapp/spreadsheet-lesson.html" class="btn btn-outline-dark btn-sm">📊 Spreadsheet Lesson</a>
+                            <a href="/webapp/data-accuracy.html" class="btn btn-outline-dark btn-sm">🧹 Data Accuracy Lab</a>
                             <button class="btn btn-secondary btn-sm" id="dashBackToHome">🏠 Back to Home</button>
                         </div>
                     </div>
@@ -877,7 +877,7 @@
                         <li><a href="#" id="footerHomeLink">Home</a></li>
                         <li><a href="#" id="footerLessonsLink">Lessons</a></li>
                         <li><a href="#" id="footerSignupLink">Sign Up</a></li>
-                        <li><a href="analytics.html">Analytics</a></li>
+                        <li><a href="/webapp/analytics.html">Analytics</a></li>
                     </ul>
                 </div>
             </div>
@@ -1017,7 +1017,7 @@
                 const isClickable = lesson.file !== null;
                 const linkClass = isClickable ? 'lesson-link' : 'lesson-link coming-soon';
                 const linkContent = isClickable ? `Try this lesson →` : `Coming soon`;
-                const linkTarget = isClickable ? `href="${lesson.file}"` : '';
+                const linkTarget = isClickable ? `href="/webapp/${lesson.file}"` : '';
                 html += `
                     <div class="track-card" ${!isClickable ? 'style="opacity:0.5;"' : ''}>
                         <span class="tag">Lesson ${num}</span>
@@ -1097,7 +1097,7 @@
                     const done = !!progress[lesson.id];
                     if (done) earned++;
                     const isClickable = lesson.file !== null;
-                    const linkTarget = isClickable ? `href="${lesson.file}"` : '';
+                    const linkTarget = isClickable ? `href="/webapp/${lesson.file}"` : '';
                     const linkText = isClickable ? (done ? 'Review →' : 'Start →') : 'Coming soon';
                     const linkClass = isClickable ? 'btn btn-outline-dark btn-sm' : 'btn btn-outline-dark btn-sm disabled';
                     html += `
