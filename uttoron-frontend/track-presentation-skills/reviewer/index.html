@@ -54,41 +54,69 @@
             </div>
         </section>
         <div class="wrap">
-            <!-- Cohort-wide weakness-pattern aggregation (PRD §5, Should-have) -->
-            <div class="ledger insights-panel" style="margin-bottom:20px;">
-                <div class="ledger-title">📈 Cohort insights — last <span id="cohortDaysLabel">30</span> days</div>
-                <div id="cohortInsights" style="margin-top:8px;">Loading…</div>
+            <!-- Track tabs (typing feedback spec §7) — one reviewer login,
+                 both tracks' queues from one screen. -->
+            <div class="queue-tabs" style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.1);">
+                <button class="btn btn-secondary btn-sm queue-tab active" data-tab="presentation" style="border-radius:8px 8px 0 0;">🖥️ Presentation Skills</button>
+                <button class="btn btn-secondary btn-sm queue-tab" data-tab="typing" style="border-radius:8px 8px 0 0;">⌨️ Typing</button>
             </div>
 
-            <div class="queue-filters" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;align-items:flex-end;">
-                <div class="field" style="margin:0;">
-                    <label for="filterStatus">Status</label>
-                    <select id="filterStatus">
-                        <option value="pending">Pending</option>
-                        <option value="reviewed">Reviewed</option>
-                        <option value="all">All</option>
-                    </select>
+            <div id="presentationPanel">
+                <!-- Cohort-wide weakness-pattern aggregation (PRD §5, Should-have) -->
+                <div class="ledger insights-panel" style="margin-bottom:20px;">
+                    <div class="ledger-title">📈 Cohort insights — last <span id="cohortDaysLabel">30</span> days</div>
+                    <div id="cohortInsights" style="margin-top:8px;">Loading…</div>
                 </div>
-                <div class="field" style="margin:0;">
-                    <label for="filterLesson">Touchpoint</label>
-                    <select id="filterLesson">
-                        <option value="">All checkpoints</option>
-                        <option value="lesson_9_checkpoint">Lesson 9 · Structural</option>
-                        <option value="lesson_12_delivery">Lesson 12 · Delivery</option>
-                        <option value="lesson_13_capstone">Lesson 13 · Capstone</option>
-                    </select>
+
+                <div class="queue-filters" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;align-items:flex-end;">
+                    <div class="field" style="margin:0;">
+                        <label for="filterStatus">Status</label>
+                        <select id="filterStatus">
+                            <option value="pending">Pending</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin:0;">
+                        <label for="filterLesson">Touchpoint</label>
+                        <select id="filterLesson">
+                            <option value="">All checkpoints</option>
+                            <option value="lesson_9_checkpoint">Lesson 9 · Structural</option>
+                            <option value="lesson_12_delivery">Lesson 12 · Delivery</option>
+                            <option value="lesson_13_capstone">Lesson 13 · Capstone</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin:0;flex:1;min-width:160px;">
+                        <label for="filterStudent">Student name contains</label>
+                        <input id="filterStudent" type="text" placeholder="e.g. Tanvir" />
+                    </div>
                 </div>
-                <div class="field" style="margin:0;flex:1;min-width:160px;">
-                    <label for="filterStudent">Student name contains</label>
-                    <input id="filterStudent" type="text" placeholder="e.g. Tanvir" />
-                </div>
+
+                <!-- Per-student growth portfolio + weakness patterns — shown once the
+                     name filter resolves to a single known student (PRD §5, Should-have) -->
+                <div id="studentInsights"></div>
+
+                <div id="queueList"></div>
             </div>
 
-            <!-- Per-student growth portfolio + weakness patterns — shown once the
-                 name filter resolves to a single known student (PRD §5, Should-have) -->
-            <div id="studentInsights"></div>
+            <div id="typingPanel" class="hidden">
+                <div class="queue-filters" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;align-items:flex-end;">
+                    <div class="field" style="margin:0;">
+                        <label for="typingFilterStatus">Status</label>
+                        <select id="typingFilterStatus">
+                            <option value="pending">Pending</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                    <div class="field" style="margin:0;flex:1;min-width:160px;">
+                        <label for="typingFilterStudent">Student name contains</label>
+                        <input id="typingFilterStudent" type="text" placeholder="e.g. Tanvir" />
+                    </div>
+                </div>
 
-            <div id="queueList"></div>
+                <div id="typingQueueList"></div>
+            </div>
         </div>
     </div>
 
@@ -99,9 +127,11 @@
         </div>
     </footer>
 
-    <script src="../shared/apiConfig.js"></script>
+    <script src="../../shared/apiConfig.js"></script>
+    <script src="../../shared/backendBridge.js"></script>
     <script src="../engines/lessonShell.js"></script>
     <script src="../engines/submissionStore.js"></script>
+    <script src="../../webapp/typingResultStore.js"></script>
     <script src="reviewer.js"></script>
 </body>
 </html>

@@ -39,7 +39,7 @@ export const tags = pgTable('tags', {
   id: serial('id').primaryKey(),
   slug: text('slug').notNull().unique(), // stable id used by the frontend, e.g. 'structure-clear'
   label: text('label').notNull(),
-  rubricCategory: text('rubric_category').notNull(), // structure | visual_design | restraint | pacing | vocal_delivery | time_management
+  rubricCategory: text('rubric_category').notNull(), // structure | visual_design | restraint | pacing | vocal_delivery | time_management (presentation track) | accuracy | typing_pacing | progress (typing track — 'typing_pacing' is namespaced to avoid colliding with the presentation track's 'pacing', see seed.ts)
   sentiment: text('sentiment').notNull(), // positive | constructive
 });
 
@@ -86,4 +86,32 @@ export const submissionMetrics = pgTable('submission_metrics', {
   slideCount: integer('slide_count'),
   parseStatus: text('parse_status').notNull(), // 'success' | 'failed'
   computedAt: timestamp('computed_at').defaultNow().notNull(),
+});
+
+// ============================================================
+// Typing track — feedback checkpoints (mirrors the Presentation
+// Skills track's submissions/feedback pair, sized for numeric
+// results instead of files).
+// ============================================================
+
+export const typingResults = pgTable('typing_results', {
+  id: serial('id').primaryKey(),
+  studentId: integer('student_id').references(() => users.id).notNull(),
+  checkpointId: text('checkpoint_id').notNull(), // 'typing_checkpoint' — dated attempts are distinguished by createdAt, not by separate ids (see typing.ts)
+  wpm: doublePrecision('wpm').notNull(),
+  accuracy: doublePrecision('accuracy').notNull(), // 0-100
+  errorCount: integer('error_count').notNull(),
+  durationSeconds: doublePrecision('duration_seconds').notNull(),
+  textLength: integer('text_length').notNull(), // characters in the target phrase(s) — needed to sanity-check wpm
+  status: text('status').notNull().default('pending'), // pending | reviewed
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const typingFeedback = pgTable('typing_feedback', {
+  id: serial('id').primaryKey(),
+  resultId: integer('result_id').references(() => typingResults.id).notNull(),
+  reviewerId: integer('reviewer_id').references(() => users.id).notNull(),
+  tagIds: jsonb('tag_ids').notNull(), // array of tags.id — same `tags` table the presentation track uses
+  comment: text('comment'), // capped to ~200 chars at the application layer, same as feedback.comment
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
