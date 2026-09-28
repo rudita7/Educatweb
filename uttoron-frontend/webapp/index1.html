@@ -985,6 +985,10 @@
 
         const $ = (sel) => document.querySelector(sel);
         const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+        // Reviewer-written free text (feedback comments) must never go into
+        // innerHTML unescaped — same pattern already used by passport.js and
+        // reviewer.js for this exact field.
+        function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
         // ============================================================
         //  TOAST
@@ -1162,7 +1166,7 @@
                     <div style="font-size:0.72rem;color:var(--ink-faint);margin-top:2px;">${when}</div>
                     ${fb ? `
                         <div style="margin-top:8px;">${tags.map(feedbackTagChip).join('')}</div>
-                        ${fb.comment ? `<div style="margin-top:8px;font-size:0.85rem;font-style:italic;color:var(--ink-dim);border-left:2px solid var(--marigold);padding-left:10px;">"${fb.comment}"</div>` : ''}
+                        ${fb.comment ? `<div style="margin-top:8px;font-size:0.85rem;font-style:italic;color:var(--ink-dim);border-left:2px solid var(--marigold);padding-left:10px;">"${escapeHtml(fb.comment)}"</div>` : ''}
                     ` : ''}
                 </div>
             `;
