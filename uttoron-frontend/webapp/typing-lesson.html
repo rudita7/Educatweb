@@ -789,21 +789,217 @@
             "use strict";
 
             // ============================================================
-            //  TYPING LESSON DATA
+            //  TYPING SESSIONS — Month 1 of both grade bands in the
+            //  Uttoron Vocational Skills Curriculum. The codebase has no
+            //  `grade` field anywhere (see the build-log spec), so which
+            //  band a student sees is a purely client-side choice (§ grade
+            //  band picker, below) — checkpointIds are just namespaced
+            //  'g69'/'g45' so a reviewer can tell them apart in the queue.
+            //
+            //  Grade 6-9 — "Typing Fluency & File Management": Sessions 4
+            //  and 6 are file-management-only in the curriculum (nested
+            //  folders, renaming/searching real files) — not reproduced
+            //  here as a typing exercise; that work belongs on the
+            //  student's actual OS, not a keystroke simulator.
+            //
+            //  Grade 4-5 — "Keyboarding & Computer Basics": Session 1 is
+            //  hardware/power-on (no typed text at all), Session 4 is
+            //  file/folder management, and Session 6 is text formatting
+            //  (bold/italic/font size) — none of the three involve a
+            //  measured typing check, so none are reproduced here either.
             // ============================================================
-            const LESSON_DATA = {
-                'typing': {
-                    title: 'Keyboard & Typing',
-                    tag: 'Typing Fundamentals',
-                    type: 'typing',
+            const SESSIONS_G69 = [
+                {
+                    id: 'g69-s1', number: 1,
+                    checkpointId: 'typing_g69_s1_baseline',
+                    title: 'Typing Baseline & Touch-Typing Refresher',
+                    objective: 'Set your starting speed/accuracy baseline and refresh home-row finger placement.',
+                    curriculumNote: 'This is the number you’ll try to beat by Session 8.',
+                    isBaseline: true,
                     phrases: [
                         "The quick brown fox jumps over the lazy dog.",
-                        "Practice makes perfect.",
-                        "Type accurately, not just fast.",
-                        "Good typing skills are essential for office work."
+                        "A good typist looks at the screen, not the keyboard.",
+                        "Practice a little every day, and speed follows accuracy.",
+                        "Home row is where your fingers rest: a s d f and j k l semicolon."
+                    ]
+                },
+                {
+                    id: 'g69-s2', number: 2,
+                    checkpointId: 'typing_g69_s2_full_keyboard',
+                    title: 'Full Keyboard Fluency Drills',
+                    objective: 'Practice every row of the keyboard, including numbers and basic punctuation.',
+                    curriculumNote: 'Today covers the top row, the bottom row, and the shift key for capitals.',
+                    phrases: [
+                        "Zebras quietly examine bright yellow flowers.",
+                        "Did you count 1, 2, 3, 4, and 5 apples in the basket?",
+                        "Price: $12.50, quantity: 3, total: $37.50 - check the math!",
+                        "Wow! Really? That's a big surprise, isn't it?"
+                    ]
+                },
+                {
+                    id: 'g69-s3', number: 3,
+                    checkpointId: 'typing_g69_s3_speed',
+                    title: 'Speed Building',
+                    objective: 'Increase your speed while holding at least 90% accuracy across a full sentence, not just isolated words.',
+                    curriculumNote: 'Accuracy comes first — speed without accuracy isn’t useful.',
+                    phrases: [
+                        "Typing quickly only helps if the words on the screen are the words you meant to write.",
+                        "Most people type faster once they stop looking down at their hands and trust their fingers instead.",
+                        "A steady, even rhythm almost always beats a fast burst followed by a pile of mistakes to fix.",
+                        "Read the whole sentence first, then type it in one smooth pass without stopping to check each letter."
+                    ]
+                },
+                {
+                    id: 'g69-s5', number: 5,
+                    checkpointId: 'typing_g69_s5_speed_naming',
+                    title: 'Speed Building + File Naming Conventions',
+                    objective: 'Keep building speed, and get comfortable typing the numbers, dates, and underscores used in clear file names.',
+                    curriculumNote: 'The file-renaming half of this session happens on your actual computer, not on this page.',
+                    phrases: [
+                        "budget_report_2026_09_15_final.xlsx",
+                        "photo_dhaka_trip_2026_03_02.jpg",
+                        "Rename it clearly: subject_description_date, all lowercase, no spaces.",
+                        "invoice_client_047_paid_2026_01_10.pdf"
+                    ]
+                },
+                {
+                    id: 'g69-s7', number: 7,
+                    checkpointId: 'typing_g69_s7_real_world',
+                    title: 'Speed Building: Real-World Text',
+                    objective: 'Type a real-world example — a short email — at increasing speed and accuracy.',
+                    curriculumNote: 'Freelance work, job applications, and everyday schoolwork all lean on exactly this skill.',
+                    phrases: [
+                        "Dear Ms. Rahman, thank you for your message.",
+                        "I have attached the report you requested for review.",
+                        "Please let me know if any changes are needed before Friday.",
+                        "Best regards, and thank you again for your time."
+                    ]
+                },
+                {
+                    id: 'g69-s8', number: 8,
+                    checkpointId: 'typing_g69_s8_final',
+                    title: 'Month 1 Review: Final Typing Test',
+                    objective: 'One last timed test — see how far you’ve come since your Session 1 baseline.',
+                    curriculumNote: 'The file-management practical half of this session happens on your actual computer, not on this page.',
+                    isFinal: true,
+                    phrases: [
+                        "This is your final check for Month 1 — type at a comfortable, steady pace.",
+                        "Compare this result to the very first test you took back in Session 1.",
+                        "Speed matters, but accuracy is what makes typing actually useful at a job.",
+                        "Great work finishing your first month of the typing track!"
                     ]
                 }
+            ];
+            const SESSIONS_G45 = [
+                {
+                    id: 'g45-s2', number: 2,
+                    checkpointId: 'typing_g45_s2_baseline',
+                    title: 'Mouse Control & Home Row Introduction',
+                    objective: 'Get your fingers comfortably placed on the home row and press each key without looking down.',
+                    curriculumNote: 'This is your starting point — you’ll try to beat it by Session 8. (Mouse-click practice happens separately, not on this page.)',
+                    isBaseline: true,
+                    phrases: [
+                        "asdf jkl;",
+                        "dad sad fall",
+                        "a s d f j k l ;",
+                        "ask a lad"
+                    ]
+                },
+                {
+                    id: 'g45-s3', number: 3,
+                    checkpointId: 'typing_g45_s3_home_row',
+                    title: 'Home Row Typing Practice',
+                    objective: 'Type simple home-row words with correct finger placement, at a comfortable pace.',
+                    curriculumNote: 'Look at the screen, not your hands.',
+                    phrases: [
+                        "dad sad fall",
+                        "flask jazz dad",
+                        "sad flask fall",
+                        "jazz sad dad"
+                    ]
+                },
+                {
+                    id: 'g45-s5', number: 5,
+                    checkpointId: 'typing_g45_s5_beyond_home_row',
+                    title: 'Expanding Beyond Home Row',
+                    objective: 'Type full words and a short sentence using the keys just above and below home row.',
+                    curriculumNote: 'New reaches today: Q W E R T on top, Z X C V B on the bottom.',
+                    phrases: [
+                        "cat tree desk",
+                        "I like my cat.",
+                        "The tree is tall.",
+                        "My desk is clean."
+                    ]
+                },
+                {
+                    id: 'g45-s7', number: 7,
+                    checkpointId: 'typing_g45_s7_paragraph',
+                    title: 'Typing + Formatting Combined Practice',
+                    objective: 'Type a short paragraph independently, combining everything you’ve learned this month.',
+                    curriculumNote: 'The bold/italic formatting half of this session happens in your word processor, not on this page.',
+                    phrases: [
+                        "My family is very important to me.",
+                        "We like to eat dinner together every night.",
+                        "My favorite game is fun to play with friends.",
+                        "I feel happy when I am with the people I love."
+                    ]
+                },
+                {
+                    id: 'g45-s8', number: 8,
+                    checkpointId: 'typing_g45_s8_final',
+                    title: 'Month 1 Review & Informal Assessment',
+                    objective: 'One last timed check — see how far you’ve come since Session 2.',
+                    curriculumNote: 'The computer-basics quiz and file/folder task happen separately, not on this page.',
+                    isFinal: true,
+                    phrases: [
+                        "This is your last typing check for the month.",
+                        "Type carefully and try your best.",
+                        "You have learned so much since Session 2!",
+                        "Great job finishing Month 1!"
+                    ]
+                }
+            ];
+            const GRADE_BANDS = {
+                g69: { id: 'g69', label: 'Grade 6-9', subtitle: 'Typing Fluency & File Management', sessions: SESSIONS_G69 },
+                g45: { id: 'g45', label: 'Grade 4-5', subtitle: 'Keyboarding & Computer Basics', sessions: SESSIONS_G45 }
             };
+            const SESSIONS_BY_ID = {};
+            SESSIONS_G69.concat(SESSIONS_G45).forEach(s => { SESSIONS_BY_ID[s.id] = s; });
+
+            // ============================================================
+            //  GRADE BAND SELECTION — persisted per passport number, same
+            //  pattern as session progress below. No session yet (or no
+            //  saved choice) means "ask."
+            // ============================================================
+            function getSavedGradeBand() {
+                const session = getStorage('uttoron:session');
+                if (!session || !session.num) return null;
+                return getStorage('typingGradeBand:' + session.num);
+            }
+            function saveGradeBand(bandId) {
+                const session = getStorage('uttoron:session');
+                if (!session || !session.num) return;
+                setStorage('typingGradeBand:' + session.num, bandId);
+            }
+
+            // ============================================================
+            //  PER-SESSION PROGRESS (which sessions this student has
+            //  completed at least once) — separate from progress.typing,
+            //  which stays a single "any typing done" stamp for the main
+            //  dashboard grid and is left untouched.
+            // ============================================================
+            function getSessionProgress() {
+                const session = getStorage('uttoron:session');
+                if (!session || !session.num) return {};
+                return getStorage('typingSessions:' + session.num) || {};
+            }
+            function markSessionCompleted(sessionId) {
+                const session = getStorage('uttoron:session');
+                if (!session || !session.num) return;
+                const prog = getStorage('typingSessions:' + session.num) || {};
+                prog[sessionId] = true;
+                setStorage('typingSessions:' + session.num, prog);
+            }
 
             // ============================================================
             //  TYPING FEEDBACK INSTRUMENTATION (typing feedback spec §5)
@@ -871,26 +1067,25 @@
             // "lesson complete" stamp (saveProgress(), just below) — the
             // student's own progress view is unaffected either way, a
             // reviewer just won't see this particular attempt in their queue.
-            async function submitCheckpointToBackend() {
-                if (checkpointSubmitted || checkpointResults.length === 0) return;
+            async function submitCheckpointToBackend(checkpointId) {
+                if (checkpointSubmitted || checkpointResults.length === 0) return null;
                 checkpointSubmitted = true;
 
                 const session = getStorage('uttoron:session');
-                if (!session || !session.num) return; // saveProgress() already prompted to sign in
+                if (!session || !session.num) return null; // saveProgress() already prompted to sign in
                 const localUser = getStorage('user:' + session.num);
-                if (!localUser) return;
+                if (!localUser) return null;
 
                 try {
                     const Storage = { get: getStorage, set: setStorage };
                     const backendUid = await TypingStore.identify({ num: session.num, nickname: localUser.nickname }, Storage);
-                    if (!backendUid) return;
-                    await TypingStore.submitTypingResult({
-                        backendUid,
-                        checkpointId: 'typing_checkpoint',
-                        ...combineCheckpointResults(checkpointResults)
-                    });
+                    if (!backendUid) return null;
+                    const combined = combineCheckpointResults(checkpointResults);
+                    await TypingStore.submitTypingResult({ backendUid, checkpointId, ...combined });
+                    return { backendUid, combined };
                 } catch (err) {
                     console.error('Could not submit typing checkpoint result:', err);
+                    return null;
                 }
             }
 
@@ -947,7 +1142,8 @@
             // ============================================================
             //  STATE
             // ============================================================
-            let currentLessonId = 'typing';
+            let currentGradeBand = null; // null = show the grade-band picker
+            let currentSessionId = null; // null = show the session picker
             let currentItemIndex = 0;
             let lessonCompleted = false;
 
@@ -1123,11 +1319,103 @@
             }
 
             // ============================================================
+            //  GRADE BAND PICKER — shown before the session picker on a
+            //  student's first visit (or after "Switch grade"). Which band
+            //  applies is a judgment call the student/teacher makes, same
+            //  as the rest of the site — nothing here reads a real grade
+            //  field, because there isn't one.
+            // ============================================================
+            function renderGradeBandPicker() {
+                const shell = $('#lessonShell');
+                const cardsHtml = Object.values(GRADE_BANDS).map(band => `
+                    <div class="scenario-card" style="margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+                            <div>
+                                <span class="tag">${band.label}</span>
+                                <h3 style="margin:4px 0 2px;font-size:1.05rem;">${band.subtitle}</h3>
+                                <p style="font-size:0.78rem;color:var(--ink-faint);">${band.sessions.length} sessions</p>
+                            </div>
+                            <button class="btn btn-primary btn-sm" data-pick-band="${band.id}" style="flex-shrink:0;">Choose →</button>
+                        </div>
+                    </div>
+                `).join('');
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">Keyboard & Typing</span>
+                            <h2>Which class are you in?</h2>
+                        </div>
+                    </div>
+                    <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">Month 1's typing sessions are different for each grade band — pick yours to see the right lessons.</p>
+                    ${cardsHtml}
+                `;
+                $$('[data-pick-band]').forEach(btn => btn.addEventListener('click', function() {
+                    currentGradeBand = this.dataset.pickBand;
+                    saveGradeBand(currentGradeBand);
+                    currentSessionId = null;
+                    renderTypingLesson();
+                }));
+            }
+
+            // ============================================================
+            //  SESSION PICKER — shown after a grade band is chosen; lets a
+            //  student choose which curriculum session to run (or resume
+            //  where they left off).
+            // ============================================================
+            function renderSessionPicker() {
+                const shell = $('#lessonShell');
+                const band = GRADE_BANDS[currentGradeBand];
+                const done = getSessionProgress();
+                const cardsHtml = band.sessions.map(s => {
+                    const isDone = !!done[s.id];
+                    return `
+                        <div class="scenario-card" style="margin-bottom:12px;${isDone ? 'opacity:0.75;' : ''}">
+                            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+                                <div>
+                                    <span class="tag">Session ${s.number}${s.isBaseline ? ' · Baseline' : ''}${s.isFinal ? ' · Final' : ''}</span>
+                                    <h3 style="margin:4px 0 6px;font-size:1.05rem;">${s.title}</h3>
+                                    <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:2px;">${s.objective}</p>
+                                    <p style="font-size:0.76rem;color:var(--ink-faint);">${s.curriculumNote}</p>
+                                </div>
+                                <button class="btn ${isDone ? 'btn-secondary' : 'btn-primary'} btn-sm" data-start-session="${s.id}" style="flex-shrink:0;">${isDone ? 'Redo' : 'Start'} →</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">${band.subtitle}</span>
+                            <h2>${band.label} · Month 1</h2>
+                            <button class="btn btn-secondary btn-sm" id="switchGradeBtn" style="margin-top:8px;">Switch grade</button>
+                        </div>
+                    </div>
+                    <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">${band.sessions.length} sessions, in curriculum order. Each one ends with a short timed check that goes to your reviewer.</p>
+                    ${cardsHtml}
+                `;
+                $$('[data-start-session]').forEach(btn => btn.addEventListener('click', function() {
+                    currentSessionId = this.dataset.startSession;
+                    currentItemIndex = 0;
+                    lessonCompleted = false;
+                    checkpointResults = [];
+                    checkpointSubmitted = false;
+                    renderTypingLesson();
+                }));
+                const switchBtn = $('#switchGradeBtn');
+                if (switchBtn) switchBtn.addEventListener('click', function() {
+                    currentGradeBand = null;
+                    renderTypingLesson();
+                });
+            }
+
+            // ============================================================
             //  TYPING LESSON RENDERER
             // ============================================================
             function renderTypingLesson() {
-                const data = LESSON_DATA[currentLessonId];
-                if (!data) return;
+                if (!currentGradeBand) { renderGradeBandPicker(); return; }
+                if (!currentSessionId) { renderSessionPicker(); return; }
+                const data = SESSIONS_BY_ID[currentSessionId];
+                if (!data) { renderSessionPicker(); return; }
                 const phrases = data.phrases;
                 const total = phrases.length;
                 const shell = $('#lessonShell');
@@ -1138,10 +1426,17 @@
                         lessonCompleted = true;
                         // Save progress
                         saveProgress();
-                        // Submit the combined checkpoint result to the backend (Phase 2)
-                        submitCheckpointToBackend();
+                        markSessionCompleted(data.id);
+                        // Submit the combined checkpoint result to the backend (Phase 2),
+                        // then render the completion screen once that settles (it never
+                        // blocks the local stamp above, but Session 8's baseline
+                        // comparison needs the backend round trip to finish first).
+                        submitCheckpointToBackend(data.checkpointId).then(submitOutcome => {
+                            showCompletionScreen(data, submitOutcome);
+                        });
+                        return;
                     }
-                    showCompletionScreen();
+                    showCompletionScreen(data, null);
                     return;
                 }
 
@@ -1160,8 +1455,9 @@
                 shell.innerHTML = `
                     <div class="lesson-top">
                         <div>
-                            <span class="tag">${data.tag || 'Typing'}</span>
-                            <h2>${data.title}</h2>
+                            <span class="tag">Session ${data.number} · ${data.title}</span>
+                            <h2>${data.objective}</h2>
+                            <button class="btn btn-secondary btn-sm" id="backToSessionsBtn" style="margin-top:8px;">← All sessions</button>
                         </div>
                     </div>
                     ${dotsHtml}
@@ -1453,28 +1749,86 @@
                     currentItemIndex++;
                     renderTypingLesson();
                 });
+
+                const backBtn = $('#backToSessionsBtn');
+                if (backBtn) backBtn.addEventListener('click', function() {
+                    currentSessionId = null;
+                    renderSessionPicker();
+                });
             }
 
             // ============================================================
             //  COMPLETION
             // ============================================================
-            function showCompletionScreen() {
+            async function showCompletionScreen(session, submitOutcome) {
                 const shell = $('#lessonShell');
+                const bandSessions = GRADE_BANDS[currentGradeBand].sessions;
+                const idx = bandSessions.findIndex(s => s.id === session.id);
+                const next = bandSessions[idx + 1] || null;
+                const baselineSession = bandSessions.find(s => s.isBaseline);
+
+                // Final session only: pull the student's own baseline result
+                // for this grade band (via TypingStore.listMine — no reviewer
+                // tag required, unlike getComparisons) and show the delta
+                // right here. This is the
+                // curriculum's own Session 8 assessment instruction ("compare
+                // to your Session 1 baseline") surfaced directly on the page.
+                let comparisonHtml = '';
+                if (session.isFinal && submitOutcome && submitOutcome.backendUid && baselineSession) {
+                    try {
+                        const baselineRows = await TypingStore.listMine(submitOutcome.backendUid, baselineSession.checkpointId);
+                        if (baselineRows && baselineRows.length > 0) {
+                            const baseline = baselineRows[baselineRows.length - 1].result; // oldest baseline attempt
+                            const wpmDelta = Math.round((submitOutcome.combined.wpm - baseline.wpm) * 10) / 10;
+                            const accDelta = Math.round((submitOutcome.combined.accuracy - baseline.accuracy) * 10) / 10;
+                            const arrow = (d) => d > 0 ? '↑' : d < 0 ? '↓' : '→';
+                            comparisonHtml = `
+                                <div class="scenario-card" style="text-align:left;margin:18px 0;">
+                                    <div class="fp-title" style="text-align:left;margin-bottom:10px;">Session ${baselineSession.number} baseline → today</div>
+                                    <div style="display:flex;gap:24px;flex-wrap:wrap;font-family:var(--font-mono);">
+                                        <div><div style="font-size:0.7rem;color:var(--ink-faint);">WPM</div><div style="font-size:1.3rem;">${baseline.wpm} → ${submitOutcome.combined.wpm} <span style="color:${wpmDelta >= 0 ? 'var(--teal)' : 'var(--coral-soft)'};font-size:0.9rem;">(${arrow(wpmDelta)}${Math.abs(wpmDelta)})</span></div></div>
+                                        <div><div style="font-size:0.7rem;color:var(--ink-faint);">Accuracy</div><div style="font-size:1.3rem;">${baseline.accuracy}% → ${submitOutcome.combined.accuracy}% <span style="color:${accDelta >= 0 ? 'var(--teal)' : 'var(--coral-soft)'};font-size:0.9rem;">(${arrow(accDelta)}${Math.abs(accDelta)})</span></div></div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    } catch (err) {
+                        console.error('Could not load baseline comparison:', err);
+                    }
+                }
+
                 shell.innerHTML = `
                     <div class="lesson-complete">
                         <div class="big-stamp">
                             <span class="stamp-icon">⌨️</span>
                             ✓
                         </div>
-                        <h2>🎯 Typing lesson complete!</h2>
-                        <p style="color:var(--ink-dim);">You've practiced keyboard accuracy and finger placement!</p>
-                        <p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Stamp saved to your Passport!</p>
+                        <h2>🎯 Session ${session.number} complete!</h2>
+                        <p style="color:var(--ink-dim);">${session.title}</p>
+                        <p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>
+                        ${comparisonHtml}
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
-                            <a href="index1.html" class="btn btn-primary">Back to Home</a>
-                            <button class="btn btn-secondary" id="resetLessonBtn">🔄 Start Over</button>
+                            ${next ? `<button class="btn btn-primary" id="nextSessionBtn">Session ${next.number}: ${next.title} →</button>` : ''}
+                            <button class="btn btn-secondary" id="allSessionsBtn">All sessions</button>
+                            <button class="btn btn-secondary" id="resetLessonBtn">🔄 Redo this session</button>
+                            <a href="index1.html" class="btn btn-secondary">Back to Home</a>
                         </div>
                     </div>
                 `;
+                if (next) {
+                    document.getElementById('nextSessionBtn').addEventListener('click', function() {
+                        currentSessionId = next.id;
+                        currentItemIndex = 0;
+                        lessonCompleted = false;
+                        checkpointResults = [];
+                        checkpointSubmitted = false;
+                        renderTypingLesson();
+                    });
+                }
+                document.getElementById('allSessionsBtn').addEventListener('click', function() {
+                    currentSessionId = null;
+                    renderSessionPicker();
+                });
                 document.getElementById('resetLessonBtn').addEventListener('click', function() {
                     currentItemIndex = 0;
                     lessonCompleted = false;
@@ -1506,6 +1860,8 @@
             // ============================================================
             function init() {
                 checkProgress();
+                const saved = getSavedGradeBand();
+                if (saved && GRADE_BANDS[saved]) currentGradeBand = saved;
                 renderTypingLesson();
             }
 
