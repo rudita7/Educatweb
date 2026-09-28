@@ -17,10 +17,39 @@ const router = Router();
 // wpm/accuracy/errorCount are already final the moment POST /results lands.
 // ============================================================
 
-// Spec §6, option (b): the current typing track is a single lesson, so
-// there's only one checkpointId. Redoing the lesson later produces a new
-// dated row rather than a new checkpoint name — see typingProgressTracking.ts.
-const VALID_CHECKPOINT_IDS = ['typing_checkpoint'] as const;
+// The typing track now covers both grade bands from the curriculum's Month
+// 1, each a real multi-session sequence with one checkpointId per session
+// (mirroring how the presentation track names
+// lesson_9_checkpoint/lesson_12_delivery/lesson_13_capstone). Supersedes the
+// original spec §6 stopgap ('typing_checkpoint', a single ID for a single
+// lesson) now that the multi-session tracks it anticipated actually exist.
+// A student can still redo any one session; per spec §6 option (b), a redo
+// is a new dated row under the SAME session's checkpointId, not a new id.
+//
+// Grade 6-9, Month 1: "Typing Fluency & File Management" — curriculum
+// Sessions 1, 2, 3, 5, 7, 8 (Sessions 4 and 6 are file-management-only,
+// no typing checkpoint). 'g69' prefix.
+//
+// Grade 4-5, Month 1: "Keyboarding & Computer Basics" — curriculum
+// Sessions 2, 3, 5, 7, 8 (Session 1 is hardware/power-on only, Session 4
+// is file/folder management, Session 6 is text formatting — none involve
+// a measured typing check). 'g45' prefix. The codebase has no `grade`
+// field anywhere (see the tagging spec's own note on this) — these are
+// two parallel checkpointId families, not a schema change; which one a
+// student sees is a purely client-side choice on typing-lesson.html.
+const VALID_CHECKPOINT_IDS = [
+  'typing_g69_s1_baseline',
+  'typing_g69_s2_full_keyboard',
+  'typing_g69_s3_speed',
+  'typing_g69_s5_speed_naming',
+  'typing_g69_s7_real_world',
+  'typing_g69_s8_final',
+  'typing_g45_s2_baseline',
+  'typing_g45_s3_home_row',
+  'typing_g45_s5_beyond_home_row',
+  'typing_g45_s7_paragraph',
+  'typing_g45_s8_final',
+] as const;
 
 // Spec §8 tag taxonomy, namespaced to avoid colliding with the
 // presentation track's 'pacing' category (see seed.ts for why).
