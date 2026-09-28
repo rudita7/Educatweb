@@ -7,24 +7,16 @@
    (createSubmission / listMine / listQueue / submitFeedback), so this swap
    stayed contained to one file, as designed from the start.
 
-   ACCOUNT BRIDGING: every track's account system (nickname + 4-digit PIN,
-   see webapp/index1.html) is 100% local, site-wide — not just this track.
-   Rather than migrating every track's accounts to the backend, this file
-   quietly registers/logs in a matching backend account the first time a
-   student hits a checkpoint on a given device (identify()). The bridged
-   username is NOT the raw local passport number alone: two different
-   devices can independently generate the same 4-digit number (it's only
-   locally unique), but the backend's `users.username` has a real, shared
-   uniqueness constraint. Appending the nickname plus a random per-device
-   suffix keeps bridged accounts collision-free while staying human-readable
-   in the reviewer queue (nickname + passport number, salt stripped for
-   display) — see reviewer.js. */
+   Account bridging (identify/ensureBackendAccount), sign-in (login), and
+   the generic fetch helpers (apiFetch/fetchWithRetry) moved out to
+   shared/backendBridge.js (typing feedback spec §6) — they were never
+   presentation-specific, and the typing track needed the exact same
+   bridging. This file now delegates to window.Backend for all of that and
+   keeps only what's actually presentation-specific: the tag taxonomy,
+   file/recording validation, and the submission/feedback/queue calls.
+   Load shared/apiConfig.js + shared/backendBridge.js before this file. */
 (function (global) {
     "use strict";
-
-    // Point this at the deployed backend once it's hosted (Phase 2). Falls
-    // back to localhost for local dev/testing.
-    const API_BASE = global.PS_API_BASE || 'http://localhost:3000';
 
     // ---------------- Tag taxonomy (spec §7 — must match the backend seed) ----------------
     const TAGS = [
@@ -74,99 +66,8 @@
     }
     function fileObjectURL(blob) { return blob ? URL.createObjectURL(blob) : null; }
 
-    // ---------------- Backend account bridging ----------------
-    function uidKey(num) { return 'ps:backend-uid:' + num; }
-    function usernameKey(num) { return 'ps:backend-username:' + num; }
-
-    async function ensureBackendAccount(num, nickname, pin) {
-        const cached = localStorage.getItem(uidKey(num));
-        if (cached) return Number(cached);
-
-        let username = localStorage.getItem(usernameKey(num));
-        if (!username) {
-            username = nickname + '#' + num + '.' + Math.random().toString(36).slice(2, 8);
-            localStorage.setItem(usernameKey(num), username);
-        }
-
-        let res = await fetch(API_BASE + '/api/auth/register', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, pin })
-        });
-        let data = await res.json().catch(() => ({}));
-        if (res.status === 400 && /already exists/i.test(data.error || '')) {
-            // Same device, second visit after a cache clear — log in instead.
-            res = await fetch(API_BASE + '/api/auth/login', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, pin })
-            });
-            data = await res.json().catch(() => ({}));
-        }
-        if (!res.ok) throw new Error(data.error || 'Could not connect your passport to the review system.');
-        localStorage.setItem(uidKey(num), String(data.user.id));
-        return data.user.id;
-    }
-
-    // Call before any submission action. `Storage`/`session` come straight
-    // from the lesson shell — Storage.get('user:'+num) holds the local
-    // passport record (including its plaintext PIN, never sent anywhere
-    // except this one bridging call).
-    async function identify(session, Storage) {
-        if (!session) return null;
-        const localUser = Storage.get('user:' + session.num);
-        if (!localUser) return null;
-        return ensureBackendAccount(session.num, session.nickname, localUser.pin);
-    }
-
-    async function login(username, pin) {
-        const res = await fetch(API_BASE + '/api/auth/login', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, pin })
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || 'Invalid username or PIN.');
-        return data.user; // { id, username, role }
-    }
-
-    // ---------------- API helpers ----------------
-    async function apiFetch(path, opts) {
-        let res;
-        try {
-            res = await fetch(API_BASE + path, opts);
-        } catch (networkErr) {
-            const err = new Error('Network error — check your connection.');
-            err.isNetworkError = true;
-            throw err;
-        }
-        let data = null;
-        try { data = await res.json(); } catch (e) { /* empty body, fine */ }
-        if (!res.ok) {
-            const err = new Error((data && data.error) || ('Request failed (' + res.status + ')'));
-            err.status = res.status;
-            throw err;
-        }
-        return data;
-    }
-
-    // Low-bandwidth submission (PRD §7): a dropped connection on a big
-    // upload shouldn't force the student to start over from nothing.
-    // Retries network failures / 5xx with backoff; a real validation error
-    // (4xx — wrong file type, missing field) fails immediately since
-    // retrying can't fix that.
-    async function fetchWithRetry(path, opts, { retries = 3, baseDelayMs = 1500, onRetry } = {}) {
-        let lastErr;
-        for (let attempt = 0; attempt <= retries; attempt++) {
-            try {
-                return await apiFetch(path, opts);
-            } catch (err) {
-                lastErr = err;
-                const retryable = err.isNetworkError || (err.status && err.status >= 500);
-                if (!retryable || attempt === retries) throw err;
-                if (onRetry) onRetry(attempt + 1, retries);
-                await new Promise((resolve) => setTimeout(resolve, baseDelayMs * Math.pow(2, attempt)));
-            }
-        }
-        throw lastErr;
-    }
+    // ---------------- Backend account bridging + generic fetch (shared/backendBridge.js) ----------------
+    const { identify, login, apiFetch, fetchWithRetry } = global.Backend;
 
     async function createSubmission({ lessonId, submissionType, file, recording, recordingName, resubmissionOf, backendUid, onRetry }) {
         const form = new FormData();

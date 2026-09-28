@@ -781,6 +781,9 @@
         </div>
     </footer>
 
+    <script src="../shared/apiConfig.js"></script>
+    <script src="../shared/backendBridge.js"></script>
+    <script src="typingResultStore.js"></script>
     <script>
         (function() {
             "use strict";
@@ -801,6 +804,95 @@
                     ]
                 }
             };
+
+            // ============================================================
+            //  TYPING FEEDBACK INSTRUMENTATION (typing feedback spec §5)
+            //
+            //  Per-phrase timing/accuracy, aggregated into one checkpoint
+            //  result for the whole 4-phrase lesson (spec §5: a single
+            //  8-word phrase's WPM is too noisy to be a meaningful unit to
+            //  review on its own — one checkpoint = the full attempt).
+            // ============================================================
+            let phraseStartTime = null;
+            let phraseKeystrokes = 0;
+            let phraseErrors = 0;
+            let checkpointResults = []; // one computeResult() output per completed phrase
+            let checkpointSubmitted = false;
+
+            function startAttempt() {
+                phraseStartTime = Date.now();
+                phraseKeystrokes = 0;
+                phraseErrors = 0;
+            }
+
+            function computeResult(targetText) {
+                const elapsedSeconds = (Date.now() - phraseStartTime) / 1000;
+                const wpm = elapsedSeconds > 0 ? (targetText.length / 5) / (elapsedSeconds / 60) : 0;
+                const accuracy = phraseKeystrokes > 0
+                    ? Math.max(0, ((phraseKeystrokes - phraseErrors) / phraseKeystrokes) * 100)
+                    : 100;
+                return {
+                    wpm: Math.round(wpm * 10) / 10,
+                    accuracy: Math.round(accuracy * 10) / 10,
+                    errorCount: phraseErrors,
+                    durationSeconds: Math.round(elapsedSeconds * 10) / 10,
+                    textLength: targetText.length,
+                    // Raw keystrokes, kept only for combining phrases below —
+                    // not part of the shape sent to the backend. Combining
+                    // per-phrase *accuracy percentages* by averaging them
+                    // would weight a short phrase the same as a long one;
+                    // recombining from raw keystrokes/errors keeps the
+                    // checkpoint's accuracy a true keystroke-weighted figure.
+                    keystrokes: phraseKeystrokes
+                };
+            }
+
+            // Combines every phrase's result into one checkpoint result:
+            // durations and text lengths sum (this is genuine typing time,
+            // with the idle "reading the next phrase" gap between phrases
+            // excluded since each phrase's timer only starts on its first
+            // keystroke); accuracy is recomputed from summed keystrokes/
+            // errors rather than averaged, for the reason above.
+            function combineCheckpointResults(results) {
+                const durationSeconds = Math.round(results.reduce((s, r) => s + r.durationSeconds, 0) * 10) / 10;
+                const textLength = results.reduce((s, r) => s + r.textLength, 0);
+                const errorCount = results.reduce((s, r) => s + r.errorCount, 0);
+                const keystrokes = results.reduce((s, r) => s + r.keystrokes, 0);
+                const accuracy = keystrokes > 0
+                    ? Math.round(Math.max(0, ((keystrokes - errorCount) / keystrokes) * 100) * 10) / 10
+                    : 100;
+                const wpm = durationSeconds > 0
+                    ? Math.round(((textLength / 5) / (durationSeconds / 60)) * 10) / 10
+                    : 0;
+                return { wpm, accuracy, errorCount, durationSeconds, textLength };
+            }
+
+            // Fire-and-forget: a failed submission never blocks the local
+            // "lesson complete" stamp (saveProgress(), just below) — the
+            // student's own progress view is unaffected either way, a
+            // reviewer just won't see this particular attempt in their queue.
+            async function submitCheckpointToBackend() {
+                if (checkpointSubmitted || checkpointResults.length === 0) return;
+                checkpointSubmitted = true;
+
+                const session = getStorage('uttoron:session');
+                if (!session || !session.num) return; // saveProgress() already prompted to sign in
+                const localUser = getStorage('user:' + session.num);
+                if (!localUser) return;
+
+                try {
+                    const Storage = { get: getStorage, set: setStorage };
+                    const backendUid = await TypingStore.identify({ num: session.num, nickname: localUser.nickname }, Storage);
+                    if (!backendUid) return;
+                    await TypingStore.submitTypingResult({
+                        backendUid,
+                        checkpointId: 'typing_checkpoint',
+                        ...combineCheckpointResults(checkpointResults)
+                    });
+                } catch (err) {
+                    console.error('Could not submit typing checkpoint result:', err);
+                }
+            }
 
             // ============================================================
             //  STORAGE HELPERS (for progress saving)
@@ -1046,6 +1138,8 @@
                         lessonCompleted = true;
                         // Save progress
                         saveProgress();
+                        // Submit the combined checkpoint result to the backend (Phase 2)
+                        submitCheckpointToBackend();
                     }
                     showCompletionScreen();
                     return;
@@ -1253,8 +1347,31 @@
 
                 highlightNextKey();
 
+                // Typing feedback instrumentation, scoped to this phrase
+                // (fresh on every call to renderTypingLesson(), i.e. every
+                // phrase) — spec §5.
+                let phraseTimerStarted = false;
+                let prevTypedLen = 0;
+                let phraseResultRecorded = false;
+
                 input.addEventListener('input', function() {
                     const typed = this.value;
+
+                    // A student reading the phrase before typing shouldn't
+                    // count against their time — start the clock on the
+                    // first keystroke of this phrase, not on page load.
+                    if (!phraseTimerStarted) { phraseTimerStarted = true; startAttempt(); }
+                    // Only a newly-appended character is a "keystroke" for
+                    // WPM/accuracy purposes — a backspace shouldn't count as
+                    // an error, and re-typing after a correction shouldn't
+                    // double-count the position.
+                    if (typed.length > prevTypedLen) {
+                        const idx = typed.length - 1;
+                        phraseKeystrokes++;
+                        if (typed[idx] !== target[idx]) phraseErrors++;
+                    }
+                    prevTypedLen = typed.length;
+
                     const chars = document.querySelectorAll('.typing-target .char');
                     let allCorrect = true;
                     for (let i = 0; i < chars.length; i++) {
@@ -1281,6 +1398,14 @@
                         status.className = 'typing-status good';
                         nextBtn.disabled = false;
                         updateFingerDisplay(null);
+                        // "Attempt complete" for this phrase — record it once;
+                        // further edits after a perfect completion (backspacing
+                        // to tinker) don't re-record a second result for the
+                        // same phrase.
+                        if (!phraseResultRecorded) {
+                            phraseResultRecorded = true;
+                            checkpointResults.push(computeResult(target));
+                        }
                     } else {
                         if (typed.length === 0) {
                             status.textContent = 'Start typing...';
@@ -1353,6 +1478,11 @@
                 document.getElementById('resetLessonBtn').addEventListener('click', function() {
                     currentItemIndex = 0;
                     lessonCompleted = false;
+                    // A redo is a new, separately dated checkpoint attempt
+                    // (spec §6, option b) — not a continuation of the one
+                    // just submitted.
+                    checkpointResults = [];
+                    checkpointSubmitted = false;
                     renderTypingLesson();
                 });
             }

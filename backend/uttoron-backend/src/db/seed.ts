@@ -23,6 +23,27 @@ const TAGS = [
   { slug: 'time-within', label: 'Within the time target', rubricCategory: 'time_management', sentiment: 'positive' },
   { slug: 'time-over', label: 'Ran over time', rubricCategory: 'time_management', sentiment: 'constructive' },
   { slug: 'time-short', label: 'Too short / underdeveloped', rubricCategory: 'time_management', sentiment: 'constructive' },
+
+  // Typing track (typing feedback spec §8) — sized to what the numeric
+  // WPM/accuracy/error data actually supports, no recording to watch.
+  //
+  // NOTE on rubricCategory naming: the spec's §8 table names this category
+  // 'pacing', reusing the presentation track's category name outright. That
+  // collides for real — both tracks' /tags/list endpoints filter purely by
+  // rubricCategory string, with no track column on `tags`, so a shared
+  // 'pacing' category would leak the presentation track's pacing-well/
+  // pacing-rushed/pacing-dragged into the typing reviewer's tag picker, and
+  // leak these typing tags into the presentation reviewer's lesson_12/13
+  // picker. Namespacing it 'typing_pacing' here (and in typing.ts's
+  // TYPING_TAG_CATEGORIES) avoids that; 'accuracy' and 'progress' have no
+  // presentation-track counterpart so they're safe as-is.
+  { slug: 'typing-accurate', label: 'Strong accuracy at this speed', rubricCategory: 'accuracy', sentiment: 'positive' },
+  { slug: 'typing-many-errors', label: 'Frequent mistyped keys', rubricCategory: 'accuracy', sentiment: 'constructive' },
+  { slug: 'typing-steady-pace', label: 'Steady, even rhythm', rubricCategory: 'typing_pacing', sentiment: 'positive' },
+  { slug: 'typing-rushes', label: 'Rushes and loses accuracy under speed', rubricCategory: 'typing_pacing', sentiment: 'constructive' },
+  { slug: 'typing-slow-careful', label: 'Accurate but notably slow', rubricCategory: 'typing_pacing', sentiment: 'constructive' },
+  { slug: 'typing-improving', label: 'Clear improvement since last attempt', rubricCategory: 'progress', sentiment: 'positive' },
+  { slug: 'typing-plateaued', label: 'No change since last attempt', rubricCategory: 'progress', sentiment: 'constructive' },
 ];
 
 async function seed() {

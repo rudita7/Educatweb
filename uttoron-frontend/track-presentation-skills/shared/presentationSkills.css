@@ -327,6 +327,10 @@
 .tag-opt.selected.constructive { border-color: var(--marigold); background: rgba(232,163,61,0.18); color: var(--marigold); }
 .empty-queue { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.4); }
 .pin-gate { max-width: 360px; margin: 60px auto; }
+
+/* Reviewer track tabs (typing feedback spec §7) */
+.queue-tab { border-radius: 8px 8px 0 0 !important; border-bottom: none !important; margin-bottom: -1px; }
+.queue-tab.active { border-color: var(--marigold) !important; color: var(--marigold) !important; background: rgba(232,163,61,0.1) !important; }
 .pin-gate h2 { margin-bottom: 4px; }
 .pin-gate .sub { color: #5b6b63; font-size: 0.88rem; margin-bottom: 18px; }
 .pin-gate .field { margin-bottom: 16px; text-align: left; }

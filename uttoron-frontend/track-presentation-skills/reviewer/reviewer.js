@@ -62,6 +62,18 @@
         renderCohortInsights();
     }
 
+    // ============================================================
+    //  Track tabs (typing feedback spec §7) — one reviewer sign-in,
+    //  both tracks' queues from one screen.
+    // ============================================================
+    $$('.queue-tab').forEach(btn => btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        $$('.queue-tab').forEach(b => b.classList.toggle('active', b === btn));
+        $('#presentationPanel').classList.toggle('hidden', tab !== 'presentation');
+        $('#typingPanel').classList.toggle('hidden', tab !== 'typing');
+        if (tab === 'typing') renderTypingQueue();
+    }));
+
     const cached = sessionStorage.getItem('ps:reviewer-session');
     if (cached) {
         try { reviewerUid = JSON.parse(cached).uid; showQueue(); } catch (e) { sessionStorage.removeItem('ps:reviewer-session'); }
@@ -78,6 +90,13 @@
         renderQueue();
         clearTimeout(studentInsightsTimer);
         studentInsightsTimer = setTimeout(renderStudentInsights, 350); // debounce — avoid a request per keystroke
+    });
+
+    $('#typingFilterStatus').addEventListener('change', renderTypingQueue);
+    let typingFilterTimer = null;
+    $('#typingFilterStudent').addEventListener('input', () => {
+        clearTimeout(typingFilterTimer);
+        typingFilterTimer = setTimeout(renderTypingQueue, 350);
     });
 
     async function renderQueue() {
@@ -179,6 +198,135 @@
                 showToast('Feedback submitted.', 'success');
                 delete selectedTags[subId];
                 renderQueue();
+            } catch (err) {
+                showToast(err.message || 'Could not submit feedback.', 'error');
+                btn.disabled = false;
+            }
+        }));
+    }
+
+    // ============================================================
+    //  Typing queue rendering (typing feedback spec §7)
+    //
+    //  Reuses renderQueue()'s tag-picker markup/CSS and queue-card shell
+    //  as-is (they were already generic). The one real structural
+    //  difference: no file/recording to preview, so the media block is
+    //  swapped for a plain numeric readout — WPM/accuracy/errors/duration.
+    // ============================================================
+    const selectedTypingTags = {}; // resultId -> Set of tagIds
+
+    function formatTypingMetrics(r) {
+        return `WPM: ${r.wpm.toFixed(1)} · Accuracy: ${r.accuracy.toFixed(1)}% · Errors: ${r.errorCount} · ${r.durationSeconds.toFixed(1)}s`;
+    }
+
+    // Phase 4 (optional, spec §9) — plain before/after WPM & accuracy next
+    // to the reviewed attempt that started tracking them. Same
+    // deliberately-neutral framing as the presentation track's
+    // metric-comparison: no color, no verdict, a teacher reads the numbers.
+    function renderTypingComparison(comparisons, resultId) {
+        const match = (comparisons || []).find(c => c.baselineResultId === resultId);
+        if (!match || !match.resolved) return '';
+        const wpmPct = match.wpmBefore !== 0 ? ` (${match.wpmDelta >= 0 ? '+' : ''}${((match.wpmDelta / match.wpmBefore) * 100).toFixed(0)}%)` : '';
+        return `<div class="metric-comparison">📊 wpm: ${match.wpmBefore.toFixed(1)} → ${match.wpmAfter.toFixed(1)}${wpmPct} · accuracy: ${match.accuracyBefore.toFixed(1)}% → ${match.accuracyAfter.toFixed(1)}%</div>`;
+    }
+
+    function renderExistingTypingFeedback(fb, resultId, comparisons) {
+        if (!fb) return '<p style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;">Reviewed — no feedback details available.</p>';
+        const tagList = (fb.tagIds || []).map(id => TypingStore.TYPING_TAGS.find(t => t.id === id)).filter(Boolean);
+        return `<div style="margin-top:10px;">
+            ${tagList.map(t => `<span class="tag-chip ${t.sentiment}">${t.sentiment === 'positive' ? '✅' : '💡'} ${escapeHtml(t.label)}</span>`).join('')}
+            ${fb.comment ? `<div class="reviewer-comment">“${escapeHtml(fb.comment)}”</div>` : ''}
+            ${renderTypingComparison(comparisons, resultId)}
+        </div>`;
+    }
+
+    async function renderTypingQueue() {
+        const status = $('#typingFilterStatus').value;
+        const nameFilter = $('#typingFilterStudent').value.trim().toLowerCase();
+
+        let queue;
+        try {
+            queue = await TypingStore.listQueue(reviewerUid, { status });
+        } catch (err) {
+            $('#typingQueueList').innerHTML = `<div class="empty-queue">⚠️ Couldn't load the queue (${escapeHtml(err.message)}).</div>`;
+            return;
+        }
+        if (nameFilter) queue = queue.filter(r => displayName(r.studentName).toLowerCase().includes(nameFilter));
+
+        if (!queue.length) {
+            $('#typingQueueList').innerHTML = '<div class="empty-queue">📭 Nothing matches these filters right now.</div>';
+            return;
+        }
+
+        // Comparisons (Phase 4) — only meaningful for already-reviewed
+        // attempts, same reasoning as the presentation queue.
+        const studentIdsNeedingComparisons = Array.from(new Set(queue.filter(r => r.status !== 'pending').map(r => r.studentId)));
+        const comparisonsByStudent = {};
+        await Promise.all(studentIdsNeedingComparisons.map(async (sid) => {
+            try { comparisonsByStudent[sid] = await TypingStore.getComparisons(reviewerUid, sid); }
+            catch (e) { comparisonsByStudent[sid] = []; }
+        }));
+
+        $('#typingQueueList').innerHTML = queue.map(r => {
+            if (!selectedTypingTags[r.id]) selectedTypingTags[r.id] = new Set();
+            const tagsList = TypingStore.tagsForTypingCheckpoint();
+            const byCategory = {};
+            tagsList.forEach(t => { (byCategory[t.category] = byCategory[t.category] || []).push(t); });
+
+            const isPending = r.status === 'pending';
+            const reviewSection = isPending ? `
+                    <div class="tag-picker-grid">
+                        ${Object.keys(byCategory).map(cat => `
+                            <div class="tag-cat-group">
+                                <div class="tag-cat-label">${escapeHtml(cat.replace('_', ' '))}</div>
+                                <div>
+                                    ${byCategory[cat].map(t => `<span class="tag-opt ${t.sentiment}" data-typing-sub="${r.id}" data-tag="${t.id}">${t.sentiment === 'positive' ? '✅' : '💡'} ${escapeHtml(t.label)}</span>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <textarea class="reflection-textarea" data-typing-comment-for="${r.id}" rows="2" maxlength="200" placeholder="Optional short comment (max 200 characters)…"></textarea>
+                    <div class="check-panel">
+                        <div style="display:flex;justify-content:flex-end;">
+                            <button class="btn btn-primary btn-sm" data-submit-typing-fb="${r.id}">Submit feedback</button>
+                        </div>
+                    </div>
+                ` : renderExistingTypingFeedback(r.feedback, r.id, comparisonsByStudent[r.studentId] || []);
+
+            return `
+                <div class="queue-card" data-id="${r.id}">
+                    <div class="q-head">
+                        <div>
+                            <span class="q-student">${escapeHtml(displayName(r.studentName))}</span>
+                            <span class="status-chip ${r.status}" style="margin-left:8px;">${escapeHtml(TypingStore.CHECKPOINT_LABELS[r.checkpointId] || r.checkpointId)}</span>
+                            ${!isPending ? '<span class="status-chip reviewed" style="margin-left:6px;">✓ reviewed</span>' : ''}
+                        </div>
+                        <span class="q-meta">${new Date(r.createdAt).toLocaleString()}</span>
+                    </div>
+                    <div style="font-family:var(--font-mono);font-size:0.82rem;color:rgba(255,255,255,0.75);">${formatTypingMetrics(r)}</div>
+                    ${reviewSection}
+                </div>
+            `;
+        }).join('');
+
+        $$('[data-typing-sub]').forEach(chip => chip.addEventListener('click', () => {
+            const resId = chip.dataset.typingSub, tagId = chip.dataset.tag;
+            const set = selectedTypingTags[resId];
+            if (set.has(tagId)) { set.delete(tagId); chip.classList.remove('selected'); }
+            else { set.add(tagId); chip.classList.add('selected'); }
+        }));
+
+        $$('[data-submit-typing-fb]').forEach(btn => btn.addEventListener('click', async () => {
+            const resId = btn.dataset.submitTypingFb;
+            const tagIds = Array.from(selectedTypingTags[resId] || []);
+            if (!tagIds.length) { showToast('Pick at least one tag before submitting.', 'error'); return; }
+            const comment = $('[data-typing-comment-for="' + resId + '"]').value.trim();
+            btn.disabled = true;
+            try {
+                await TypingStore.submitFeedback({ backendUid: reviewerUid, resultId: resId, tagIds, comment });
+                showToast('Feedback submitted.', 'success');
+                delete selectedTypingTags[resId];
+                renderTypingQueue();
             } catch (err) {
                 showToast(err.message || 'Could not submit feedback.', 'error');
                 btn.disabled = false;
@@ -309,5 +457,10 @@
     }
 
     // Re-render if this tab regains focus (e.g. a new submission came in elsewhere).
-    window.addEventListener('focus', () => { if (!$('#queueView').classList.contains('hidden')) { renderQueue(); renderCohortInsights(); } });
+    window.addEventListener('focus', () => {
+        if ($('#queueView').classList.contains('hidden')) return;
+        if (!$('#typingPanel').classList.contains('hidden')) { renderTypingQueue(); return; }
+        renderQueue();
+        renderCohortInsights();
+    });
 })();
