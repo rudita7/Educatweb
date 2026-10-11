@@ -1,0 +1,29 @@
+name: Demo environment keep-alive
+
+# Render's and Supabase's free tiers both pause/sleep inactive projects.
+# This pings the demo backend daily so it doesn't go cold before anyone
+# reviewing the portfolio clicks the demo link. Does NOT touch the real
+# production backend/Supabase project — DEMO_API_BASE must point at the
+# separate demo deployment only.
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # once daily, 06:00 UTC — adjust if needed
+  workflow_dispatch: {} # lets you trigger it manually from the Actions tab too
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping demo backend health endpoint
+        run: curl -fsS "${{ secrets.DEMO_API_BASE }}/health"
+
+      - name: Touch the demo database (keeps Supabase itself from pausing)
+        # /health alone doesn't query Postgres. This hits a real,
+        # read-only, no-side-effect endpoint that does, using a demo
+        # reviewer account's credentials stored as repo secrets — never
+        # real credentials, and only valid against the demo project.
+        run: |
+          curl -fsS -X POST "${{ secrets.DEMO_API_BASE }}/api/auth/login" \
+            -H "Content-Type: application/json" \
+            -d "{\"username\":\"${{ secrets.DEMO_REVIEWER_USERNAME }}\",\"pin\":\"${{ secrets.DEMO_REVIEWER_PIN }}\"}"
