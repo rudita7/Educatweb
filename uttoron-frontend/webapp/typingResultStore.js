@@ -46,12 +46,50 @@
 
     const { identify, apiFetch, fetchWithRetry } = global.Backend;
 
-    async function submitTypingResult({ backendUid, checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength, onRetry }) {
+    // Offline handling: fetchWithRetry already retries network failures a
+    // few times over ~10s (see backendBridge.js). If the device is still
+    // offline after that, don't drop the result — hand it to OfflineQueue
+    // so it's stored on-device and sent automatically once reconnected.
+    // Returns { queued: true } instead of throwing in that case, so the
+    // caller can tell the student their result was saved, not lost.
+    let onQueueChange = null;
+    function setOnQueueChange(fn) { onQueueChange = fn; }
+
+    function typingResultPayload({ backendUid, checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength }) {
+        return { backendUid, checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength };
+    }
+
+    async function postTypingResult(payload) {
         return fetchWithRetry('/api/typing/results', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-user-id': String(backendUid) },
-            body: JSON.stringify({ checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength }),
-        }, { onRetry });
+            headers: { 'Content-Type': 'application/json', 'x-user-id': String(payload.backendUid) },
+            body: JSON.stringify({
+                checkpointId: payload.checkpointId, wpm: payload.wpm, accuracy: payload.accuracy,
+                errorCount: payload.errorCount, durationSeconds: payload.durationSeconds, textLength: payload.textLength,
+            }),
+        });
+    }
+
+    if (global.OfflineQueue) {
+        global.OfflineQueue.autoFlush(
+            { 'typing-result': postTypingResult },
+            (pendingCount) => { if (onQueueChange) onQueueChange(pendingCount); }
+        );
+    }
+
+    async function submitTypingResult(args) {
+        const payload = typingResultPayload(args);
+        try {
+            await postTypingResult(payload);
+            return { queued: false };
+        } catch (err) {
+            if (err && err.isNetworkError && global.OfflineQueue) {
+                await global.OfflineQueue.enqueue('typing-result', payload);
+                if (onQueueChange) onQueueChange(await global.OfflineQueue.count());
+                return { queued: true };
+            }
+            throw err;
+        }
     }
 
     // [{result, feedback}], newest-first.
@@ -84,6 +122,8 @@
 
     global.TypingStore = {
         identify, submitTypingResult, listMine, listQueue, submitFeedback, getComparisons,
-        TYPING_TAGS, CHECKPOINT_LABELS, tagsForTypingCheckpoint
+        TYPING_TAGS, CHECKPOINT_LABELS, tagsForTypingCheckpoint,
+        setOnQueueChange,
+        getPendingCount: () => (global.OfflineQueue ? global.OfflineQueue.count() : Promise.resolve(0)),
     };
 })(window);
