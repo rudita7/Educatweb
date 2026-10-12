@@ -756,6 +756,9 @@
     <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
 
+    <!-- ===== OFFLINE QUEUE BANNER ===== -->
+    <div id="offlineQueueBanner" style="display:none;background:var(--coral-soft, #e8a87c);color:#1a1a1a;text-align:center;font-size:0.85rem;font-weight:600;padding:6px 12px;"></div>
+
     <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
         <div class="nav-inner">
@@ -783,6 +786,7 @@
     </footer>
 
     <script src="../shared/apiConfig.js"></script>
+    <script src="../shared/offlineQueue.js"></script>
     <script src="../shared/backendBridge.js"></script>
     <script src="typingResultStore.js"></script>
     <script>
@@ -1258,8 +1262,8 @@
                     const backendUid = await TypingStore.identify({ num: session.num, nickname: localUser.nickname }, Storage);
                     if (!backendUid) return null;
                     const combined = combineCheckpointResults(checkpointResults);
-                    await TypingStore.submitTypingResult({ backendUid, checkpointId, ...combined });
-                    return { backendUid, combined };
+                    const outcome = await TypingStore.submitTypingResult({ backendUid, checkpointId, ...combined });
+                    return { backendUid, combined, queued: !!(outcome && outcome.queued) };
                 } catch (err) {
                     console.error('Could not submit typing checkpoint result:', err);
                     return null;
@@ -1982,7 +1986,9 @@
                         </div>
                         <h2>🎯 Session ${session.number} complete!</h2>
                         <p style="color:var(--ink-dim);">${session.title}</p>
-                        <p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>
+                        ${submitOutcome && submitOutcome.queued
+                            ? `<p style="color:var(--coral-soft);font-weight:600;margin-top:8px;">📴 No internet connection — your result is saved on this device and will be sent to your reviewer automatically once you're back online.</p>`
+                            : `<p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>`}
                         ${comparisonHtml}
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
                             ${next ? `<button class="btn btn-primary" id="nextSessionBtn">Session ${next.number}: ${next.title} →</button>` : ''}
@@ -2033,6 +2039,25 @@
             }
 
             // ============================================================
+            //  OFFLINE QUEUE BANNER — shows while any result from this
+            //  device is still waiting to reach the backend (saved by
+            //  submitCheckpointToBackend() when offline, sent automatically
+            //  once reconnected — see shared/offlineQueue.js).
+            // ============================================================
+            function renderQueueBanner(pendingCount) {
+                const banner = document.getElementById('offlineQueueBanner');
+                if (!banner) return;
+                if (pendingCount > 0) {
+                    banner.textContent = pendingCount === 1
+                        ? '📴 1 result saved on this device, waiting to sync — it will send automatically once you\'re back online.'
+                        : `📴 ${pendingCount} results saved on this device, waiting to sync — they'll send automatically once you're back online.`;
+                    banner.style.display = 'block';
+                } else {
+                    banner.style.display = 'none';
+                }
+            }
+
+            // ============================================================
             //  INIT
             // ============================================================
             function init() {
@@ -2040,6 +2065,10 @@
                 const saved = getSavedGradeBand();
                 if (saved && GRADE_BANDS[saved]) currentGradeBand = saved;
                 renderTypingLesson();
+                if (window.TypingStore) {
+                    TypingStore.setOnQueueChange(renderQueueBanner);
+                    TypingStore.getPendingCount().then(renderQueueBanner);
+                }
             }
 
             init();
