@@ -29,6 +29,13 @@
       "when": 1790518258427,
       "tag": "0003_typing_track_feedback",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792041685100,
+      "tag": "0004_add_nickname_avatar_to_users",
+      "breakpoints": true
     }
   ]
 }

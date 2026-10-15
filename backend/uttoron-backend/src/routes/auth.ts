@@ -9,7 +9,7 @@ const SALT_ROUNDS = Number(process.env.PIN_SALT_ROUNDS) || 10;
 
 // Register new user with PIN
 router.post('/register', async (req, res) => {
-  const { username, pin } = req.body;
+  const { username, pin, nickname, avatar } = req.body;
 
   if (!username || !pin) {
     return res.status(400).json({ error: 'Username and PIN are required' });
@@ -29,7 +29,9 @@ router.post('/register', async (req, res) => {
     const [newUser] = await db.insert(users).values({
       username,
       pin: hashedPin,
-    }).returning({ id: users.id, username: users.username, role: users.role });
+      nickname: nickname ? String(nickname).slice(0, 60) : null,
+      avatar: avatar ? String(avatar).slice(0, 30) : null,
+    }).returning({ id: users.id, username: users.username, role: users.role, nickname: users.nickname, avatar: users.avatar });
 
     res.status(201).json({ user: newUser });
   } catch (error) {
@@ -62,7 +64,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       message: 'Login successful',
-      user: { id: user.id, username: user.username, role: user.role }
+      user: { id: user.id, username: user.username, role: user.role, nickname: user.nickname, avatar: user.avatar }
     });
   } catch (error) {
     console.error('Login error:', error);

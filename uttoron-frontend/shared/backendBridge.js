@@ -12,13 +12,19 @@
 
    Load shared/apiConfig.js before this file (sets window.UTTORON_API_BASE).
 
-   ACCOUNT BRIDGING: two different devices can independently generate the
-   same 4-digit local passport number (it's only locally unique), but the
-   backend's `users.username` has a real, shared uniqueness constraint.
-   Appending the nickname plus a random per-device suffix keeps bridged
-   accounts collision-free while staying human-readable in the reviewer
-   queue (nickname + passport number, salt stripped for display — see
-   reviewer.js's displayName()).
+   ACCOUNT BRIDGING: the passport number (e.g. "UT-4821") IS the backend
+   username — register-or-login against it directly, so the same student
+   always resolves to the same backend account from any device, not just
+   the one they signed up on. This used to append a random per-device
+   suffix instead (two devices could independently generate the same
+   4-digit number, and that scheme avoided colliding on it) — the real fix
+   is that the passport number is now actually checked for uniqueness
+   against the live database at creation time (see index1.html's signup
+   handler), not just this device's local storage, so it doesn't need a
+   salt to stay collision-free anymore. The tradeoff this intentionally
+   accepts: a passport created before this change is still only reachable
+   from the device that created it, under its old salted username — this
+   only fixes it going forward.
 
    IMPORTANT: the cached backend account is keyed by passport num only
    (uttoron:backend-uid:<num>), NOT by track — one passport bridges to ONE
@@ -34,33 +40,28 @@
     const API_BASE = global.UTTORON_API_BASE || global.PS_API_BASE || 'http://localhost:3000';
 
     function uidKey(num) { return 'uttoron:backend-uid:' + num; }
-    function usernameKey(num) { return 'uttoron:backend-username:' + num; }
     function legacyUidKey(num) { return 'ps:backend-uid:' + num; } // pre-extraction key, presentation-track-only
-    function legacyUsernameKey(num) { return 'ps:backend-username:' + num; }
 
-    async function ensureBackendAccount(num, nickname, pin) {
+    async function ensureBackendAccount(num, nickname, pin, avatar) {
         const cached = localStorage.getItem(uidKey(num)) || localStorage.getItem(legacyUidKey(num));
         if (cached) {
             localStorage.setItem(uidKey(num), cached); // migrate off the legacy presentation-only key, if that's where it came from
             return Number(cached);
         }
 
-        let username = localStorage.getItem(usernameKey(num)) || localStorage.getItem(legacyUsernameKey(num));
-        if (!username) {
-            username = nickname + '#' + num + '.' + Math.random().toString(36).slice(2, 8);
-        }
-        localStorage.setItem(usernameKey(num), username);
-
+        // Passport number is the backend username directly now (see file
+        // header) — register-or-login against it, which naturally handles
+        // both "brand new account" and "this device just doesn't have it
+        // cached yet" in one call.
         let res = await fetch(API_BASE + '/api/auth/register', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, pin })
+            body: JSON.stringify({ username: num, pin, nickname, avatar })
         });
         let data = await res.json().catch(() => ({}));
         if (res.status === 400 && /already exists/i.test(data.error || '')) {
-            // Same device, second visit after a cache clear — log in instead.
             res = await fetch(API_BASE + '/api/auth/login', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, pin })
+                body: JSON.stringify({ username: num, pin })
             });
             data = await res.json().catch(() => ({}));
         }
@@ -80,7 +81,8 @@
         const localUser = Storage.get('user:' + session.num);
         if (!localUser) return null;
         const nickname = session.nickname || localUser.nickname;
-        return ensureBackendAccount(session.num, nickname, localUser.pin);
+        const avatar = session.avatar || localUser.avatar;
+        return ensureBackendAccount(session.num, nickname, localUser.pin, avatar);
     }
 
     async function login(username, pin) {

@@ -1293,7 +1293,7 @@
         //  SIGNUP
         // ============================================================
         const signupForm = $('#signupForm');
-        signupForm.addEventListener('submit', function(e) {
+        signupForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const msg = $('#signupMsg');
             msg.className = 'form-msg';
@@ -1313,45 +1313,76 @@
                 return;
             }
 
-            let num, attempts = 0, existing = null;
-            do {
-                const n = Math.floor(1000 + Math.random() * 9000);
-                num = 'UT-' + n;
-                attempts++;
-                existing = Storage.get('user:' + num);
-            } while (existing !== null && attempts <= 50);
+            // The passport number is registered against the real backend
+            // (not just checked locally) so it's actually globally unique —
+            // that's what lets the same student sign back in from any
+            // device later, not just this one.
+            const submitBtn = signupForm.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = true;
+            msg.textContent = 'Creating your passport…';
 
-            if (existing !== null) {
-                msg.textContent = 'Could not generate a unique number. Please try again.';
+            try {
+                let num, res, data, attempts = 0;
+                do {
+                    const n = Math.floor(1000 + Math.random() * 9000);
+                    num = 'UT-' + n;
+                    attempts++;
+                    res = await fetch(window.Backend.API_BASE + '/api/auth/register', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: num, pin, nickname: nick, avatar: pendingAvatar })
+                    });
+                    data = await res.json().catch(() => ({}));
+                } while (res.status === 400 && /already exists/i.test(data.error || '') && attempts <= 20);
+
+                if (!res.ok) {
+                    msg.textContent = data.error || 'Could not create your passport. Please try again.';
+                    msg.classList.add('error');
+                    if (submitBtn) submitBtn.disabled = false;
+                    return;
+                }
+
+                localStorage.setItem('uttoron:backend-uid:' + num, String(data.user.id));
+
+                const user = { num, nickname: nick, avatar: pendingAvatar, pin, createdAt: Date.now() };
+                Storage.set('user:' + num, user);
+
+                session = { num, nickname: nick, avatar: pendingAvatar, createdAt: user.createdAt };
+                progress = {};
+                TRACKS.forEach(track => { track.lessons.forEach(l => { progress[l.id] = false; }); });
+                Storage.set('progress:' + num, progress);
+                Storage.set('uttoron:session', { num });
+
+                msg.textContent = '✅ Passport ' + num + ' created!';
+                msg.classList.add('ok');
+                refreshCounter();
+                showToast('Welcome, ' + nick + '!', 'success');
+                setTimeout(() => enterDashboard(), 600);
+            } catch (err) {
+                msg.textContent = 'Network error — check your connection and try again.';
                 msg.classList.add('error');
-                return;
+                if (submitBtn) submitBtn.disabled = false;
             }
-
-            const user = { num, nickname: nick, avatar: pendingAvatar, pin, createdAt: Date.now() };
-            if (!Storage.set('user:' + num, user)) {
-                msg.textContent = 'Failed to save. Please try again.';
-                msg.classList.add('error');
-                return;
-            }
-
-            session = { num, nickname: nick, avatar: pendingAvatar, createdAt: user.createdAt };
-            progress = {};
-            TRACKS.forEach(track => { track.lessons.forEach(l => { progress[l.id] = false; }); });
-            Storage.set('progress:' + num, progress);
-            Storage.set('uttoron:session', { num });
-
-            msg.textContent = '✅ Passport ' + num + ' created!';
-            msg.classList.add('ok');
-            refreshCounter();
-            showToast('Welcome, ' + nick + '!', 'success');
-            setTimeout(() => enterDashboard(), 600);
         });
 
         // ============================================================
         //  SIGNIN
         // ============================================================
         const signinForm = $('#signinForm');
-        signinForm.addEventListener('submit', function(e) {
+
+        function completeSignin(user, num, msg) {
+            session = { num, nickname: user.nickname, avatar: user.avatar, createdAt: user.createdAt };
+            const p = Storage.get('progress:' + num);
+            progress = p || {};
+            TRACKS.forEach(track => { track.lessons.forEach(l => { if (!(l.id in progress)) progress[l.id] = false; }); });
+            Storage.set('uttoron:session', { num });
+
+            msg.textContent = '✅ Welcome back, ' + user.nickname + '!';
+            msg.classList.add('ok');
+            showToast('Signed in as ' + user.nickname, 'success');
+            setTimeout(() => enterDashboard(), 500);
+        }
+
+        signinForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const msg = $('#signinMsg');
             msg.className = 'form-msg';
@@ -1366,28 +1397,40 @@
                 return;
             }
 
-            const user = Storage.get('user:' + num);
-            if (!user) {
-                msg.textContent = 'Passport not found. Check the number.';
-                msg.classList.add('error');
-                return;
-            }
-            if (user.pin !== pin) {
-                msg.textContent = 'Incorrect PIN. Try again.';
-                msg.classList.add('error');
+            const localUser = Storage.get('user:' + num);
+            if (localUser && localUser.pin === pin) {
+                // Fast path: this device already has the passport cached.
+                completeSignin(localUser, num, msg);
                 return;
             }
 
-            session = { num, nickname: user.nickname, avatar: user.avatar, createdAt: user.createdAt };
-            const p = Storage.get('progress:' + num);
-            progress = p || {};
-            TRACKS.forEach(track => { track.lessons.forEach(l => { if (!(l.id in progress)) progress[l.id] = false; }); });
-            Storage.set('uttoron:session', { num });
-
-            msg.textContent = '✅ Welcome back, ' + user.nickname + '!';
-            msg.classList.add('ok');
-            showToast('Signed in as ' + user.nickname, 'success');
-            setTimeout(() => enterDashboard(), 500);
+            // Not found on this device (or the PIN here is stale) — this is
+            // the "signing in from a different device" case. Check the real
+            // account instead of just giving up, so a passport created on
+            // one device still works on another.
+            const submitBtn = signinForm.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = true;
+            msg.textContent = 'Checking…';
+            try {
+                const backendUser = await window.Backend.login(num, pin);
+                if (!backendUser.nickname) {
+                    // A passport created before cross-device sign-in existed —
+                    // its backend account has no nickname/avatar on file, so
+                    // there's nothing to rebuild a session from here.
+                    msg.textContent = 'This passport was created before cross-device sign-in was added — it only works on the device that made it.';
+                    msg.classList.add('error');
+                    if (submitBtn) submitBtn.disabled = false;
+                    return;
+                }
+                const user = { num, nickname: backendUser.nickname, avatar: backendUser.avatar, pin, createdAt: Date.now() };
+                Storage.set('user:' + num, user);
+                localStorage.setItem('uttoron:backend-uid:' + num, String(backendUser.id));
+                completeSignin(user, num, msg);
+            } catch (err) {
+                msg.textContent = localUser ? 'Incorrect PIN. Try again.' : 'Passport not found. Check the number.';
+                msg.classList.add('error');
+                if (submitBtn) submitBtn.disabled = false;
+            }
         });
 
         // ============================================================
