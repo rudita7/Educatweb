@@ -85,6 +85,31 @@
         return ensureBackendAccount(session.num, nickname, localUser.pin, avatar);
     }
 
+    // Cross-device stamp/progress sync. The homepage dashboard's
+    // "progress:<num>" localStorage blob (a flat { lessonId: true } map —
+    // same shape everywhere it's written) is pushed/pulled as one row's
+    // `metadata` via the existing /api/progress endpoints, under a fixed
+    // trackId/lessonId pair — the per-lesson fine-grained tracking already
+    // has its own real trackId/lessonId rows elsewhere; this one row is
+    // just "the stamp blob" so a second device can see it without this
+    // code having to understand every track's internal key names.
+    const STAMPS_TRACK_ID = 'site-progress';
+    const STAMPS_LESSON_ID = 'stamps';
+
+    async function pullStampProgress(backendUid) {
+        const rows = await apiFetch('/api/progress', { headers: { 'x-user-id': String(backendUid) } });
+        const row = Array.isArray(rows) && rows.find((r) => r.trackId === STAMPS_TRACK_ID && r.lessonId === STAMPS_LESSON_ID);
+        return (row && row.metadata) || {};
+    }
+
+    async function pushStampProgress(backendUid, progressBlob) {
+        return apiFetch('/api/progress/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-user-id': String(backendUid) },
+            body: JSON.stringify({ trackId: STAMPS_TRACK_ID, lessonId: STAMPS_LESSON_ID, status: 'synced', metadata: progressBlob })
+        });
+    }
+
     async function login(username, pin) {
         const res = await fetch(API_BASE + '/api/auth/login', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -137,6 +162,7 @@
     }
 
     global.Backend = {
-        API_BASE, identify, ensureBackendAccount, login, apiFetch, fetchWithRetry
+        API_BASE, identify, ensureBackendAccount, login, apiFetch, fetchWithRetry,
+        pullStampProgress, pushStampProgress
     };
 })(window);

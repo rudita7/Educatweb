@@ -1016,10 +1016,19 @@
             else { btn.textContent = 'Sign in'; }
         }
 
-        function refreshCounter() {
-            const count = Storage.count('user:');
+        async function refreshCounter() {
+            // Real total from the backend, not a per-device localStorage
+            // tally — the old Storage.count('user:') approach reset to 0
+            // on every new device since it only counted passports cached
+            // locally, and only grew when someone signed in on that
+            // specific device.
             const el = $('#counterNum');
-            if (el) { el.textContent = String(count).padStart(4, '0'); }
+            try {
+                const data = await window.Backend.apiFetch('/api/auth/count', {});
+                if (el) { el.textContent = String(data.count).padStart(4, '0'); }
+            } catch (err) {
+                // Leave the "····" placeholder rather than showing a wrong number.
+            }
         }
 
         // ============================================================
@@ -1226,6 +1235,40 @@
             if (!session) return;
             renderDashboard();
             showView('dashboard');
+            syncStampsAcrossDevices();
+        }
+
+        // Cross-device stamps: merge this device's local "progress:<num>"
+        // with whatever's on the backend, in both directions. Merge is a
+        // simple OR per lesson id — a stamp only ever goes from not-earned
+        // to earned, never back, so there's no real conflict to resolve;
+        // taking the union is always correct and can't lose a stamp either
+        // device already has. Best-effort: failures here must never block
+        // using the dashboard (offline, demo backend asleep, etc.).
+        async function syncStampsAcrossDevices() {
+            if (!session) return;
+            const backendUid = localStorage.getItem('uttoron:backend-uid:' + session.num);
+            if (!backendUid) return;
+            try {
+                const remote = await window.Backend.pullStampProgress(backendUid);
+                let changed = false;
+                const merged = Object.assign({}, progress);
+                Object.keys(remote).forEach((lessonId) => {
+                    if (remote[lessonId] && !merged[lessonId]) { merged[lessonId] = true; changed = true; }
+                });
+                Object.keys(progress).forEach((lessonId) => {
+                    if (progress[lessonId] && !remote[lessonId]) { changed = true; }
+                });
+                if (changed) {
+                    progress = merged;
+                    Storage.set('progress:' + session.num, progress);
+                    if ($('#view-dashboard').classList.contains('active')) renderDashboard();
+                }
+                await window.Backend.pushStampProgress(backendUid, merged);
+            } catch (err) {
+                // No internet, or the demo backend is asleep — the dashboard
+                // already rendered from local data, so just skip this round.
+            }
         }
 
         // ============================================================

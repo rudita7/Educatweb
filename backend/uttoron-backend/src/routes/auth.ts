@@ -1,11 +1,24 @@
 import { Router } from 'express';
 import { db } from '@/db';
 import { users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, count } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 const router = Router();
 const SALT_ROUNDS = Number(process.env.PIN_SALT_ROUNDS) || 10;
+
+// Total passports issued — a real count from the database, not a per-device
+// localStorage tally, so it reads the same number on every device and
+// doesn't reset when someone opens the site somewhere new or signs out.
+router.get('/count', async (_req, res) => {
+  try {
+    const [row] = await db.select({ total: count() }).from(users).where(eq(users.role, 'student'));
+    res.json({ count: row?.total ?? 0 });
+  } catch (error) {
+    console.error('Count error:', error);
+    res.status(500).json({ error: 'Failed to count passports' });
+  }
+});
 
 // Register new user with PIN
 router.post('/register', async (req, res) => {
