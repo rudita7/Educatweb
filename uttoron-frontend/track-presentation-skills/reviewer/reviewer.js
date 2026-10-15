@@ -240,6 +240,63 @@
         </div>`;
     }
 
+    // Per-student progress history (across every session, not just a
+    // baseline/final pair) — a reviewer clicks "📈 Progress" once per
+    // student and gets every attempt they've ever submitted, oldest first,
+    // so growth (or a plateau) is visible at a glance rather than only on
+    // whichever single result happens to be the tagged baseline/final.
+    function renderHistoryRow(r) {
+        const label = TypingStore.CHECKPOINT_LABELS[r.checkpointId] || r.checkpointId;
+        const when = new Date(r.createdAt).toLocaleDateString();
+        return `<tr>
+            <td style="padding:4px 10px 4px 0;white-space:nowrap;">${escapeHtml(when)}</td>
+            <td style="padding:4px 10px;">${escapeHtml(label)}</td>
+            <td style="padding:4px 10px;font-family:var(--font-mono);">${r.wpm.toFixed(1)} wpm</td>
+            <td style="padding:4px 10px;font-family:var(--font-mono);">${r.accuracy.toFixed(1)}%</td>
+            <td style="padding:4px 0;">${r.status === 'reviewed' ? '✓ reviewed' : '⏳ pending'}</td>
+        </tr>`;
+    }
+
+    function renderHistoryPanel(history, comparisons) {
+        if (!history.length) return '<div style="padding:10px 0;font-size:0.82rem;color:rgba(255,255,255,0.5);">No sessions submitted yet.</div>';
+        const sorted = [...history].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        const resolved = (comparisons || []).find(c => c.resolved);
+        const summary = resolved
+            ? `<div class="metric-comparison" style="margin-bottom:8px;">📊 Overall: wpm ${resolved.wpmBefore.toFixed(1)} → ${resolved.wpmAfter.toFixed(1)} · accuracy ${resolved.accuracyBefore.toFixed(1)}% → ${resolved.accuracyAfter.toFixed(1)}%</div>`
+            : '';
+        return `${summary}<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+            <thead><tr style="color:rgba(255,255,255,0.5);text-align:left;">
+                <th style="padding:4px 10px 4px 0;font-weight:500;">Date</th>
+                <th style="padding:4px 10px;font-weight:500;">Session</th>
+                <th style="padding:4px 10px;font-weight:500;">WPM</th>
+                <th style="padding:4px 10px;font-weight:500;">Accuracy</th>
+                <th style="padding:4px 0;font-weight:500;">Status</th>
+            </tr></thead>
+            <tbody>${sorted.map(renderHistoryRow).join('')}</tbody>
+        </table>`;
+    }
+
+    const loadedHistory = {}; // studentId -> rendered HTML, cached so re-toggling doesn't refetch
+
+    async function toggleStudentHistory(studentId, panel) {
+        const isOpen = panel.style.display !== 'none';
+        if (isOpen) { panel.style.display = 'none'; return; }
+        panel.style.display = 'block';
+        if (loadedHistory[studentId]) { panel.innerHTML = loadedHistory[studentId]; return; }
+        panel.innerHTML = '<div style="padding:10px 0;font-size:0.82rem;color:rgba(255,255,255,0.5);">Loading…</div>';
+        try {
+            const [history, comparisons] = await Promise.all([
+                TypingStore.listQueue(reviewerUid, { studentId, status: 'all' }),
+                TypingStore.getComparisons(reviewerUid, studentId).catch(() => []),
+            ]);
+            const html = renderHistoryPanel(history, comparisons);
+            loadedHistory[studentId] = html;
+            panel.innerHTML = html;
+        } catch (err) {
+            panel.innerHTML = `<div style="padding:10px 0;font-size:0.82rem;color:#f2a0a0;">Couldn't load this student's history (${escapeHtml(err.message)}).</div>`;
+        }
+    }
+
     async function renderTypingQueue() {
         const status = $('#typingFilterStatus').value;
         const nameFilter = $('#typingFilterStudent').value.trim().toLowerCase();
@@ -267,11 +324,15 @@
             catch (e) { comparisonsByStudent[sid] = []; }
         }));
 
+        const seenStudents = new Set(); // one "📈 Progress" toggle per student, not per submission
         $('#typingQueueList').innerHTML = queue.map(r => {
             if (!selectedTypingTags[r.id]) selectedTypingTags[r.id] = new Set();
             const tagsList = TypingStore.tagsForTypingCheckpoint();
             const byCategory = {};
             tagsList.forEach(t => { (byCategory[t.category] = byCategory[t.category] || []).push(t); });
+
+            const showHistoryBtn = !seenStudents.has(r.studentId);
+            seenStudents.add(r.studentId);
 
             const isPending = r.status === 'pending';
             const reviewSection = isPending ? `
@@ -300,14 +361,22 @@
                             <span class="q-student">${escapeHtml(displayName(r.studentName))}</span>
                             <span class="status-chip ${r.status}" style="margin-left:8px;">${escapeHtml(TypingStore.CHECKPOINT_LABELS[r.checkpointId] || r.checkpointId)}</span>
                             ${!isPending ? '<span class="status-chip reviewed" style="margin-left:6px;">✓ reviewed</span>' : ''}
+                            ${showHistoryBtn ? `<button class="btn btn-secondary btn-sm" style="margin-left:8px;" data-toggle-history="${r.studentId}">📈 Progress</button>` : ''}
                         </div>
                         <span class="q-meta">${new Date(r.createdAt).toLocaleString()}</span>
                     </div>
                     <div style="font-family:var(--font-mono);font-size:0.82rem;color:rgba(255,255,255,0.75);">${formatTypingMetrics(r)}</div>
                     ${reviewSection}
+                    ${showHistoryBtn ? `<div class="history-panel" data-history-panel="${r.studentId}" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);"></div>` : ''}
                 </div>
             `;
         }).join('');
+
+        $$('[data-toggle-history]').forEach(btn => btn.addEventListener('click', () => {
+            const sid = btn.dataset.toggleHistory;
+            const panel = $(`[data-history-panel="${sid}"]`);
+            if (panel) toggleStudentHistory(sid, panel);
+        }));
 
         $$('[data-typing-sub]').forEach(chip => chip.addEventListener('click', () => {
             const resId = chip.dataset.typingSub, tagId = chip.dataset.tag;
