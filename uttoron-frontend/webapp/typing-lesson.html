@@ -1597,7 +1597,13 @@
                 if (!currentSessionId) { renderSessionPicker(); return; }
                 const data = SESSIONS_BY_ID[currentSessionId];
                 if (!data) { renderSessionPicker(); return; }
-                const phrases = data.phrases;
+                // Demo-only shortcut: window.UTTORON_DEMO_MAX_PHRASES is set at
+                // build time on the demo Netlify site only (see its build
+                // command), never on the real site, so a real student always
+                // gets the full session.
+                const phrases = window.UTTORON_DEMO_MAX_PHRASES
+                    ? data.phrases.slice(0, window.UTTORON_DEMO_MAX_PHRASES)
+                    : data.phrases;
                 const total = phrases.length;
                 const shell = $('#lessonShell');
 

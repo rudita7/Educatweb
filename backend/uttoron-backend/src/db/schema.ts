@@ -2,9 +2,11 @@ import { pgTable, serial, text, integer, timestamp, jsonb, uniqueIndex, doublePr
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  username: text('username').notNull().unique(),
+  username: text('username').notNull().unique(), // the passport number (e.g. "UT-4821") for students; a plain chosen name for reviewers
   pin: text('pin').notNull(), // Hashed PIN
   role: text('role').notNull().default('student'), // 'student' | 'reviewer' — spec explicitly descopes multiple reviewer tiers, so this is a flat flag, not a permissions table
+  nickname: text('nickname'), // display name chosen at passport creation — nullable since it predates this column and reviewers don't set one
+  avatar: text('avatar'), // avatar id chosen at passport creation, same nullability reasoning as nickname
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
