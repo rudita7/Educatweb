@@ -551,6 +551,11 @@
         .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
         .footer-col a { color: var(--ink-dim); font-size: 0.86rem; }
         .footer-col a:hover { color: var(--coral-soft); text-decoration: none; }
+        .footer-partner {
+            display: flex; align-items: center; gap: 12px; padding-top: 22px; margin-bottom: 22px;
+            border-top: 1px solid var(--line-soft); color: var(--ink-faint); font-size: 0.85rem;
+        }
+        .footer-partner img { height: 36px; width: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
         .footer-bottom {
             display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding-top: 22px;
             border-top: 1px solid var(--line-soft); color: var(--ink-faint); font-size: 0.78rem;
@@ -890,6 +895,10 @@
                         <li><a href="/webapp/analytics.html">Analytics</a></li>
                     </ul>
                 </div>
+            </div>
+            <div class="footer-partner">
+                <img src="/webapp/assets/aim-initiative-foundation-logo.png" alt="AIM Initiative Foundation logo">
+                <span>In partnership with <strong style="color: var(--ink);">AIM Initiative Foundation</strong></span>
             </div>
             <div class="footer-bottom">
                 <span>Uttoron — Skills Passport for underprivileged youth</span>
