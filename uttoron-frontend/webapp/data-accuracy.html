@@ -19,7 +19,7 @@
             --bg-elev: #0b0b0c;
             --ink: #F5F1E6;
             --ink-dim: rgba(245, 241, 230, 0.62);
-            --ink-faint: rgba(245, 241, 230, 0.36);
+            --ink-faint: rgba(245, 241, 230, 0.55);
             --coral: #E6493C;
             --coral-soft: #FF6B57;
             --coral-glow: rgba(230, 73, 60, 0.45);
@@ -122,7 +122,7 @@
             box-shadow: 0 4px 14px rgba(230, 73, 60, 0.35);
         }
         .nav-btn, .back-link {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             border: none;
             color: #fff;
             padding: 8px 18px;
@@ -246,6 +246,12 @@
             color: #6fd6ab;
             border: 1px solid rgba(46, 125, 91, 0.4);
         }
+        .status-badge.done {
+            background: #2e7d5b;
+            color: #fff;
+            border: 1px solid #2e7d5b;
+        }
+        .track-summary { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-dim); margin: 0 0 18px; }
         .status-badge.coming-soon {
             background: transparent;
             color: var(--ink-faint);
@@ -277,7 +283,7 @@
         }
         .lesson-card .module-list li::before {
             content: "●";
-            color: var(--teal);
+            color: #4aa882;
             font-size: 0.5rem;
         }
 
@@ -302,7 +308,7 @@
             transform: scale(0.96);
         }
         .btn-primary {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             color: #fff;
             box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25);
         }
@@ -556,6 +562,41 @@
             <span>Track 3: Data Accuracy & Quality Assurance</span>
         </div>
     </footer>
+
+    <script>
+    // Show which lessons this student has already finished. Reads the same
+    // localStorage progress map the lessons write to (progress:<passport>);
+    // signed-out visitors just see the plain "Start" buttons.
+    (function () {
+        try {
+            var sess = JSON.parse(localStorage.getItem('uttoron:session') || 'null');
+            if (!sess || !sess.num) return;
+            var prog = JSON.parse(localStorage.getItem('progress:' + sess.num) || '{}');
+            var IDS = ["lesson1-find-errors", "lesson2-correct-records", "lesson3-data-cleaning", "lesson4-workplace-qa"];
+            var done = 0;
+            document.querySelectorAll('.lesson-card a.btn').forEach(function (a) {
+                var m = (a.getAttribute('href') || '').match(/lesson(\d+)\/index\.html/);
+                if (!m) return;
+                var n = Number(m[1]);
+                if (!IDS[n - 1] || !prog[IDS[n - 1]]) return;
+                done++;
+                var badge = a.closest('.lesson-card').querySelector('.status-badge');
+                if (badge) { badge.className = 'status-badge done'; badge.textContent = '✓ Complete'; }
+                a.textContent = 'Review Lesson ' + n + ' →';
+            });
+            var cap = document.querySelector('.capstone-section a.btn');
+            if (cap && prog['capstone-records-department']) {
+                cap.textContent = 'Review the Capstone →';
+            }
+            var sum = document.createElement('p');
+            sum.className = 'track-summary';
+            sum.textContent = done + ' of 4 lessons complete';
+            var first = document.querySelector('.lesson-card');
+            var grid = first && first.parentNode;
+            if (grid && grid.parentNode) grid.parentNode.insertBefore(sum, grid);
+        } catch (e) { /* no storage: leave the page as-is */ }
+    })();
+    </script>
 
 </body>
 </html>

@@ -40,7 +40,7 @@
                         ${opts.removable ? `<button type="button" data-remove="${i}" title="Remove">✕</button>` : ''}
                     </div>
                 </div>`;
-        }).join('') || '<p style="grid-column:1/-1;color:rgba(255,255,255,0.4);font-size:0.85rem;">No slides yet — add some above.</p>';
+        }).join('') || '<p style="grid-column:1/-1;color:rgba(255,255,255,0.62);font-size:0.85rem;">No slides yet — add some above.</p>';
 
         $$('[data-move]', container).forEach(btn => btn.addEventListener('click', () => {
             const i = Number(btn.dataset.idx);

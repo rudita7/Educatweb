@@ -18,7 +18,7 @@
 .dup-card.cluster-odd { border-color: rgba(232, 163, 61, 0.6); }
 .dup-card .info { flex: 1; }
 .dup-card .info h4 { font-size: 0.95rem; margin-bottom: 2px; }
-.dup-card .info .meta { font-family: var(--font-mono); font-size: 0.78rem; color: #5b6b63; }
+.dup-card .info .meta { font-family: var(--font-mono); font-size: 0.78rem; color: #4e5e56; }
 .dup-card input[type="checkbox"] { margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; }
 .cluster-tag {
     font-family: var(--font-mono);
@@ -41,7 +41,7 @@
     margin-bottom: 8px;
     flex-wrap: wrap;
 }
-.pipeline-field .before-after .arrow { color: #8a7c58; }
+.pipeline-field .before-after .arrow { color: #665738; }
 .pipeline-palette { display: flex; flex-wrap: wrap; gap: 8px; }
 .pipeline-palette label {
     display: flex;
@@ -76,7 +76,7 @@
     flex-shrink: 0;
 }
 .rule-result-item .badge.pass { background: #d4e8dd; color: var(--teal-stamp); }
-.rule-result-item .badge.fail { background: #f8d9d0; color: var(--coral); }
+.rule-result-item .badge.fail { background: #f8d9d0; color: #b8341a; }
 
 /* Data Cleaning Challenge (module 7) */
 .step-list { list-style: none; }

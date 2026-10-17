@@ -119,7 +119,7 @@ p {
     font-weight: 600;
     font-size: 0.82rem;
     background: transparent;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255,255,255,0.62);
     border: 1.5px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -194,7 +194,7 @@ p {
 
 .field-label {
     font-weight: 600;
-    color: var(--teal-stamp);
+    color: #246b4c;
     min-width: 150px;
     font-family: var(--font-body);
 }
@@ -207,7 +207,7 @@ p {
 }
 
 .field-value.error {
-    color: var(--coral);
+    color: #b8341a;
     font-weight: 600;
 }
 
@@ -264,7 +264,7 @@ button:disabled {
 
 /* Primary button (Coral) */
 button:not(.secondary):not(.state-btn):not(.flag-btn) {
-    background: var(--coral);
+    background: #bf3f1f;
     color: var(--paper);
 }
 
@@ -418,7 +418,7 @@ button.secondary:hover {
 }
 
 .record-item small {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255,255,255,0.62);
 }
 
 .record-item.flagged {
@@ -523,7 +523,7 @@ button.secondary:hover {
 }
 
 .error-type-card small {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255,255,255,0.62);
 }
 
 /* ============================================================
@@ -578,4 +578,4 @@ button.secondary:hover {
     .error-type-grid {
         grid-template-columns: 1fr;
     }
-}
+}

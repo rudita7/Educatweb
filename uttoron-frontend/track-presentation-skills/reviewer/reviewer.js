@@ -3,7 +3,7 @@
 
     const $ = (sel, root) => (root || document).querySelector(sel);
     const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
-    function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
     // Bridged student accounts are named `nickname#passportNum.salt` (see
     // submissionStore.js — the salt keeps accounts collision-free across
@@ -174,7 +174,7 @@
                         </div>
                         <span class="q-meta">${new Date(sub.createdAt).toLocaleString()}</span>
                     </div>
-                    <div>${mediaHtml || '<span style="color:rgba(255,255,255,0.4);font-size:0.85rem;">No file attached.</span>'}</div>
+                    <div>${mediaHtml || '<span style="color:rgba(255,255,255,0.62);font-size:0.85rem;">No file attached.</span>'}</div>
                     ${reviewSection}
                 </div>
             `;
@@ -231,7 +231,7 @@
     }
 
     function renderExistingTypingFeedback(fb, resultId, comparisons) {
-        if (!fb) return '<p style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;">Reviewed — no feedback details available.</p>';
+        if (!fb) return '<p style="font-size:0.82rem;color:rgba(255,255,255,0.62);margin-top:8px;">Reviewed — no feedback details available.</p>';
         const tagList = (fb.tagIds || []).map(id => TypingStore.TYPING_TAGS.find(t => t.id === id)).filter(Boolean);
         return `<div style="margin-top:10px;">
             ${tagList.map(t => `<span class="tag-chip ${t.sentiment}">${t.sentiment === 'positive' ? '✅' : '💡'} ${escapeHtml(t.label)}</span>`).join('')}
@@ -258,14 +258,14 @@
     }
 
     function renderHistoryPanel(history, comparisons) {
-        if (!history.length) return '<div style="padding:10px 0;font-size:0.82rem;color:rgba(255,255,255,0.5);">No sessions submitted yet.</div>';
+        if (!history.length) return '<div style="padding:10px 0;font-size:0.82rem;color:rgba(255,255,255,0.62);">No sessions submitted yet.</div>';
         const sorted = [...history].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         const resolved = (comparisons || []).find(c => c.resolved);
         const summary = resolved
             ? `<div class="metric-comparison" style="margin-bottom:8px;">📊 Overall: wpm ${resolved.wpmBefore.toFixed(1)} → ${resolved.wpmAfter.toFixed(1)} · accuracy ${resolved.accuracyBefore.toFixed(1)}% → ${resolved.accuracyAfter.toFixed(1)}%</div>`
             : '';
         return `${summary}<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
-            <thead><tr style="color:rgba(255,255,255,0.5);text-align:left;">
+            <thead><tr style="color:rgba(255,255,255,0.62);text-align:left;">
                 <th style="padding:4px 10px 4px 0;font-weight:500;">Date</th>
                 <th style="padding:4px 10px;font-weight:500;">Session</th>
                 <th style="padding:4px 10px;font-weight:500;">WPM</th>
@@ -283,7 +283,7 @@
         if (isOpen) { panel.style.display = 'none'; return; }
         panel.style.display = 'block';
         if (loadedHistory[studentId]) { panel.innerHTML = loadedHistory[studentId]; return; }
-        panel.innerHTML = '<div style="padding:10px 0;font-size:0.82rem;color:rgba(255,255,255,0.5);">Loading…</div>';
+        panel.innerHTML = '<div style="padding:10px 0;font-size:0.82rem;color:rgba(255,255,255,0.62);">Loading…</div>';
         try {
             const [history, comparisons] = await Promise.all([
                 TypingStore.listQueue(reviewerUid, { studentId, status: 'all' }),
@@ -427,7 +427,7 @@
     }
 
     function renderExistingFeedback(fb, submissionId, comparisons) {
-        if (!fb) return '<p style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;">Reviewed — no feedback details available.</p>';
+        if (!fb) return '<p style="font-size:0.82rem;color:rgba(255,255,255,0.62);margin-top:8px;">Reviewed — no feedback details available.</p>';
         const tags = (fb.tagIds || []).map(id => PS.submissionStore.TAGS.find(t => t.id === id)).filter(Boolean);
         const categoriesSeen = new Set();
         return `<div style="margin-top:10px;">
@@ -448,14 +448,14 @@
         try {
             const data = await PS.submissionStore.getCohortWeaknessPatterns(reviewerUid, 30);
             if (!data.totalReviews) {
-                $('#cohortInsights').innerHTML = '<p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">No reviews yet in this window.</p>';
+                $('#cohortInsights').innerHTML = '<p style="color:#665738;font-size:0.85rem;">No reviews yet in this window.</p>';
                 return;
             }
             $('#cohortInsights').innerHTML = data.patterns.map(p =>
                 `<span class="tag-chip constructive" style="margin:3px 6px 3px 0;">${escapeHtml(p.category.replace('_', ' '))}: ${p.count}/${data.totalReviews} reviews (${p.percentage}%)</span>`
             ).join('');
         } catch (err) {
-            $('#cohortInsights').innerHTML = `<p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">Couldn't load insights (${escapeHtml(err.message)}).</p>`;
+            $('#cohortInsights').innerHTML = `<p style="color:#665738;font-size:0.85rem;">Couldn't load insights (${escapeHtml(err.message)}).</p>`;
         }
     }
 
@@ -493,15 +493,15 @@
 
         const patternsHtml = patterns.patterns.length
             ? patterns.patterns.map(p => `<span class="tag-chip constructive" style="margin:3px 6px 3px 0;">${escapeHtml(p.category.replace('_', ' '))}: flagged in ${p.count} of ${p.totalReviews} reviews</span>`).join('')
-            : '<p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">No recurring patterns yet.</p>';
+            : '<p style="color:#665738;font-size:0.85rem;">No recurring patterns yet.</p>';
 
         let portfolioHtml;
         if (!portfolio.touchpoint1 || !portfolio.capstone) {
-            portfolioHtml = '<p style="color:rgba(255,255,255,0.45);font-size:0.85rem;">Not enough deck submissions yet to compare touchpoint 1 with the capstone.</p>';
+            portfolioHtml = '<p style="color:#665738;font-size:0.85rem;">Not enough deck submissions yet to compare touchpoint 1 with the capstone.</p>';
         } else {
             const side = (label, entry) => `
                 <div style="flex:1;min-width:200px;">
-                    <div style="font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:4px;">${label}</div>
+                    <div style="font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;color:#665738;margin-bottom:4px;">${label}</div>
                     ${entry.fileUrl ? `<a class="btn btn-secondary btn-sm" href="${entry.fileUrl}" download="${escapeHtml(entry.fileName || 'deck.pptx')}">⬇ ${escapeHtml(entry.fileName || 'deck.pptx')}</a>` : ''}
                 </div>`;
             const diffHtml = portfolio.diff
@@ -509,7 +509,7 @@
                     const pct = d.percentChange === null ? '' : ` (${d.percentChange >= 0 ? '+' : ''}${d.percentChange.toFixed(0)}%)`;
                     return `${escapeHtml(METRIC_LABELS[d.metric] || d.metric)}: ${formatMetricValue(d.before)} → ${formatMetricValue(d.after)}${pct}`;
                 }).join(' · ')}</div>`
-                : '<p style="color:rgba(255,255,255,0.45);font-size:0.82rem;margin-top:8px;">One of these decks didn\'t parse cleanly, so a numeric comparison isn\'t available — the files are still downloadable above.</p>';
+                : '<p style="color:#665738;font-size:0.82rem;margin-top:8px;">One of these decks didn\'t parse cleanly, so a numeric comparison isn\'t available — the files are still downloadable above.</p>';
             portfolioHtml = `<div style="display:flex;gap:16px;flex-wrap:wrap;">${side('Touchpoint 1', portfolio.touchpoint1)}${side('Capstone', portfolio.capstone)}</div>${diffHtml}`;
         }
 

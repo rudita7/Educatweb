@@ -33,7 +33,7 @@
         .lesson-card p { color: var(--ink-dim); font-size: 0.9rem; margin: 0 0 12px; }
         .lesson-card .module-list { font-size: 0.82rem; color: var(--ink-faint); margin-bottom: 16px; list-style: none; padding: 0; }
         .lesson-card .module-list li { padding: 2px 0; display: flex; align-items: center; gap: 8px; }
-        .lesson-card .module-list li::before { content: "●"; color: var(--teal); font-size: 0.5rem; }
+        .lesson-card .module-list li::before { content: "●"; color: #4aa882; font-size: 0.5rem; }
         .capstone-section {
             margin-top: 40px; padding: 28px; background: var(--glass); backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-lg); border: 1px dashed var(--line);
@@ -132,7 +132,7 @@
             const allDone = LESSONS.every(l => progress[l.id]);
             const statusEl = document.getElementById('capstoneStatus');
             if (capstoneDone) {
-                statusEl.innerHTML = '<span style="color:var(--teal);font-weight:600;">✅ Capstone complete — Spreadsheet Mastery stamp earned.</span>';
+                statusEl.innerHTML = '<span style="color:#4aa882;font-weight:600;">✅ Capstone complete — Spreadsheet Mastery stamp earned.</span>';
             } else if (allDone) {
                 statusEl.innerHTML = '<a href="capstone/index.html" class="btn btn-success">Start the Capstone →</a>';
             } else {

@@ -22,7 +22,7 @@
             --bg-elev: #0b0b0c;
             --ink: #F5F1E6;
             --ink-dim: rgba(245, 241, 230, 0.62);
-            --ink-faint: rgba(245, 241, 230, 0.36);
+            --ink-faint: rgba(245, 241, 230, 0.55);
             --coral: #E6493C;
             --coral-soft: #FF6B57;
             --coral-glow: rgba(230, 73, 60, 0.45);
@@ -174,7 +174,7 @@
             box-shadow: 0 4px 14px rgba(230, 73, 60, 0.35);
         }
         .back-link {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             border: none;
             color: #fff;
             padding: 8px 18px;
@@ -210,7 +210,7 @@
             transform: scale(0.96);
         }
         .btn-primary {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             color: #fff;
             box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25);
         }
@@ -367,7 +367,7 @@
             min-height: 1.5em;
         }
         .typing-status.good {
-            color: var(--teal);
+            color: #4aa882;
             font-weight: 600;
         }
 
@@ -644,7 +644,7 @@
             height: 88px;
             border-radius: 50%;
             border: 2.5px solid var(--teal);
-            color: var(--teal);
+            color: #4aa882;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1994,7 +1994,7 @@
                         <p style="color:var(--ink-dim);">${session.title}</p>
                         ${submitOutcome && submitOutcome.queued
                             ? `<p style="color:var(--coral-soft);font-weight:600;margin-top:8px;">📴 No internet connection — your result is saved on this device and will be sent to your reviewer automatically once you're back online.</p>`
-                            : `<p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>`}
+                            : `<p style="color:#4aa882;font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>`}
                         ${comparisonHtml}
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
                             ${next ? `<button class="btn btn-primary" id="nextSessionBtn">Session ${next.number}: ${next.title} →</button>` : ''}
@@ -2083,4 +2083,4 @@
     </script>
 
 </body>
-</html>
+</html>

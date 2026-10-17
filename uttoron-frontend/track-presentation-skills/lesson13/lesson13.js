@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="recorder-playback" id="playbackHolder"></div>
-            <p style="font-size:0.76rem;color:rgba(255,255,255,0.4);margin-top:10px;">Presented live instead? Upload a video someone else recorded:
+            <p style="font-size:0.76rem;color:rgba(255,255,255,0.62);margin-top:10px;">Presented live instead? Upload a video someone else recorded:
                 <label style="text-decoration:underline;cursor:pointer;color:var(--marigold);">choose a file<input type="file" id="liveUpload" accept="audio/*,video/*" style="display:none;" /></label>
             </p>
         `;
@@ -181,7 +181,7 @@
     function renderStatusArea() {
         if (!mine.length) { $('#statusArea').innerHTML = ''; return; }
         $('#statusArea').innerHTML = `
-            <div class="ledger-title" style="color:rgba(255,255,255,0.4);margin-bottom:10px;">Your capstone submissions</div>
+            <div class="ledger-title" style="color:rgba(255,255,255,0.62);margin-bottom:10px;">Your capstone submissions</div>
             ${mine.map(({ submission, feedback: fb }) => `
                 <div class="submission-card">
                     <div class="sub-head">
@@ -189,7 +189,7 @@
                         <span class="status-chip ${submission.status}">${submission.status === 'reviewed' ? '✓ Reviewed' : '⏳ Pending'}</span>
                     </div>
                     <div class="sub-meta">Submitted ${new Date(submission.createdAt).toLocaleString()}${submission.resubmissionOf ? ' · resubmission' : ''}</div>
-                    ${fb ? renderFeedbackBlock(fb) : (submission.status === 'pending' ? '<p style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;">Waiting on a reviewer.</p>' : '')}
+                    ${fb ? renderFeedbackBlock(fb) : (submission.status === 'pending' ? '<p style="font-size:0.82rem;color:rgba(255,255,255,0.62);margin-top:8px;">Waiting on a reviewer.</p>' : '')}
                 </div>
             `).join('')}
         `;
@@ -201,7 +201,7 @@
         return `<div style="margin-top:10px;">
             ${Object.keys(byCategory).map(cat => `
                 <div style="margin-bottom:8px;">
-                    <div style="font-family:var(--font-mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.4);margin-bottom:3px;">${escapeHtml(cat.replace('_', ' '))}</div>
+                    <div style="font-family:var(--font-mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.62);margin-bottom:3px;">${escapeHtml(cat.replace('_', ' '))}</div>
                     ${byCategory[cat].map(t => `<span class="tag-chip ${t.sentiment}">${t.sentiment === 'positive' ? '✅' : '💡'} ${escapeHtml(t.label)}</span>`).join('')}
                 </div>
             `).join('')}

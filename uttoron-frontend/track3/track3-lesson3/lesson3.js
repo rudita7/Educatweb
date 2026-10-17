@@ -63,7 +63,7 @@
     function resetFeedback(id) { $(id).className = 'feedback'; }
 
     const norm = window.T3.hashLookup.normalize;
-    function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
     function escapeAttr(s) { return escapeHtml(s).replace(/"/g, '&quot;'); }
 
     function ledgerRow(field, label, value, opts) {

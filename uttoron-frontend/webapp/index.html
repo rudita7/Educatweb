@@ -151,7 +151,7 @@
             transform: scale(0.96);
         }
         .btn-primary {
-            background: var(--coral);
+            background: #bf3f1f;
             color: var(--paper);
         }
         .btn-primary:hover {
@@ -167,6 +167,10 @@
             border-color: var(--marigold);
             color: var(--marigold);
         }
+        /* The dashboard is a cream page: the default (cream-on-transparent)
+           secondary button was cream text on a cream background. */
+        .dashboard-actions .btn-secondary { color: var(--ink); border-color: rgba(28, 43, 46, 0.45); }
+        .dashboard-actions .btn-secondary:hover { color: #8a5a00; border-color: #8a5a00; }
         .btn-success {
             background: var(--teal-stamp);
             color: var(--paper);
@@ -378,7 +382,7 @@
             min-width: 0;
         }
         .email-input-wrapper input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255,255,255,0.62);
         }
         .email-input-wrapper .btn-submit {
             background: #fff;
@@ -435,7 +439,7 @@
             font-size: 0.68rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: #5b6b63;
+            color: #4e5e56;
         }
 
         .hero-passport {
@@ -451,7 +455,7 @@
             font-size: 0.65rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #7a6a4a;
+            color: #665738;
         }
         .hero-passport h3 {
             margin: 4px 0 14px;
@@ -479,12 +483,12 @@
             transition: transform 0.3s;
         }
         .stamp.locked {
-            border: 2px dashed rgba(28, 43, 46, 0.3);
-            color: rgba(28, 43, 46, 0.4);
+            border: 2px dashed rgba(28, 43, 46, 0.4);
+            color: rgba(28, 43, 46, 0.7);
         }
         .stamp.earned {
             border: 2.5px solid var(--teal-stamp);
-            color: var(--teal-stamp);
+            color: #246b4c;
             transform: rotate(-6deg);
             box-shadow: inset 0 0 0 3px rgba(46, 125, 91, 0.08);
         }
@@ -535,7 +539,7 @@
         }
         .section-head h2 em {
             font-style: italic;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255,255,255,0.62);
         }
         .section-head p {
             color: var(--paper-dim);
@@ -558,7 +562,7 @@
             font-weight: 600;
             font-size: 0.85rem;
             background: transparent;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.62);
             border: 1.5px solid transparent;
             transition: all 0.2s;
         }
@@ -605,7 +609,7 @@
             font-size: 1.1rem;
         }
         .track-card p {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.62);
             font-size: 0.88rem;
             margin: 0 0 14px;
         }
@@ -629,7 +633,7 @@
         }
 
         .demo-banner {
-            background: linear-gradient(135deg, var(--teal-stamp), #245c47);
+            background: linear-gradient(135deg, #246b4c, #1d5a3e);
             border-radius: 18px;
             padding: 24px 28px;
             display: flex;
@@ -644,7 +648,7 @@
         }
         .demo-banner p {
             margin: 0;
-            color: rgba(246, 240, 223, 0.85);
+            color: rgba(246, 240, 223, 0.95);
             max-width: 44ch;
             font-size: 0.88rem;
         }
@@ -664,7 +668,7 @@
             font-size: 1.4rem;
         }
         .card .sub {
-            color: #5b6b63;
+            color: #4e5e56;
             font-size: 0.88rem;
             margin: 0 0 20px;
         }
@@ -736,12 +740,12 @@
             font-size: 0.85rem;
             text-align: center;
             margin-top: 16px;
-            color: #5b6b63;
+            color: #4e5e56;
         }
         .switch-link button {
             background: none;
             border: none;
-            color: var(--teal-stamp);
+            color: #246b4c;
             font-weight: 600;
             text-decoration: underline;
             padding: 0;
@@ -804,7 +808,7 @@
             margin-bottom: 20px;
             font-family: var(--font-mono);
             font-size: 0.8rem;
-            color: #5b6b63;
+            color: #4e5e56;
             flex-wrap: wrap;
             gap: 8px;
         }
@@ -839,7 +843,7 @@
         }
         .stamp-tile .status {
             font-size: 0.75rem;
-            color: #7a7060;
+            color: #5c5444;
         }
         .stamp-tile .status.done {
             color: var(--teal-stamp);
@@ -873,7 +877,7 @@
             font-size: 0.6rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #7a7060;
+            color: #5c5444;
             background: var(--paper-dim);
             padding: 2px 10px;
             border-radius: 10px;
@@ -941,7 +945,7 @@
         footer {
             padding: 32px 0 44px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255,255,255,0.62);
             font-size: 0.78rem;
         }
         footer .wrap {
@@ -1319,7 +1323,7 @@
                         <span class="tag">Lesson ${num}</span>
                         <h3>${lesson.emoji} ${lesson.title}</h3>
                         <p>${lesson.desc}</p>
-                        ${isClickable ? `<button class="lesson-link" data-lesson="${lesson.id}">Try this lesson →</button>` : `<span style="color:rgba(255,255,255,0.3);font-size:0.85rem;">Coming soon</span>`}
+                        ${isClickable ? `<button class="lesson-link" data-lesson="${lesson.id}">Try this lesson →</button>` : `<span style="color:rgba(255,255,255,0.62);font-size:0.85rem;">Coming soon</span>`}
                     </div>
                 `;
             });
@@ -1396,7 +1400,7 @@
                             <h4>${lesson.title}</h4>
                             <div class="track-label">${track.icon} ${track.title}</div>
                             <div class="status ${done ? 'done' : ''}">${statusText}</div>
-                            ${isClickable ? `<button class="btn btn-outline-dark btn-sm" onclick="openLesson('${lesson.id}')" style="font-size:0.7rem;padding:4px 12px;">${done ? 'Review' : 'Start'} →</button>` : `<span style="font-size:0.65rem;color:#8a806c;">Coming soon</span>`}
+                            ${isClickable ? `<button class="btn btn-outline-dark btn-sm" onclick="openLesson('${lesson.id}')" style="font-size:0.7rem;padding:4px 12px;">${done ? 'Review' : 'Start'} →</button>` : `<span style="font-size:0.65rem;color:#5c5444;">Coming soon</span>`}
                         </div>
                     `;
                 });
@@ -1421,10 +1425,10 @@
                 shell.innerHTML = `
                     <div style="text-align:center;padding:20px;">
                         <h2>⌨️ Keyboard & Typing Practice</h2>
-                        <p style="color:#5b6b63;margin:12px 0;">Type the text below accurately.</p>
+                        <p style="color:#4e5e56;margin:12px 0;">Type the text below accurately.</p>
                         <div style="background:#faf8f2;padding:20px;border-radius:10px;font-family:monospace;font-size:1.2rem;letter-spacing:1px;border:1.5px solid #e3d9b8;margin:12px 0;" id="typingTarget">The quick brown fox jumps over the lazy dog.</div>
                         <input type="text" id="typingInput" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #d8cfae;font-family:monospace;font-size:1.1rem;background:#fff;" placeholder="Type here..." />
-                        <div id="typingStatus" style="margin-top:10px;font-size:0.9rem;color:#5b6b63;">Start typing...</div>
+                        <div id="typingStatus" style="margin-top:10px;font-size:0.9rem;color:#4e5e56;">Start typing...</div>
                         <button class="btn btn-primary" style="margin-top:12px;" onclick="markComplete('typing')">✅ Mark Complete</button>
                         <button class="btn btn-secondary" style="margin-top:12px;" onclick="showView('dashboard')">Back to Dashboard</button>
                         <button class="btn btn-secondary" style="margin-top:12px;margin-left:8px;" onclick="showView('landing')">🏠 Home</button>
@@ -1444,7 +1448,7 @@
                         status.style.color = 'var(--coral)';
                     } else {
                         status.textContent = `Keep going... ${typed.length}/${targetText.length}`;
-                        status.style.color = '#5b6b63';
+                        status.style.color = '#4e5e56';
                     }
                 });
                 input.focus();
@@ -1454,7 +1458,7 @@
                 shell.innerHTML = `
                     <div style="text-align:center;padding:20px;">
                         <h2>📊 Spreadsheet Basics</h2>
-                        <p style="color:#5b6b63;margin:12px 0;">Enter numbers and use formulas!</p>
+                        <p style="color:#4e5e56;margin:12px 0;">Enter numbers and use formulas!</p>
                         <div style="background:#fff;border-radius:12px;padding:16px;border:1.5px solid #d8cfae;overflow-x:auto;margin:12px 0;">
                             <table style="border-collapse:collapse;width:100%;min-width:300px;margin:0 auto;">
                                 <tr><th style="border:1px solid #b5aa8a;padding:8px;background:#f0ebe0;">&nbsp;</th><th style="border:1px solid #b5aa8a;padding:8px;background:#f0ebe0;">A</th><th style="border:1px solid #b5aa8a;padding:8px;background:#f0ebe0;">B</th><th style="border:1px solid #b5aa8a;padding:8px;background:#f0ebe0;">C</th></tr>
@@ -1466,9 +1470,9 @@
                         </div>
                         <div style="background:#faf8f2;padding:12px;border-radius:8px;border-left:4px solid var(--marigold);text-align:left;">
                             <p style="font-weight:600;">Try these formulas:</p>
-                            <p style="font-size:0.9rem;color:#5b6b63;">• <code>=SUM(A1:A3)</code> - adds values in A1, A2, A3</p>
-                            <p style="font-size:0.9rem;color:#5b6b63;">• <code>=AVERAGE(B1:B3)</code> - averages values in B1, B2, B3</p>
-                            <p style="font-size:0.9rem;color:#5b6b63;">• <code>=MAX(A1:C3)</code> - finds the highest value</p>
+                            <p style="font-size:0.9rem;color:#4e5e56;">• <code>=SUM(A1:A3)</code> - adds values in A1, A2, A3</p>
+                            <p style="font-size:0.9rem;color:#4e5e56;">• <code>=AVERAGE(B1:B3)</code> - averages values in B1, B2, B3</p>
+                            <p style="font-size:0.9rem;color:#4e5e56;">• <code>=MAX(A1:C3)</code> - finds the highest value</p>
                         </div>
                         <button class="btn btn-primary" style="margin-top:12px;" onclick="markComplete('spreadsheet')">✅ Mark Complete</button>
                         <button class="btn btn-secondary" style="margin-top:12px;" onclick="showView('dashboard')">Back to Dashboard</button>

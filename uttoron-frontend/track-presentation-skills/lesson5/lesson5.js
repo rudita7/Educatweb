@@ -48,7 +48,7 @@
             canvasBody += imageInserted
                 ? '<div class="ppt-img-placeholder"><span class="icon">🖼️</span>Picture inserted</div>'
                 : '<div class="ppt-img-placeholder"><span class="icon">＋</span>No picture yet</div>';
-            canvasBody += '<div class="ppt-chart-canvas" id="chartCanvas">' + (chartInserted ? PS_PPT.chartSVG(chartType, chartData) : '<span style="color:#a19f9d;font-size:0.8rem;">No chart yet</span>') + '</div>';
+            canvasBody += '<div class="ppt-chart-canvas" id="chartCanvas">' + (chartInserted ? PS_PPT.chartSVG(chartType, chartData) : '<span style="color:#6b6a68;font-size:0.8rem;">No chart yet</span>') + '</div>';
             canvasBody += '</div></div></div>';
             body = ribbon + canvasBody;
         }

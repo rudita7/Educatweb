@@ -13,7 +13,7 @@
         return `<div style="margin-top:10px;">
             ${Object.keys(byCategory).map(cat => `
                 <div style="margin-bottom:8px;">
-                    <div style="font-family:var(--font-mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.4);margin-bottom:3px;">${escapeHtml(cat.replace('_', ' '))}</div>
+                    <div style="font-family:var(--font-mono);font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.62);margin-bottom:3px;">${escapeHtml(cat.replace('_', ' '))}</div>
                     ${byCategory[cat].map(t => `<span class="tag-chip ${t.sentiment}">${t.sentiment === 'positive' ? '✅' : '💡'} ${escapeHtml(t.label)}</span>`).join('')}
                 </div>
             `).join('')}
@@ -35,7 +35,7 @@
                 <span class="status-chip ${submission.status}">${submission.status === 'reviewed' ? '✓ Reviewed' : '⏳ Pending'}</span>
             </div>
             <div class="sub-meta">Submitted ${new Date(submission.createdAt).toLocaleString()}${submission.resubmissionOf ? ' · resubmission' : ''}</div>
-            ${fb ? renderFeedbackBlock(fb) : '<p style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;">Waiting on a reviewer.</p>'}
+            ${fb ? renderFeedbackBlock(fb) : '<p style="font-size:0.82rem;color:rgba(255,255,255,0.62);margin-top:8px;">Waiting on a reviewer.</p>'}
         </div>`;
     }
 

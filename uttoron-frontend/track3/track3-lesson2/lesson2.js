@@ -107,7 +107,7 @@
     // ============================================================
     //  SHARED: generic editable ledger row + command-stack binding
     // ============================================================
-    function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
     function escapeAttr(s) { return escapeHtml(s).replace(/"/g, '&quot;'); }
 
     function ledgerRow(field, label, value, opts) {
@@ -327,7 +327,7 @@
         let html = m3Stack.undoStack.map((cmd, i) =>
             `<li class="${i === m3Stack.undoStack.length - 1 ? 'current' : ''}">${cmd.label}</li>`).join('');
         html += m3Stack.redoStack.slice().reverse().map(cmd => `<li class="undone">${cmd.label} (undone)</li>`).join('');
-        $('#m3-history').innerHTML = html || '<li style="border:none;color:#8a7c58;">No edits yet.</li>';
+        $('#m3-history').innerHTML = html || '<li style="border:none;color:rgba(255,255,255,0.62);">No edits yet.</li>';
     }
 
     function checkM3Progress() {

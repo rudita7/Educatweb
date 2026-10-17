@@ -16,7 +16,7 @@
             --bg-elev: #0b0b0c;
             --ink: #F5F1E6;
             --ink-dim: rgba(245, 241, 230, 0.62);
-            --ink-faint: rgba(245, 241, 230, 0.36);
+            --ink-faint: rgba(245, 241, 230, 0.55);
             --coral: #E6493C;
             --coral-soft: #FF6B57;
             --coral-glow: rgba(230, 73, 60, 0.45);
@@ -108,7 +108,7 @@
             font-family: var(--font-body);
         }
         .btn:active { transform: scale(0.96); }
-        .btn-primary { background: linear-gradient(135deg, var(--coral-soft), var(--coral)); color: #fff; box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25); }
+        .btn-primary { background: linear-gradient(135deg, #d13f2a, #b8321f); color: #fff; box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--coral-glow); }
         .btn-secondary { background: rgba(255,255,255,0.03); color: var(--ink); border: 1.5px solid var(--line); }
         .btn-secondary:hover { border-color: var(--coral); color: var(--coral-soft); transform: translateY(-2px); }
@@ -165,7 +165,7 @@
             box-shadow: 0 4px 14px rgba(230, 73, 60, 0.35);
         }
         .nav-btn {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             border: none;
             color: #fff;
             padding: 8px 18px;
@@ -291,7 +291,7 @@
         .stamp.locked { border: 2px dashed rgba(245,241,230,0.18); color: var(--ink-faint); }
         .stamp.earned {
             border: 2.5px solid var(--teal);
-            color: var(--teal);
+            color: #4aa882;
             transform: rotate(-6deg);
             box-shadow: 0 0 0 3px rgba(46,125,91,0.1), 0 0 18px rgba(46,125,91,0.25);
             animation: stampPulse 3.4s ease-in-out infinite;
@@ -318,7 +318,7 @@
             padding: 9px 22px; border-radius: var(--radius-pill); font-weight: 600; font-size: 0.85rem;
             background: transparent; color: var(--ink-faint); border: none; transition: all 0.25s var(--ease); cursor: pointer;
         }
-        .track-selector button.active { background: linear-gradient(135deg, var(--coral-soft), var(--coral)); color: #fff; box-shadow: 0 6px 18px var(--coral-glow); }
+        .track-selector button.active { background: linear-gradient(135deg, #d13f2a, #b8321f); color: #fff; box-shadow: 0 6px 18px var(--coral-glow); }
         .track-selector button:hover:not(.active) { color: var(--ink); }
 
         .tracks-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
@@ -984,6 +984,37 @@
             ]
         }];
 
+        // A stamp is earned when the lesson shells actually record the work —
+        // not through a flag of its own. Typing and Spreadsheet Basics set
+        // progress.typing / progress.spreadsheet directly, but Presentation
+        // Skills and Data Accuracy are multi-lesson tracks whose lessons each
+        // write their own id (ps-lesson1-…, lesson1-find-errors, …) and never
+        // wrote progress['presentation-skills'] / progress['data-accuracy'].
+        // Those two stamps were therefore impossible to earn. Derive them
+        // from the real lesson ids instead.
+        const STAMP_REQUIRES = {
+            'presentation-skills': [
+                'ps-lesson1-getting-started', 'ps-lesson2-template', 'ps-lesson3-structure',
+                'ps-lesson4-text', 'ps-lesson5-visuals', 'ps-lesson6-motion', 'ps-lesson7-notes',
+                'ps-lesson8-proofread', 'ps-lesson9-checkpoint', 'ps-lesson10-saving',
+                'ps-lesson11-slideshow', 'ps-lesson12-delivery', 'ps-lesson13-capstone'
+            ],
+            'data-accuracy': [
+                'lesson1-find-errors', 'lesson2-correct-records',
+                'lesson3-data-cleaning', 'lesson4-workplace-qa'
+            ]
+        };
+        function stampProgress(lessonId, prog) {
+            const needed = STAMP_REQUIRES[lessonId];
+            if (!needed) {
+                // Single-lesson stamps. 'spreadsheet-basics' was an older key.
+                const done = !!(prog[lessonId] || (lessonId === 'spreadsheet' && prog['spreadsheet-basics']));
+                return { done: done, have: done ? 1 : 0, total: 1 };
+            }
+            const have = needed.filter(id => !!prog[id]).length;
+            return { done: have === needed.length || !!prog[lessonId], have: have, total: needed.length };
+        }
+
         // ============================================================
         //  STATE
         // ============================================================
@@ -1130,11 +1161,13 @@
             TRACKS.forEach(track => {
                 track.lessons.forEach((lesson) => {
                     totalLessons++;
-                    const done = !!progress[lesson.id];
+                    const sp = stampProgress(lesson.id, progress);
+                    const done = sp.done;
+                    const partial = !done && sp.have > 0 && sp.total > 1;
                     if (done) earned++;
                     const isClickable = lesson.file !== null;
                     const linkTarget = isClickable ? `href="/webapp/${lesson.file}"` : '';
-                    const linkText = isClickable ? (done ? 'Review →' : 'Start →') : 'Coming soon';
+                    const linkText = isClickable ? (done ? 'Review →' : (partial ? 'Continue →' : 'Start →')) : 'Coming soon';
                     const linkClass = isClickable ? 'btn btn-outline-dark btn-sm' : 'btn btn-outline-dark btn-sm disabled';
                     html += `
                         <div class="stamp-tile ${done ? 'done' : ''}">
@@ -1144,7 +1177,7 @@
                             </div>
                             <h4>${lesson.title}</h4>
                             <div class="track-label">${track.icon} ${track.title}</div>
-                            <div class="status ${done ? 'done' : ''}">${done ? '✅ Stamped' : '⭕ Not started'}</div>
+                            <div class="status ${done ? 'done' : ''}">${done ? '✅ Stamped' : (partial ? '🟡 In progress · ' + sp.have + '/' + sp.total + ' lessons' : '⭕ Not started')}</div>
                             <a ${linkTarget} class="${linkClass}" style="font-size:0.7rem;padding:4px 12px;display:inline-block;text-decoration:none;${!isClickable ? 'opacity:0.4;pointer-events:none;' : ''}">${linkText}</a>
                         </div>
                     `;

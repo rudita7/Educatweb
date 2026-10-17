@@ -42,7 +42,7 @@
 .mcq-opt.chosen { border-color: var(--teal-stamp); background: #eef6f1; }
 .mcq-opt.correct { border-color: var(--teal-stamp); background: #dff0e6; }
 .mcq-opt.wrong { border-color: var(--coral); background: #f8e0da; }
-.mcq-explain { font-size: 0.82rem; color: #5b6b63; background: #f5f1e6; border-radius: 8px; padding: 10px 12px; margin-top: 8px; display: none; }
+.mcq-explain { font-size: 0.82rem; color: #4e5e56; background: #f5f1e6; border-radius: 8px; padding: 10px 12px; margin-top: 8px; display: none; }
 .mcq-explain.show { display: block; }
 
 /* Drag/select matching */
@@ -99,12 +99,19 @@
 
 .ppt-tabs { display: flex; gap: 2px; background: var(--ppt-orange); padding: 0 8px; overflow-x: auto; }
 .ppt-tab {
-    padding: 8px 14px; font-size: 0.8rem; color: rgba(255,255,255,0.85); background: transparent; border: none;
+    padding: 8px 14px; font-size: 0.8rem; color: #fff; background: transparent; border: none;
     cursor: pointer; white-space: nowrap; border-top-left-radius: 6px; border-top-right-radius: 6px; font-family: var(--font-body);
 }
-.ppt-tab:hover { background: rgba(255,255,255,0.15); }
+.ppt-tab:hover { background: rgba(0,0,0,0.18); }
 .ppt-tab.active { background: var(--ppt-gray); color: var(--ppt-ink); font-weight: 600; }
-.ppt-tab.hotspot { animation: pptPulse 1.4s ease-in-out infinite; }
+/* The tab sits on the orange ribbon with white text, so it can't use the
+   white-flash pptPulse (white text on a white flash = invisible). Pulse a
+   darker orange instead, so white text stays readable at every frame. */
+.ppt-tab.hotspot { animation: pptTabPulse 1.4s ease-in-out infinite; }
+@keyframes pptTabPulse {
+    0%, 100% { background: transparent; box-shadow: 0 0 0 0 rgba(255,255,255,0.6); }
+    50% { background: #8f2a10; box-shadow: 0 0 0 4px rgba(255,255,255,0); }
+}
 
 .ppt-ribbon {
     background: var(--ppt-gray); border-bottom: 1px solid var(--ppt-gray-line); padding: 10px 12px;
@@ -189,7 +196,7 @@
    ============================================================ */
 .ppt-img-placeholder {
     flex: 1; min-height: 90px; border: 2px dashed #c8c6c4; border-radius: 6px; background: #faf9f8;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #a19f9d; font-size: 0.78rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #6b6a68; font-size: 0.78rem;
 }
 .ppt-img-placeholder .icon { font-size: 1.8rem; }
 .ppt-chart-canvas { flex: 1; min-height: 140px; display: flex; align-items: center; justify-content: center; }
@@ -219,7 +226,7 @@
 /* Speaker notes pane (Lesson 7) */
 .ppt-notes-pane { border-top: 1px solid var(--ppt-gray-line); background: #faf9f8; padding: 10px 16px; }
 .ppt-notes-pane textarea { width: 100%; border: 1px solid var(--ppt-gray-line); border-radius: 6px; padding: 8px 10px; font-family: var(--font-body); font-size: 0.82rem; color: var(--ppt-ink); resize: vertical; min-height: 44px; }
-.ppt-notes-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: #a19f9d; margin-bottom: 4px; }
+.ppt-notes-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: #6b6a68; margin-bottom: 4px; }
 .note-good { border: 1.5px solid #d8cfae; }
 
 /* Proofread checkpoint (Lesson 8) */
@@ -227,6 +234,7 @@
 .proof-slide .proof-title { font-family: var(--font-display); font-weight: 700; color: var(--ppt-ink); margin-bottom: 8px; }
 .proof-slide ul { margin: 0; padding-left: 18px; color: var(--ppt-ink); font-size: 0.9rem; }
 .proof-slide li { margin-bottom: 4px; }
+.proof-slide { color: var(--ink); }
 .proof-word { cursor: pointer; border-bottom: 2px dotted var(--marigold); }
 .proof-word.found { background: rgba(46,125,91,0.2); border-bottom-color: var(--teal-stamp); border-radius: 3px; }
 .proof-word.missed { background: rgba(232,163,61,0.3); border-bottom-color: var(--marigold); border-radius: 3px; }
@@ -266,7 +274,7 @@
 .bullet-input-row input { flex: 1; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #d8cfae; font-family: var(--font-body); font-size: 0.92rem; background: #fff; color: var(--ink); }
 .bullet-input-row input:focus { outline: none; border-color: var(--teal-stamp); }
 .bullet-input-row input.over { border-color: var(--coral); background: rgba(226,89,59,0.06); }
-.bullet-count { font-family: var(--font-mono); font-size: 0.72rem; min-width: 68px; text-align: right; color: #8a7c58; }
+.bullet-count { font-family: var(--font-mono); font-size: 0.72rem; min-width: 68px; text-align: right; color: rgba(255,255,255,0.62); }
 .bullet-count.over { color: var(--coral); font-weight: 600; }
 
 /* ============================================================
@@ -285,11 +293,11 @@
    ============================================================ */
 .upload-zone {
     border: 2px dashed #d8cfae; border-radius: 12px; padding: 28px 20px; text-align: center;
-    background: #fff; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    background: #fff; color: var(--ink); cursor: pointer; transition: border-color 0.15s, background 0.15s;
 }
 .upload-zone:hover, .upload-zone.dragover { border-color: var(--teal-stamp); background: #f5faf7; }
 .upload-zone .upload-icon { font-size: 2rem; margin-bottom: 8px; }
-.upload-zone .upload-hint { font-size: 0.78rem; color: #8a7c58; margin-top: 4px; }
+.upload-zone .upload-hint { font-size: 0.78rem; color: #665738; margin-top: 4px; }
 .upload-zone input[type=file] { display: none; }
 .file-chip {
     display: inline-flex; align-items: center; gap: 10px; background: #eef6f1; border: 1.5px solid var(--teal-stamp);
@@ -303,7 +311,7 @@
 }
 .submission-card .sub-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
 .submission-card .sub-file { font-weight: 600; color: var(--paper); font-size: 0.9rem; }
-.submission-card .sub-meta { font-family: var(--font-mono); font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+.submission-card .sub-meta { font-family: var(--font-mono); font-size: 0.7rem; color: rgba(255,255,255,0.62); }
 .status-chip { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 10px; }
 .status-chip.pending { background: rgba(232,163,61,0.15); color: var(--marigold); border: 1px solid rgba(232,163,61,0.4); }
 .status-chip.reviewed { background: rgba(46,125,91,0.18); color: #6fd6ab; border: 1px solid rgba(46,125,91,0.4); }
@@ -315,31 +323,37 @@
 /* Feedback-stuck tracking: plain before/after numbers, deliberately neutral — no color implying "good" or "bad". */
 .metric-comparison { margin-top: 8px; padding: 8px 12px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.15); border-radius: 6px; font-family: var(--font-mono); font-size: 0.76rem; color: rgba(255,255,255,0.65); }
 
+/* The growth-portfolio card (.ledger, from track3/shared/theme.css) has a light
+   cream background — the dark-page colors above/on .btn-secondary would be
+   near-invisible on it, so repaint both for that one light context. */
+.ledger .metric-comparison { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); color: #4a5850; }
+.ledger .btn-secondary { background: rgba(0,0,0,0.04); color: #4a5850; border-color: rgba(0,0,0,0.2); }
+
 /* Reviewer queue page */
 .queue-card { background: var(--glass, rgba(255,255,255,0.03)); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px 22px; margin-bottom: 16px; }
 .queue-card .q-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
 .queue-card .q-student { font-weight: 700; color: var(--paper); }
-.queue-card .q-meta { font-family: var(--font-mono); font-size: 0.72rem; color: rgba(255,255,255,0.45); }
+.queue-card .q-meta { font-family: var(--font-mono); font-size: 0.72rem; color: rgba(255,255,255,0.62); }
 .tag-picker-grid { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
-.tag-cat-group .tag-cat-label { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+.tag-cat-group .tag-cat-label { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.62); margin-bottom: 6px; }
 .tag-opt { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 14px; font-size: 0.8rem; border: 1.5px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.65); cursor: pointer; margin: 3px 6px 3px 0; }
 .tag-opt.selected.positive { border-color: var(--teal-stamp); background: rgba(46,125,91,0.18); color: #6fd6ab; }
 .tag-opt.selected.constructive { border-color: var(--marigold); background: rgba(232,163,61,0.18); color: var(--marigold); }
-.empty-queue { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.4); }
+.empty-queue { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.62); }
 .pin-gate { max-width: 360px; margin: 60px auto; }
 
 /* Reviewer track tabs (typing feedback spec §7) */
 .queue-tab { border-radius: 8px 8px 0 0 !important; border-bottom: none !important; margin-bottom: -1px; }
 .queue-tab.active { border-color: var(--marigold) !important; color: var(--marigold) !important; background: rgba(232,163,61,0.1) !important; }
 .pin-gate h2 { margin-bottom: 4px; }
-.pin-gate .sub { color: #5b6b63; font-size: 0.88rem; margin-bottom: 18px; }
+.pin-gate .sub { color: #4e5e56; font-size: 0.88rem; margin-bottom: 18px; }
 .pin-gate .field { margin-bottom: 16px; text-align: left; }
 .pin-gate .field label { display: block; font-size: 0.78rem; font-weight: 600; margin-bottom: 5px; color: #3d4a44; }
 .pin-gate .field input { width: 100%; padding: 10px 14px; border-radius: 9px; border: 1.5px solid #d8cfae; font-size: 1rem; background: #fff; color: var(--ink); }
 .pin-gate .field input:focus { outline: none; border-color: var(--teal-stamp); }
 .pin-gate .form-msg { font-size: 0.85rem; margin: 10px 0 0; min-height: 1.2em; padding: 8px; border-radius: 6px; }
-.pin-gate .form-msg.error { color: var(--coral); background: rgba(226,89,58,0.08); }
-.pin-gate .form-msg.ok { color: var(--teal-stamp); background: rgba(46,125,91,0.08); }
+.pin-gate .form-msg.error { color: #a32d15; background: rgba(226,89,58,0.08); }
+.pin-gate .form-msg.ok { color: #246b4c; background: rgba(46,125,91,0.08); }
 
 /* ============================================================
    Present Mode / Presenter View overlay (Lesson 11)
@@ -361,7 +375,7 @@
 .presenter-current .ppt-canvas { width: 100%; }
 .presenter-side { display: flex; flex-direction: column; gap: 12px; }
 .presenter-next .ppt-canvas { width: 100%; transform: scale(0.92); transform-origin: top left; font-size: 0.85rem; }
-.presenter-label { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+.presenter-label { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.62); margin-bottom: 6px; }
 .presenter-notes-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; font-size: 0.85rem; color: rgba(255,255,255,0.8); min-height: 60px; }
 
 /* ============================================================
@@ -370,7 +384,7 @@
 .recorder-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 20px 22px; }
 .record-btn {
     width: 64px; height: 64px; border-radius: 50%; border: none; cursor: pointer;
-    background: var(--coral); color: #fff; font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
+    background: #bf3f1f; color: #fff; font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
     box-shadow: 0 6px 20px rgba(226,89,58,0.4);
 }
 .record-btn.recording { animation: recPulse 1.2s ease-in-out infinite; }
@@ -390,4 +404,12 @@
 @media (max-width: 640px) { .waveform-compare { grid-template-columns: 1fr; } }
 .waveform-card { background: #fff; border-radius: 10px; padding: 14px; }
 .waveform-card .wf-label { font-size: 0.78rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-.waveform-card .wf-desc { font-size: 0.76rem; color: #5b6b63; margin-top: 8px; }
+.waveform-card .wf-desc { font-size: 0.76rem; color: #4e5e56; margin-top: 8px; }
+
+/* ---- Contrast fixes for the cream .ledger surface ----------------------
+   Text styles written for the dark page (light-green pass, salmon fail,
+   white-alpha hints) become unreadable once they land inside a cream
+   ledger card. Re-colour them for that surface only. */
+.ledger .check-list li.pass { color: #246b4c; }
+.ledger .check-list li.fail { color: #b8341a; }
+.ledger .upload-hint, .ledger .field-hint { color: #665738; }

@@ -53,7 +53,7 @@
     function updatePresenterSlide() {
         $('#presenterCurrent').innerHTML = PS_PPT.canvas({ title: SLIDES[presenterIdx] });
         const next = SLIDES[presenterIdx + 1];
-        $('#presenterNext').innerHTML = next ? PS_PPT.canvas({ title: next }) : '<p style="color:rgba(255,255,255,0.4);font-size:0.85rem;">(end of deck)</p>';
+        $('#presenterNext').innerHTML = next ? PS_PPT.canvas({ title: next }) : '<p style="color:rgba(255,255,255,0.62);font-size:0.85rem;">(end of deck)</p>';
         $('#presenterNotes').textContent = NOTES[presenterIdx];
         $('#presenterCounter').textContent = `${presenterIdx + 1} / ${SLIDES.length}`;
     }

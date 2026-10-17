@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="recorder-playback" id="playbackHolder"></div>
-            <p style="font-size:0.76rem;color:rgba(255,255,255,0.4);margin-top:10px;">🔒 This recording is only used for this checkpoint's submission — nothing is analyzed automatically, and nothing leaves your device except what you choose to submit for review.</p>
+            <p style="font-size:0.76rem;color:rgba(255,255,255,0.62);margin-top:10px;">🔒 This recording is only used for this checkpoint's submission — nothing is analyzed automatically, and nothing leaves your device except what you choose to submit for review.</p>
         `;
         $('#recBtn').addEventListener('click', toggleRecording);
     }
@@ -113,6 +113,7 @@
         $('#selfReviewArea').innerHTML = `
             <div class="ledger">
                 <div class="ledger-title">Self-review — listen back, then be honest</div>
+                <p style="font-size:0.82rem;margin:0 0 8px;color:#4a5850;">Tick only what's true — it's fine to leave some unticked. Enter your filler-word count (0 is fine) to continue.</p>
                 <ul class="self-review-list">
                     <li><label style="display:flex;gap:10px;"><input type="checkbox" id="rv-paused" /> I paused briefly after key points, instead of rushing straight through.</label></li>
                     <li><label style="display:flex;gap:10px;"><input type="checkbox" id="rv-steady" /> My pace felt steady — not rushed, not dragging.</label></li>
@@ -130,9 +131,14 @@
         updateM2();
     }
 
+    // The three boxes are honest self-assessment, not a checklist to complete:
+    // leaving one unticked ("my pace felt rushed") is a legitimate answer and
+    // must not block the student. What proves they actually listened back is
+    // the filler-word count, so that's the one thing required (0 is valid).
     function updateM2() {
-        const reviewDone = review.paused && review.steady && review.varied && review.tally !== '';
-        $('#m2-continue').disabled = !(recordedBlob && reviewDone);
+        const raw = String(review.tally).trim();
+        const tallyOk = raw !== '' && /^\d+$/.test(raw);
+        $('#m2-continue').disabled = !(recordedBlob && tallyOk);
     }
     $('#m2-continue').addEventListener('click', () => {
         feedback('#m2-feedback', true, '✅ Self-review complete. Ready to send this to a reviewer.');
@@ -188,7 +194,7 @@
     function renderStatusArea() {
         if (!mine.length) { $('#statusArea').innerHTML = ''; return; }
         $('#statusArea').innerHTML = `
-            <div class="ledger-title" style="color:rgba(255,255,255,0.4);margin-bottom:10px;">Your submissions</div>
+            <div class="ledger-title" style="color:rgba(255,255,255,0.62);margin-bottom:10px;">Your submissions</div>
             ${mine.map(({ submission, feedback: fb }) => `
                 <div class="submission-card">
                     <div class="sub-head">
@@ -196,7 +202,7 @@
                         <span class="status-chip ${submission.status}">${submission.status === 'reviewed' ? '✓ Reviewed' : '⏳ Pending'}</span>
                     </div>
                     <div class="sub-meta">Submitted ${new Date(submission.createdAt).toLocaleString()}${submission.resubmissionOf ? ' · resubmission' : ''}</div>
-                    ${fb ? renderFeedbackBlock(fb) : (submission.status === 'pending' ? '<p style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;">Waiting on a reviewer.</p>' : '')}
+                    ${fb ? renderFeedbackBlock(fb) : (submission.status === 'pending' ? '<p style="font-size:0.82rem;color:rgba(255,255,255,0.62);margin-top:8px;">Waiting on a reviewer.</p>' : '')}
                 </div>
             `).join('')}
         `;

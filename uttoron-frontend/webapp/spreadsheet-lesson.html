@@ -22,7 +22,7 @@
             --bg-elev: #0b0b0c;
             --ink: #F5F1E6;
             --ink-dim: rgba(245, 241, 230, 0.62);
-            --ink-faint: rgba(245, 241, 230, 0.36);
+            --ink-faint: rgba(245, 241, 230, 0.55);
             --coral: #E6493C;
             --coral-soft: #FF6B57;
             --coral-glow: rgba(230, 73, 60, 0.45);
@@ -113,7 +113,7 @@
             transform: scale(0.96);
         }
         .btn-primary {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             color: #fff;
             box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25);
         }
@@ -195,7 +195,7 @@
             box-shadow: 0 4px 14px rgba(230, 73, 60, 0.35);
         }
         .back-link {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             border: none;
             color: #fff;
             padding: 8px 18px;
@@ -368,7 +368,7 @@
             margin-top: 4px;
         }
         .spreadsheet-step .step-status.done {
-            color: var(--teal);
+            color: #4aa882;
             font-weight: 600;
         }
         .spreadsheet-step .step-status.error {
@@ -394,7 +394,7 @@
             height: 88px;
             border-radius: 50%;
             border: 3px solid var(--teal);
-            color: var(--teal);
+            color: #4aa882;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -550,6 +550,11 @@
             // ============================================================
             //  LESSON DATA
             // ============================================================
+            // True when a cell's raw text is a formula that calls the named function.
+            function usesFunction(raw, fn) {
+                return new RegExp('^=\\s*' + fn + '\\s*\\(', 'i').test(String(raw || '').trim());
+            }
+
             const LESSON_DATA = {
                 'spreadsheet': {
                     title: 'Spreadsheet Basics',
@@ -558,36 +563,34 @@
                     steps: [{
                         instruction: 'Enter the numbers 10, 20, 30 in cells A1, A2, A3.',
                         validate: (grid) => {
-                            return grid.get('A1') == 10 && grid.get('A2') == 20 && grid.get('A3') ==
-                            30;
+                            return grid.get('A1') === 10 && grid.get('A2') === 20 && grid.get('A3') === 30;
                         },
                         hint: 'Click each cell, type the number, and press Enter or Tab to confirm.'
                     }, {
                         instruction: 'In cell A4, use the SUM function to add A1, A2, A3. (Type =SUM(A1:A3))',
                         validate: (grid) => {
-                            const val = grid.get('A4');
-                            return val == 60 || String(grid._raw('A4')).toUpperCase() ===
-                                '=SUM(A1:A3)';
+                            // Must be an actual SUM formula that evaluates to 60. The old
+                            // check also passed if the student just typed 60 into A4.
+                            return grid.get('A4') === 60 && usesFunction(grid._raw('A4'), 'SUM');
                         },
                         hint: 'Start with =, then SUM, then (A1:A3)'
                     }, {
                         instruction: 'Enter numbers 5, 10, 15 in cells B1, B2, B3, then in B4 use AVERAGE to calculate the average.',
                         validate: (grid) => {
-                            return grid.get('B1') == 5 && grid.get('B2') == 10 && grid.get('B3') ==
-                                15 &&
-                                grid.get('B4') == 10;
+                            return grid.get('B1') === 5 && grid.get('B2') === 10 && grid.get('B3') === 15 &&
+                                grid.get('B4') === 10 && usesFunction(grid._raw('B4'), 'AVERAGE');
                         },
                         hint: 'AVERAGE(B1:B3)'
                     }, {
                         instruction: 'In cell C1, use MAX to find the highest value in A1:A3.',
                         validate: (grid) => {
-                            return grid.get('C1') == 30;
+                            return grid.get('C1') === 30 && usesFunction(grid._raw('C1'), 'MAX');
                         },
                         hint: 'MAX(A1:A3)'
                     }, {
                         instruction: 'In cell C2, use MIN to find the lowest value in B1:B3.',
                         validate: (grid) => {
-                            return grid.get('C2') == 5;
+                            return grid.get('C2') === 5 && usesFunction(grid._raw('C2'), 'MIN');
                         },
                         hint: 'MIN(B1:B3)'
                     }]
@@ -639,15 +642,32 @@
             // ============================================================
             //  SPREADSHEET ENGINE
             // ============================================================
+            // Strict number parse. parseFloat('10abc') is 10, which let a cell
+            // holding "10abc" pass a "type 10" check and sum as 10.
+            function toNumber(raw) {
+                if (typeof raw === 'number') return raw;
+                const t = String(raw === undefined || raw === null ? '' : raw).trim();
+                if (t === '') return NaN;
+                const n = Number(t);
+                return isFinite(n) ? n : NaN;
+            }
+
+            // Cells whose formula is currently being evaluated. A formula that
+            // (directly or through others) refers to its own cell, e.g. =SUM(A1:A4)
+            // typed into A4, used to recurse until the browser threw a stack
+            // overflow; it now evaluates to an error instead.
+            const evaluating = new Set();
+
             function getCellValue(id) {
                 const raw = gridData[id];
                 if (raw === undefined || raw === '') return NaN;
                 if (typeof raw === 'number') return raw;
                 if (typeof raw === 'string' && raw.startsWith('=')) {
-                    return evaluateFormula(raw);
+                    if (evaluating.has(id)) return NaN;
+                    evaluating.add(id);
+                    try { return evaluateFormula(raw); } finally { evaluating.delete(id); }
                 }
-                const num = parseFloat(raw);
-                return isNaN(num) ? NaN : num;
+                return toNumber(raw);
             }
 
             function getRawValue(id) {
@@ -662,13 +682,14 @@
                 const range = match[2];
                 const [start, end] = range.split(':');
                 if (!start || !end) return NaN;
-                const startCol = start.charAt(0);
-                const startRow = parseInt(start.substring(1));
-                const endCol = end.charAt(0);
-                const endRow = parseInt(end.substring(1));
-                const colStartIdx = cols.indexOf(startCol);
-                const colEndIdx = cols.indexOf(endCol);
-                if (colStartIdx === -1 || colEndIdx === -1) return NaN;
+                const colA = cols.indexOf(start.charAt(0));
+                const colB = cols.indexOf(end.charAt(0));
+                const rowA = parseInt(start.substring(1));
+                const rowB = parseInt(end.substring(1));
+                if (colA === -1 || colB === -1) return NaN;
+                // Accept ranges written backwards (A3:A1) the way real spreadsheets do.
+                const colStartIdx = Math.min(colA, colB), colEndIdx = Math.max(colA, colB);
+                const startRow = Math.min(rowA, rowB), endRow = Math.max(rowA, rowB);
                 const values = [];
                 for (let c = colStartIdx; c <= colEndIdx; c++) {
                     for (let r = startRow; r <= endRow; r++) {
@@ -702,7 +723,7 @@
                     if (typeof raw === 'string' && raw.startsWith('=')) {
                         computed[id] = evaluateFormula(raw);
                     } else {
-                        const num = parseFloat(raw);
+                        const num = toNumber(raw);
                         computed[id] = isNaN(num) ? raw : num;
                     }
                 });
@@ -716,7 +737,7 @@
                     return val;
                 }
                 if (raw === '') return '';
-                const num = parseFloat(raw);
+                const num = toNumber(raw);
                 if (!isNaN(num)) return num;
                 return raw;
             }
@@ -832,7 +853,7 @@
                         </div>
                     </div>
                     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-                        <span style="font-size:0.8rem;background:linear-gradient(135deg, var(--coral-soft), var(--coral));color:#fff;padding:2px 12px;border-radius:12px;">
+                        <span style="font-size:0.8rem;background:linear-gradient(135deg, #d13f2a, #b8321f);color:#fff;padding:2px 12px;border-radius:12px;">
                             Step ${currentItemIndex+1} of ${totalSteps}
                         </span>
                         <span style="font-size:0.8rem;background:var(--glass-strong);border:1px solid var(--line);color:var(--ink-dim);padding:2px 12px;border-radius:12px;">
@@ -862,6 +883,19 @@
                     </div>
                 `;
 
+                // A passed check only counts for the grid as it was when checked.
+                // Editing a cell afterwards (e.g. breaking the answer) used to leave
+                // "Next Step" enabled; now it asks for another check.
+                function invalidateStepCheck() {
+                    const nextBtn = document.getElementById('stepNextBtn');
+                    if (nextBtn && !nextBtn.disabled) {
+                        nextBtn.disabled = true;
+                        const st = document.getElementById('stepStatus');
+                        st.textContent = 'You changed the grid — press Check Step again.';
+                        st.className = 'step-status';
+                    }
+                }
+
                 // --- Cell inputs ---
                 const inputs = document.querySelectorAll('#gridWrapper input[data-cell]');
                 inputs.forEach(inp => {
@@ -880,6 +914,7 @@
                         const val = this.value.trim();
                         if (gridData[id] !== val) {
                             gridData[id] = val;
+                            invalidateStepCheck();
                             recomputeAll();
                             refreshAllCells();
                             document.getElementById('formulaBar').value = val;
@@ -912,6 +947,7 @@
                             const val = this.value.trim();
                             if (gridData[cellId] !== val) {
                                 gridData[cellId] = val;
+                                invalidateStepCheck();
                                 recomputeAll();
                                 refreshAllCells();
                                 const inp = document.querySelector(
@@ -1026,7 +1062,7 @@
                         </div>
                         <h2>🎯 Lesson complete!</h2>
                         <p style="color:var(--ink-dim);">You've mastered spreadsheet basics — SUM, AVERAGE, MAX, and MIN!</p>
-                        <p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Stamp saved to your Passport!</p>
+                        <p style="color:#4aa882;font-weight:600;margin-top:8px;">✅ Stamp saved to your Passport!</p>
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
                             <a href="index1.html" class="btn btn-primary">Back to Home</a>
                             <button class="btn btn-secondary" id="resetLessonBtn">🔄 Start Over</button>
@@ -1074,4 +1110,4 @@
     </script>
 
 </body>
-</html>
+</html>

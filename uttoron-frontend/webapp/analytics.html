@@ -21,7 +21,7 @@
             --bg-elev: #0b0b0c;
             --ink: #F5F1E6;
             --ink-dim: rgba(245, 241, 230, 0.62);
-            --ink-faint: rgba(245, 241, 230, 0.36);
+            --ink-faint: rgba(245, 241, 230, 0.55);
             --coral: #E6493C;
             --coral-soft: #FF6B57;
             --coral-glow: rgba(230, 73, 60, 0.45);
@@ -105,7 +105,7 @@
             font-family: var(--font-body);
         }
         .btn:active { transform: scale(0.96); }
-        .btn-primary { background: linear-gradient(135deg, var(--coral-soft), var(--coral)); color: #fff; box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25); }
+        .btn-primary { background: linear-gradient(135deg, #d13f2a, #b8321f); color: #fff; box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25); }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px var(--coral-glow); }
         .btn-secondary { background: rgba(255,255,255,0.03); color: var(--ink); border: 1.5px solid var(--line); }
         .btn-secondary:hover { border-color: var(--coral); color: var(--coral-soft); transform: translateY(-2px); }
@@ -155,7 +155,7 @@
             box-shadow: 0 4px 14px rgba(230, 73, 60, 0.35);
         }
         .nav-btn, .back-link {
-            background: linear-gradient(135deg, var(--coral-soft), var(--coral));
+            background: linear-gradient(135deg, #d13f2a, #b8321f);
             border: none;
             color: #fff;
             padding: 8px 18px;
@@ -225,7 +225,7 @@
         }
         .stat-card .stat-change {
             font-size: 0.75rem;
-            color: var(--teal);
+            color: #4aa882;
             margin-top: 8px;
             display: inline-block;
             background: rgba(46, 125, 91, 0.15);
@@ -327,7 +327,7 @@
         .detail-card .detail-item:last-child { border-bottom: none; }
         .detail-card .detail-item .label { color: var(--ink-dim); }
         .detail-card .detail-item .value { color: var(--ink); font-weight: 500; }
-        .detail-card .detail-item .value.done { color: var(--teal); }
+        .detail-card .detail-item .value.done { color: #4aa882; }
 
         .hero .back-link {
             display: inline-flex;
@@ -371,7 +371,7 @@
         <div class="wrap">
             <a href="index1.html" class="back-link">← Back to Home</a>
             <h1>Analytics <em>Dashboard</em></h1>
-            <p class="subtitle">Track platform growth and user engagement</p>
+            <p class="subtitle">Track platform growth and user engagement <span id="sourceNote" style="opacity:0.7;"></span></p>
         </div>
     </section>
 
@@ -440,6 +440,8 @@
 
     </div>
 
+    <script src="../shared/apiConfig.js"></script>
+    <script src="../shared/backendBridge.js"></script>
     <script>
     (function() {
         "use strict";
@@ -484,20 +486,43 @@
             lessons: [
                 { id: 'typing', title: 'Keyboard & Typing', emoji: '⌨️' },
                 { id: 'spreadsheet', title: 'Spreadsheet Basics', emoji: '📊' },
-                { id: 'data-accuracy', title: 'Data Accuracy', emoji: '🧹' },
-                { id: 'data-project', title: 'Data Entry Project', emoji: '📋' }
+                { id: 'data-accuracy', title: 'Data Accuracy', emoji: '🧹' }
             ]
         }, {
             id: 'digital-presence',
             title: 'Digital Presence & Communication',
             icon: '💬',
             lessons: [
+                { id: 'presentation-skills', title: 'Presentation Skills', emoji: '🗣️' },
                 { id: 'comms', title: 'Professional Communication', emoji: '💬' },
                 { id: 'email', title: 'Email & Digital Comms', emoji: '✉️' },
                 { id: 'cv', title: 'Building Your CV', emoji: '📄' },
                 { id: 'career', title: 'Career Readiness', emoji: '🎤' }
             ]
         }];
+
+        // Same rule as the home page: multi-lesson tracks count as complete
+        // when every one of their real lesson ids is done (they never wrote a
+        // flag under the track's own id, so reading progress[id] alone always
+        // counted them as 0).
+        const STAMP_REQUIRES = {
+            'presentation-skills': [
+                'ps-lesson1-getting-started', 'ps-lesson2-template', 'ps-lesson3-structure',
+                'ps-lesson4-text', 'ps-lesson5-visuals', 'ps-lesson6-motion', 'ps-lesson7-notes',
+                'ps-lesson8-proofread', 'ps-lesson9-checkpoint', 'ps-lesson10-saving',
+                'ps-lesson11-slideshow', 'ps-lesson12-delivery', 'ps-lesson13-capstone'
+            ],
+            'data-accuracy': [
+                'lesson1-find-errors', 'lesson2-correct-records',
+                'lesson3-data-cleaning', 'lesson4-workplace-qa'
+            ]
+        };
+        function isStampDone(lessonId, progress) {
+            const needed = STAMP_REQUIRES[lessonId];
+            if (needed) return progress[lessonId] === true || needed.every(id => progress[id] === true);
+            return progress[lessonId] === true || (lessonId === 'spreadsheet' && progress['spreadsheet-basics'] === true);
+        }
+        function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
         const ALL_LESSON_IDS = [];
         TRACKS.forEach(track => {
@@ -524,16 +549,16 @@
             userKeys.forEach(key => {
                 const user = Storage.get(key);
                 if (user) {
-                    users.push(user);
                     const progress = Storage.get('progress:' + user.num) || {};
                     let userCompleted = 0;
                     ALL_LESSON_IDS.forEach(lessonId => {
-                        if (progress[lessonId] === true) {
+                        if (isStampDone(lessonId, progress)) {
                             userCompleted++;
                             lessonCounts[lessonId] = (lessonCounts[lessonId] || 0) + 1;
                         }
                     });
                     totalLessonsCompleted += userCompleted;
+                    users.push({ avatar: user.avatar, label: user.nickname, createdAt: user.createdAt, completed: userCompleted });
                 }
             });
 
@@ -564,15 +589,54 @@
                 newAccounts,
                 newLessons,
                 users: sortedUsers,
-                totalLessons: ALL_LESSON_IDS.length
+                totalLessons: ALL_LESSON_IDS.length,
+                source: 'device'
             };
+        }
+
+        // Platform-wide numbers from the backend (GET /api/analytics/summary):
+        // every student's passport, on every device — not just this browser's
+        // localStorage. Returns null if the backend can't be reached (offline,
+        // Render asleep, older backend without the endpoint), and the caller
+        // falls back to the on-device numbers instead of showing nothing.
+        async function getRemoteAnalytics() {
+            if (!window.Backend) return null;
+            try {
+                const s = await window.Backend.apiFetch('/api/analytics/summary', {});
+                if (!s || typeof s.totalStudents !== 'number') return null;
+                const totalAccounts = s.totalStudents;
+                const totalLessonsCompleted = s.totalStampsEarned || 0;
+                const lessonCounts = {};
+                ALL_LESSON_IDS.forEach(id => { lessonCounts[id] = (s.stampCounts && s.stampCounts[id]) || 0; });
+                const previousData = Storage.get('analytics:previous') || { accounts: 0, lessons: 0 };
+                const newAccounts = totalAccounts - previousData.accounts;
+                const newLessons = totalLessonsCompleted - previousData.lessons;
+                Storage.set('analytics:previous', { accounts: totalAccounts, lessons: totalLessonsCompleted, timestamp: Date.now() });
+                return {
+                    totalAccounts,
+                    totalLessonsCompleted,
+                    avgLessonsPerUser: totalAccounts > 0 ? totalLessonsCompleted / totalAccounts : 0,
+                    completionRate: totalAccounts > 0 ? (totalLessonsCompleted / (totalAccounts * ALL_LESSON_IDS.length)) * 100 : 0,
+                    lessonCounts,
+                    newAccounts,
+                    newLessons,
+                    users: (s.recent || []).map(r => ({ avatar: r.avatar, label: null, createdAt: r.joinedAt ? Date.parse(r.joinedAt) : 0, completed: r.stampsEarned || 0 })),
+                    totalLessons: ALL_LESSON_IDS.length,
+                    source: 'platform'
+                };
+            } catch (err) {
+                return null;
+            }
         }
 
         // ============================================================
         //  RENDER DASHBOARD
         // ============================================================
-        function renderAnalytics() {
-            const data = getAnalytics();
+        async function renderAnalytics() {
+            const data = (await getRemoteAnalytics()) || getAnalytics();
+            document.getElementById('sourceNote').textContent = data.source === 'platform'
+                ? '· all passports, on every device'
+                : '· couldn\'t reach the server — showing passports created on this device only';
 
             // Update stats
             document.getElementById('totalAccounts').textContent = data.totalAccounts;
@@ -606,7 +670,7 @@
                 'typing': '⌨️ Typing',
                 'spreadsheet': '📊 Spreadsheet',
                 'data-accuracy': '🧹 Data Accuracy',
-                'data-project': '📋 Data Project',
+                'presentation-skills': '🗣️ Presentations',
                 'comms': '💬 Comms',
                 'email': '✉️ Email',
                 'cv': '📄 CV',
@@ -639,7 +703,7 @@
                 'typing': '⌨️ Keyboard & Typing',
                 'spreadsheet': '📊 Spreadsheet Basics',
                 'data-accuracy': '🧹 Data Accuracy',
-                'data-project': '📋 Data Entry Project',
+                'presentation-skills': '🗣️ Presentation Skills',
                 'comms': '💬 Professional Communication',
                 'email': '✉️ Email & Digital Comms',
                 'cv': '📄 Building Your CV',
@@ -670,7 +734,7 @@
             if (recentUsers.length === 0) {
                 container.innerHTML = `
                     <div class="detail-item">
-                        <span class="label" style="color:rgba(255,255,255,0.3);">No users registered yet</span>
+                        <span class="label" style="color:rgba(255,255,255,0.62);">No users registered yet</span>
                     </div>
                 `;
                 return;
@@ -678,13 +742,14 @@
 
             let html = '';
             recentUsers.forEach(user => {
-                const progress = Storage.get('progress:' + user.num) || {};
-                const completed = ALL_LESSON_IDS.filter(id => progress[id] === true).length;
+                const completed = user.completed;
                 const joinedDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown';
+                // Platform view has no names by design (students are minors): show the avatar and join date.
+                const who = user.label ? escapeHtml(user.label) : 'Passport · joined ' + joinedDate;
                 
                 html += `
                     <div class="detail-item">
-                        <span class="label">${user.avatar || '👤'} ${user.nickname}</span>
+                        <span class="label">${escapeHtml(user.avatar || '👤')} ${who}</span>
                         <span class="value ${completed > 0 ? 'done' : ''}">${completed}/${ALL_LESSON_IDS.length} lessons</span>
                     </div>
                 `;
@@ -708,4 +773,4 @@
     </script>
 
 </body>
-</html>
+</html>

@@ -106,7 +106,7 @@
     function renderStatusArea() {
         if (!mine.length) { $('#statusArea').innerHTML = ''; return; }
         $('#statusArea').innerHTML = `
-            <div class="ledger-title" style="color:rgba(255,255,255,0.4);margin-bottom:10px;">Your submissions</div>
+            <div class="ledger-title" style="color:rgba(255,255,255,0.62);margin-bottom:10px;">Your submissions</div>
             ${mine.map(({ submission, feedback: fb }) => `
                 <div class="submission-card">
                     <div class="sub-head">
@@ -114,7 +114,7 @@
                         <span class="status-chip ${submission.status}">${submission.status === 'reviewed' ? '✓ Reviewed' : '⏳ Pending'}</span>
                     </div>
                     <div class="sub-meta">Submitted ${new Date(submission.createdAt).toLocaleString()}${submission.resubmissionOf ? ' · resubmission' : ''}</div>
-                    ${fb ? renderFeedbackBlock(fb) : (submission.status === 'pending' ? '<p style="font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:8px;">Waiting on a reviewer — turnaround depends on volunteer availability.</p>' : '')}
+                    ${fb ? renderFeedbackBlock(fb) : (submission.status === 'pending' ? '<p style="font-size:0.82rem;color:rgba(255,255,255,0.62);margin-top:8px;">Waiting on a reviewer — turnaround depends on volunteer availability.</p>' : '')}
                 </div>
             `).join('')}
         `;

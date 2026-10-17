@@ -18,8 +18,10 @@
     function renderDeckStatus() { $('#deckStatus').innerHTML = PS.deckStore.deckStatusHtml(deck()); }
 
     const LESSON_IDS = [
-        'ps-lesson1-getting-started', 'ps-lesson2-slides-layouts', 'ps-lesson3-content',
-        'ps-lesson4-enhance', 'ps-lesson5-polish', 'ps-lesson6-delivery'
+        'ps-lesson1-getting-started', 'ps-lesson2-template', 'ps-lesson3-structure',
+        'ps-lesson4-text', 'ps-lesson5-visuals', 'ps-lesson6-motion', 'ps-lesson7-notes',
+        'ps-lesson8-proofread', 'ps-lesson9-checkpoint', 'ps-lesson10-saving',
+        'ps-lesson11-slideshow', 'ps-lesson12-delivery'
     ];
     function getProgress() {
         if (!session) return {};

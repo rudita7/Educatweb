@@ -13,7 +13,7 @@
     --bg-elev: #0b0b0c;
     --ink: #F5F1E6;
     --ink-dim: rgba(245, 241, 230, 0.62);
-    --ink-faint: rgba(245, 241, 230, 0.36);
+    --ink-faint: rgba(245, 241, 230, 0.55);
     --coral: #E6493C;
     --coral-soft: #FF6B57;
     --coral-glow: rgba(230, 73, 60, 0.45);
@@ -68,7 +68,7 @@ a:hover { text-decoration: underline; }
 }
 .btn:active { transform: scale(0.96); }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-.btn-primary { background: linear-gradient(135deg, var(--coral-soft), var(--coral)); color: #fff; box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25); }
+.btn-primary { background: linear-gradient(135deg, #d13f2a, #b8321f); color: #fff; box-shadow: 0 8px 24px rgba(230, 73, 60, 0.25); }
 .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 32px var(--coral-glow); }
 .btn-secondary { background: rgba(255,255,255,0.03); color: var(--ink); border: 1.5px solid var(--line); }
 .btn-secondary:hover:not(:disabled) { border-color: var(--coral); color: var(--coral-soft); transform: translateY(-2px); }
@@ -123,7 +123,7 @@ a:hover { text-decoration: underline; }
 }
 .module-dot.active { color: #fff; border-color: var(--coral); }
 .module-dot.active .num { background: var(--coral); color: #fff; }
-.module-dot.done { color: var(--teal); border-color: var(--teal); }
+.module-dot.done { color: #4aa882; border-color: var(--teal); }
 .module-dot.done .num { background: var(--teal); color: #fff; }
 .module-dot.done .num::before { content: '✓'; }
 .module-dot.locked { color: var(--ink-faint); }
@@ -210,7 +210,7 @@ a:hover { text-decoration: underline; }
 .ledger-legend span.dot { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: middle; }
 
 .big-stamp {
-    width: 88px; height: 88px; border-radius: 50%; border: 3px solid var(--teal); color: var(--teal);
+    width: 88px; height: 88px; border-radius: 50%; border: 3px solid var(--teal); color: #4aa882;
     display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
     font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; flex-direction: column;
     transform: rotate(-6deg); background: rgba(46, 125, 91, 0.08); box-shadow: 0 0 28px var(--teal-glow);

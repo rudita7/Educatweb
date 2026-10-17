@@ -62,7 +62,7 @@
     }
 
     const norm = window.T3.hashLookup.normalize;
-    function escapeHtml(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+    function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
     function escapeAttr(s) { return escapeHtml(s).replace(/"/g, '&quot;'); }
 
     function ledgerRow(field, label, value, opts) {
@@ -346,7 +346,7 @@
                     </div>
                     <div style="display:flex;gap:8px;align-items:center;">
                         <button class="btn btn-secondary btn-sm" data-undo="${r.id}" ${stack.canUndo() ? '' : 'disabled'}>↶ Undo</button>
-                        <span style="font-size:0.78rem;color:rgba(255,255,255,0.5);">${isRecordFixed(r) ? '✅ Matches expected value' : '⭕ Not yet corrected'}</span>
+                        <span style="font-size:0.78rem;color:rgba(255,255,255,0.62);">${isRecordFixed(r) ? '✅ Matches expected value' : '⭕ Not yet corrected'}</span>
                     </div>
                 </div>
             `;
@@ -408,7 +408,7 @@
         $('#s3-dupes').innerHTML = `
             <div class="ledger-title">Duplicate scan (inventory)</div>
             ${clusters.length === 0
-                ? '<div style="font-size:0.85rem;color:rgba(255,255,255,0.5);">No duplicate groups found.</div>'
+                ? '<div style="font-size:0.85rem;color:rgba(255,255,255,0.62);">No duplicate groups found.</div>'
                 : `<ul class="dup-group-list">${clusters.map(c => `<li class="dup-group-row"><span class="badge">Group</span> ${c.records.map(r => r.id + ' (' + escapeHtml(r.itemName.trim()) + ')').join(' ≈ ')} — likely duplicates.</li>`).join('')}</ul>`}
         `;
 

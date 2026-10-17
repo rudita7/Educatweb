@@ -55,10 +55,13 @@ a:hover { text-decoration: underline; }
 }
 .btn:active { transform: scale(0.96); }
 .btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-.btn-primary { background: var(--coral); color: var(--paper); }
+.btn-primary { background: #bf3f1f; color: var(--paper); }
 .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(226, 89, 58, 0.35); }
 .btn-secondary { background: transparent; color: var(--paper); border: 1.5px solid rgba(255,255,255,0.2); }
 .btn-secondary:hover:not(:disabled) { border-color: var(--marigold); color: var(--marigold); }
+/* A secondary button inside a cream .ledger card was cream-on-cream (invisible). */
+.ledger .btn-secondary { background: rgba(0,0,0,0.04); color: #4a5850; border-color: rgba(0,0,0,0.25); }
+.ledger .btn-secondary:hover:not(:disabled) { border-color: #8a5a00; color: #8a5a00; }
 .btn-success { background: var(--teal-stamp); color: var(--paper); }
 .btn-success:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46, 125, 91, 0.35); }
 .btn-outline-dark { background: transparent; color: var(--ink); border: 1.5px solid #cbbf95; }
@@ -163,7 +166,7 @@ a:hover { text-decoration: underline; }
 footer {
     padding: 32px 0 44px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255,255,255,0.62);
     font-size: 0.78rem;
 }
 footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
@@ -206,7 +209,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
     font-size: 0.8rem;
     font-weight: 600;
     background: transparent;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.62);
     border: 1.5px solid rgba(255,255,255,0.12);
     cursor: pointer;
     transition: all 0.2s;
@@ -223,7 +226,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 }
 .module-dot.active { color: #fff; border-color: var(--marigold); }
 .module-dot.active .num { background: var(--marigold); color: #000; }
-.module-dot.done { color: var(--teal-stamp); border-color: var(--teal-stamp); }
+.module-dot.done { color: #4aa882; border-color: var(--teal-stamp); }
 .module-dot.done .num { background: var(--teal-stamp); color: var(--paper); }
 .module-dot.done .num::before { content: '✓'; }
 
@@ -256,7 +259,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
     font-size: 1.5rem;
     margin-bottom: 8px;
 }
-.module-intro { color: rgba(255,255,255,0.55); max-width: 66ch; margin-bottom: 20px; font-size: 0.94rem; }
+.module-intro { color: rgba(255,255,255,0.62); max-width: 66ch; margin-bottom: 20px; font-size: 0.94rem; }
 
 .ledger {
     background: rgba(246, 240, 223, 0.95);
@@ -271,7 +274,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
     font-size: 0.68rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #7a6a4a;
+    color: #665738;
     margin-bottom: 10px;
 }
 .ledger-row {
@@ -297,8 +300,8 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 }
 .ledger-row input:focus, .ledger-row select:focus { outline: none; border-color: var(--teal-stamp); }
 .ledger-row input.invalid { border-color: var(--coral); background: rgba(226,89,59,0.06); }
-.field-hint { font-size: 0.72rem; color: #8a7c58; margin-top: 4px; }
-.field-hint.error { color: var(--coral); font-weight: 600; }
+.field-hint { font-size: 0.72rem; color: #665738; margin-top: 4px; }
+.field-hint.error { color: #b8341a; font-weight: 600; }
 
 .check-panel {
     background: rgba(255,255,255,0.03);
@@ -329,13 +332,15 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 .diffline .del { background: rgba(226,89,58,0.22); color: #8a2f1c; text-decoration: line-through; border-radius: 3px; padding: 0 1px; }
 
 .history-list { list-style: none; font-family: var(--font-mono); font-size: 0.78rem; }
-.history-list li { padding: 6px 10px; border-left: 3px solid #d8cfae; color: #5b6b63; }
-.history-list li.current { border-left-color: var(--teal-stamp); color: var(--ink); font-weight: 600; background: rgba(46,125,91,0.08); }
+/* The command-history list sits on the dark check panel, so its text has to
+   be light — it was dark-grey/near-black (--ink) on near-black before. */
+.history-list li { padding: 6px 10px; border-left: 3px solid #d8cfae; color: rgba(255,255,255,0.75); }
+.history-list li.current { border-left-color: var(--teal-stamp); color: var(--paper); font-weight: 600; background: rgba(46,125,91,0.08); }
 .history-list li.undone { color: #b8ab84; text-decoration: line-through; }
 
 .roster-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
 .roster-table th, .roster-table td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #e3d9b8; }
-.roster-table th { font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: #7a6a4a; }
+.roster-table th { font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: #665738; }
 .mismatch-flag { font-family: var(--font-mono); font-size: 0.7rem; padding: 2px 8px; border-radius: 8px; background: rgba(226,89,58,0.12); color: #a83f26; }
 
 .stamp-earn-pill {

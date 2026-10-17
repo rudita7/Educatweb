@@ -48,7 +48,7 @@
     function renderTree() {
         $('#decisionTree').innerHTML = SCENARIOS.map(s => `
             <div class="ledger" data-scn="${s.id}" style="margin-bottom:14px;">
-                <div class="ledger-title" style="color:#7a6a4a;">Situation</div>
+                <div class="ledger-title" style="color:#665738;">Situation</div>
                 <p style="color:var(--ink);margin-bottom:12px;">${escapeHtml(s.text)}</p>
                 <div class="match-grid">
                     <div class="match-row">
