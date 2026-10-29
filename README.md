@@ -14,6 +14,23 @@ passport.
 
 ---
 
+## Try the demo
+
+The demo site (https://uttoron-demo.netlify.app) runs on synthetic data only. To look around as a student:
+
+- **Sign in** with passport number `UT-5028` and PIN `1234`. This is the passport shown in the cross-device screenshots in the
+  portfolio.
+- **Or create your own** passport: choose a nickname and any 4-digit PIN, and the site generates a passport number
+  (`UT-nnnn`). A passport works from any device, so you can sign in from a second browser with just the number and PIN.
+- **Teacher/reviewer view:** open the [reviewer sign-in page](https://uttoron-demo.netlify.app/track-presentation-skills/reviewer/)
+  and sign in with username `demo-teacher-amina` and PIN `1111`. This is the role-gated review queue, where a teacher sees
+  submissions (typing results, decks, recordings) and replies with tagged feedback, which then appears on the student's passport.
+
+The demo runs on free hosting. If nobody has used it for a while, the first request can take up to a minute while the server
+wakes up.
+
+---
+
 ## What's in it
 
 | Track | Where | What it is |
@@ -52,10 +69,11 @@ Fixed tags keep feedback consistent and quick when one volunteer reviews many st
 - **Passports work from any device.** A passport is a number plus a 4-digit PIN — no email or phone. Signing in on a
   second device restores the passport, and stamp progress is saved to the server and merged (a stamp is never lost
   by merging).
-- **Real counters.** The "passports issued" count and the Analytics page read platform-wide totals from the backend
-  (aggregates only — no names).
+- **Real counters.** The "passports issued" count reads a real server-side total (aggregate only — no names). On the
+  `demo` branch, which the demo site runs, the Analytics page also reads platform-wide totals from the backend; on
+  `main` it still reads the browser's local storage.
 - **Accessibility pass.** Every page was checked with an automated contrast scan (WCAG AA, 4.5:1 for text) as part of a
-  site-wide bug audit, and the low-contrast text it found was fixed.
+  site-wide bug audit, and the low-contrast text it found was fixed on the `demo` branch (not yet merged into `main`).
 
 ## Architecture
 
@@ -124,6 +142,8 @@ for f in engines/*.test.js; do node "$f"; done
 - **Frontend:** a static site on Netlify — publish directory `uttoron-frontend`; `_redirects` sends `/` to the homepage.
 - **Backend:** a Docker web service on Render (`backend/uttoron-backend/Dockerfile`), configured through the
   environment variables above.
+- **Branches:** `main` is the code the pilot runs. The `demo` branch carries the latest fixes (the October audit) and is what
+  the demo site and demo backend are built from; it has not been merged into `main`.
 - **Demo:** a *separate* Netlify site + Render service + Supabase project holding synthetic data only, so reviewers can
   click around without touching real students' records. `scripts/seed-demo-data.ts` fills it, `scripts/reset-demo.sql`
   wipes it, and `.github/workflows/demo-keepalive.yml` pings it daily so free tiers don't sleep before it's viewed.
@@ -137,7 +157,7 @@ for f in engines/*.test.js; do node "$f"; done
 | Progress | `GET /api/progress`, `POST /api/progress/sync` |
 | Presentation review | `POST /api/submissions`, `GET /api/submissions/mine`, `GET …/queue` *(reviewer)*, `POST …/:id/feedback` *(reviewer)*, `GET …/comparisons`, `…/growth-portfolio`, `…/weakness-patterns`, `…/weakness-patterns/cohort` *(reviewer)*, `GET …/tags/list` |
 | Typing review | `POST /api/typing/results`, `GET …/mine`, `GET …/queue` *(reviewer)*, `POST …/:id/feedback` *(reviewer)*, `GET …/comparisons`, `GET …/tags/list` |
-| Analytics | `GET /api/analytics/summary` (public aggregates), `POST /api/analytics/log`, `POST /api/analytics/recommend-track` |
+| Analytics | `GET /api/analytics/summary` (public aggregates; `demo` branch only), `POST /api/analytics/log`, `POST /api/analytics/recommend-track` |
 
 ## Known limitations
 
@@ -150,8 +170,8 @@ Stated plainly, because this is a prototype:
   device used to sign in.
 - **Four stamps are placeholders** (communication, email, CV, career).
 - **Spreadsheet Mastery** is built and tested but not yet linked from the homepage.
-- **Analytics stamp counts** update when a student opens their passport dashboard, which is when progress is saved to
-  the server.
+- **Analytics stamp counts** (`demo` branch) update when a student opens their passport dashboard, which is when progress
+  is saved to the server.
 - The demo environment is the one verified end to end from outside; the pilot runs on a separate production deployment.
 
 ## Documentation and credits
