@@ -1,7 +1,8 @@
 # Build timeline & process notes
 
 Extracted from commit history. Dates are commit dates, not necessarily when the underlying work
-happened (see note on bulk uploads below).
+happened (see note on bulk uploads below). AI assistance is described in `AI_USAGE.docx`; the
+commits Claude authored are listed by `git log --author=Claude`.
 
 ## Timeline
 
@@ -18,8 +19,27 @@ backend (role-based auth, Supabase Storage for files, a Python subprocess for de
 extraction), and the deployment to Render + Netlify. This is also where the project's first real
 security hardening happened — see "Dead end #1" below.
 
+**Aug 2026 — official launch.** The project launched officially in August 2026, in partnership with the
+AIM Initiative Foundation (the partnership itself began in July).
+
 **Sep 27–28, 2026 — typing-track feedback.** Extended the same reviewer/feedback system to the
 typing track (two grade bands), plus a stored-XSS fix in the dashboard — see "Dead end #2."
+
+**Oct 11–16, 2026 — demo environment, offline sync and cross-device passports.**
+- *Oct 11* (`90096cf`): demo-environment tooling — a keep-alive workflow, a demo reset script, a synthetic-data seed
+  script — and the first version of this document.
+- *Oct 12* (`eca12a8`): offline sync for the typing track — a result that cannot be sent is stored in the browser
+  (IndexedDB) and sent automatically when the connection returns.
+- *Oct 15* (`d062603`, `7fa0cd5`, `7cf582d`, `83cbdfb`): a per-student progress-history view in the reviewer's typing
+  queue; a demo-only option to shorten typing sessions for recording; passports that work from any device (new
+  `nickname`/`avatar` columns, migration `0004`); and cross-device stamp sync plus a server-side passport counter.
+- *Oct 16* (`9017b4c`): the AIM Initiative Foundation logo in the homepage footer.
+
+**From Oct 17, 2026 — site-wide audit (on the `demo` branch).** An automated contrast scan of every page
+(185 low-contrast findings, all fixed), a Lesson 12 self-review that could not be completed, two stamps that could
+never be earned, stricter checks in the spreadsheet lesson, a platform-wide Analytics endpoint and completion
+badges on the hub pages. These fixes are on the `demo` branch, which the demo site runs; they are not merged into
+`main`, which is the code the pilot runs.
 
 ## Early prototype vs. current version
 
