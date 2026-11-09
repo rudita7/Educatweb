@@ -748,6 +748,84 @@
                 top: -14px;
             }
         }
+
+        /* ===== CLASS MODE: shared-device turn-taking ===== */
+        .who-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--ink-dim);
+        }
+        .who-bar b { color: var(--ink); }
+        .roster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .roster-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            text-align: left;
+            background: var(--glass);
+            border: 1.5px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            color: var(--ink);
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+        }
+        .roster-card:hover { border-color: var(--coral); transform: translateY(-2px); }
+        .roster-avatar {
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: var(--glass-strong);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .roster-avatar.sm { width: 28px; height: 28px; font-size: 1rem; }
+        .roster-name { font-weight: 700; font-size: 1.02rem; }
+        .roster-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-dim); }
+        .roster-status { font-size: 0.78rem; color: var(--ink-dim); margin-top: 2px; }
+        .roster-status.resume { color: var(--marigold); font-weight: 600; }
+        .roster-remove {
+            background: none;
+            border: none;
+            padding: 4px 2px;
+            margin-top: 2px;
+            color: var(--ink-dim);
+            font-size: 0.72rem;
+            font-family: var(--font-body);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .roster-remove:hover { color: var(--coral-soft); }
+        .add-student-form label { display: block; font-size: 0.8rem; color: var(--ink-dim); margin: 10px 0 4px; }
+        .add-student-form input {
+            width: 100%;
+            max-width: 320px;
+            box-sizing: border-box;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1.5px solid var(--line);
+            background: var(--bg-elev);
+            color: var(--ink);
+            font-family: var(--font-mono);
+            font-size: 1rem;
+        }
+        .add-student-form input:focus { outline: none; border-color: var(--coral); }
+        .class-msg { min-height: 1.3em; margin-top: 10px; font-size: 0.85rem; color: var(--ink-dim); }
+        .class-msg.error { color: var(--coral-soft); }
     </style>
 </head>
 <body>
@@ -1148,6 +1226,28 @@
             SESSIONS_G69.concat(SESSIONS_G45).forEach(s => { SESSIONS_BY_ID[s.id] = s; });
 
             // ============================================================
+            //  CLASS MODE — one shared laptop, many students taking turns.
+            //  A session is RUNS_PER_SESSION short runs (one phrase each,
+            //  the first N phrases of the session). After every run the
+            //  student can keep going or hand the laptop over; their runs
+            //  so far are saved on this device under
+            //  'typingInProgress:<passport>' so they can resume later,
+            //  and the combined result is sent to the reviewer only once
+            //  the last run is done (same single checkpoint result as
+            //  before — the reviewer queue is unchanged).
+            //  'uttoron:roster' lists the passports signed in on this device.
+            // ============================================================
+            const RUNS_PER_SESSION = 3;
+            const ROSTER_KEY = 'uttoron:roster';
+            function runsPerSession() {
+                const cap = Number(window.UTTORON_DEMO_MAX_PHRASES);
+                return cap > 0 ? Math.min(RUNS_PER_SESSION, cap) : RUNS_PER_SESSION;
+            }
+            function esc(s) {
+                return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            }
+
+            // ============================================================
             //  GRADE BAND SELECTION — persisted per passport number, same
             //  pattern as session progress below. No session yet (or no
             //  saved choice) means "ask."
@@ -1180,6 +1280,53 @@
                 const prog = getStorage('typingSessions:' + session.num) || {};
                 prog[sessionId] = true;
                 setStorage('typingSessions:' + session.num, prog);
+            }
+
+            // ============================================================
+            //  ROSTER + IN-PROGRESS SESSIONS (class mode)
+            // ============================================================
+            function currentNum() {
+                const s = getStorage('uttoron:session');
+                return (s && s.num) || null;
+            }
+            function getRoster() {
+                const r = getStorage(ROSTER_KEY);
+                return Array.isArray(r) ? r.filter(n => typeof n === 'string' && getStorage('user:' + n)) : [];
+            }
+            function rosterAdd(num) {
+                const r = getRoster();
+                if (r.indexOf(num) < 0) { r.push(num); setStorage(ROSTER_KEY, r); }
+            }
+            function rosterRemove(num) {
+                setStorage(ROSTER_KEY, getRoster().filter(n => n !== num));
+                clearInProgress(num);
+                if (currentNum() === num) { try { localStorage.removeItem('uttoron:session'); } catch (e) {} }
+            }
+            // A passport that is already signed in (e.g. they came from the
+            // Home page) joins the roster automatically.
+            function seedRosterFromSession() {
+                const n = currentNum();
+                if (n && getStorage('user:' + n)) rosterAdd(n);
+            }
+            function getInProgress(num) {
+                num = num || currentNum();
+                if (!num) return null;
+                const ip = getStorage('typingInProgress:' + num);
+                if (!ip || !SESSIONS_BY_ID[ip.sessionId] || !Array.isArray(ip.results)) return null;
+                if (ip.results.length === 0 || ip.results.length >= runsPerSession()) return null;
+                return ip;
+            }
+            function persistInProgress() {
+                const num = currentNum();
+                if (!num || !currentSessionId) return;
+                setStorage('typingInProgress:' + num, {
+                    sessionId: currentSessionId, bandId: currentGradeBand,
+                    results: checkpointResults, updatedAt: Date.now()
+                });
+            }
+            function clearInProgress(num) {
+                num = num || currentNum();
+                if (num) { try { localStorage.removeItem('typingInProgress:' + num); } catch (e) {} }
             }
 
             // ============================================================
@@ -1327,6 +1474,10 @@
             let currentSessionId = null; // null = show the session picker
             let currentItemIndex = 0;
             let lessonCompleted = false;
+            let identityConfirmed = false; // false = ask "who's typing?" before anything else
+            let trackConfirmed = false;    // false = show the track chooser for the chosen student
+            let onRunScreen = false;       // true while a run is on screen (switching then discards it)
+            let lastTurnNum = null;        // who just handed the device over
 
             const $ = (sel) => document.querySelector(sel);
             const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -1525,6 +1676,7 @@
                         <div>
                             <span class="tag">Keyboard & Typing</span>
                             <h2>Which class are you in?</h2>
+                            ${whoBarHtml()}
                         </div>
                     </div>
                     <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">Month 1's typing sessions are different for each grade band — pick yours to see the right lessons.</p>
@@ -1549,6 +1701,8 @@
                 const done = getSessionProgress();
                 const cardsHtml = band.sessions.map(s => {
                     const isDone = !!done[s.id];
+                    const ip = getInProgress();
+                    const inProg = !!(ip && ip.sessionId === s.id);
                     return `
                         <div class="scenario-card" style="margin-bottom:12px;${isDone ? 'opacity:0.75;' : ''}">
                             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
@@ -1558,7 +1712,7 @@
                                     <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:2px;">${s.objective}</p>
                                     <p style="font-size:0.76rem;color:var(--ink-faint);">${s.curriculumNote}</p>
                                 </div>
-                                <button class="btn ${isDone ? 'btn-secondary' : 'btn-primary'} btn-sm" data-start-session="${s.id}" style="flex-shrink:0;">${isDone ? 'Redo' : 'Start'} →</button>
+                                <button class="btn ${isDone && !inProg ? 'btn-secondary' : 'btn-primary'} btn-sm" data-start-session="${s.id}" style="flex-shrink:0;">${inProg ? 'Resume (' + ip.results.length + ' of ' + runsPerSession() + ' runs done)' : (isDone ? 'Redo' : 'Start')} →</button>
                             </div>
                         </div>
                     `;
@@ -1568,18 +1722,28 @@
                         <div>
                             <span class="tag">${band.subtitle}</span>
                             <h2>${band.label} · Month 1</h2>
+                            ${whoBarHtml()}
                             <button class="btn btn-secondary btn-sm" id="switchGradeBtn" style="margin-top:8px;">Switch grade</button>
                         </div>
                     </div>
-                    <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">${band.sessions.length} sessions, in curriculum order. Each one ends with a short timed check that goes to your reviewer.</p>
+                    <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">${band.sessions.length} sessions, in curriculum order. Each session is ${runsPerSession()} short runs; your result goes to your reviewer when you finish the last one, and you can hand the laptop to another student after any run.</p>
                     ${cardsHtml}
                 `;
                 $$('[data-start-session]').forEach(btn => btn.addEventListener('click', function() {
-                    currentSessionId = this.dataset.startSession;
-                    currentItemIndex = 0;
+                    const sid = this.dataset.startSession;
+                    const ip = getInProgress();
+                    currentSessionId = sid;
                     lessonCompleted = false;
-                    checkpointResults = [];
                     checkpointSubmitted = false;
+                    if (ip && ip.sessionId === sid) {
+                        // Resume where this student left off.
+                        checkpointResults = ip.results.slice();
+                        currentItemIndex = checkpointResults.length;
+                    } else {
+                        currentItemIndex = 0;
+                        checkpointResults = [];
+                        clearInProgress();
+                    }
                     renderTypingLesson();
                 }));
                 const switchBtn = $('#switchGradeBtn');
@@ -1593,17 +1757,18 @@
             //  TYPING LESSON RENDERER
             // ============================================================
             function renderTypingLesson() {
+                onRunScreen = false;
+                if (!identityConfirmed) { renderIdentityScreen('start'); return; }
+                if (!trackConfirmed) { renderTrackScreen(); return; }
                 if (!currentGradeBand) { renderGradeBandPicker(); return; }
                 if (!currentSessionId) { renderSessionPicker(); return; }
                 const data = SESSIONS_BY_ID[currentSessionId];
                 if (!data) { renderSessionPicker(); return; }
-                // Demo-only shortcut: window.UTTORON_DEMO_MAX_PHRASES is set at
-                // build time on the demo Netlify site only (see its build
-                // command), never on the real site, so a real student always
-                // gets the full session.
-                const phrases = window.UTTORON_DEMO_MAX_PHRASES
-                    ? data.phrases.slice(0, window.UTTORON_DEMO_MAX_PHRASES)
-                    : data.phrases;
+                // Class mode: a session is the first runsPerSession() phrases
+                // (3 by default) so every student gets a turn in the time
+                // available. window.UTTORON_DEMO_MAX_PHRASES (demo Netlify
+                // site only) can only make it shorter, never longer.
+                const phrases = data.phrases.slice(0, runsPerSession());
                 const total = phrases.length;
                 const shell = $('#lessonShell');
 
@@ -1614,6 +1779,7 @@
                         // Save progress
                         saveProgress();
                         markSessionCompleted(data.id);
+                        clearInProgress();
                         // Submit the combined checkpoint result to the backend (Phase 2),
                         // then render the completion screen once that settles (it never
                         // blocks the local stamp above, but Session 8's baseline
@@ -1628,6 +1794,7 @@
                 }
 
                 const target = phrases[currentItemIndex];
+                onRunScreen = true;
                 let dotsHtml = '<div class="lesson-progress">';
                 for (let i = 0; i < total; i++) {
                     const cls = i < currentItemIndex ? 'dot done' : i === currentItemIndex ? 'dot active' : 'dot';
@@ -1644,6 +1811,7 @@
                         <div>
                             <span class="tag">Session ${data.number} · ${data.title}</span>
                             <h2>${data.objective}</h2>
+                            ${whoBarHtml()}
                             <button class="btn btn-secondary btn-sm" id="backToSessionsBtn" style="margin-top:8px;">← All sessions</button>
                         </div>
                     </div>
@@ -1684,8 +1852,8 @@
                         </div>
                     </div>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;flex-wrap:wrap;gap:8px;">
-                        <span style="font-size:0.78rem;color:var(--ink-dim);">${currentItemIndex+1} of ${total}</span>
-                        <button class="btn btn-primary btn-sm" id="typingNext" disabled>${currentItemIndex === total-1 ? 'Finish' : 'Next'}</button>
+                        <span style="font-size:0.78rem;color:var(--ink-dim);">Run ${currentItemIndex+1} of ${total}</span>
+                        <button class="btn btn-primary btn-sm" id="typingNext" disabled>${currentItemIndex === total-1 ? 'Finish session' : 'Finish run'}</button>
                     </div>
                 `;
 
@@ -1877,7 +2045,7 @@
                     }
                     highlightNextKey();
                     if (typed.length === target.length && allCorrect) {
-                        status.textContent = '✅ Perfect! Click Next to continue.';
+                        status.textContent = currentItemIndex === total - 1 ? '✅ Perfect! Click Finish session.' : '✅ Perfect! Click Finish run.';
                         status.className = 'typing-status good';
                         nextBtn.disabled = false;
                         updateFingerDisplay(null);
@@ -1934,7 +2102,14 @@
                 nextBtn.addEventListener('click', function() {
                     if (this.disabled) return;
                     currentItemIndex++;
-                    renderTypingLesson();
+                    if (currentItemIndex < total) {
+                        // Between runs: save progress, then let the student
+                        // continue or hand the laptop over.
+                        persistInProgress();
+                        renderBetweenRuns(total);
+                    } else {
+                        renderTypingLesson();
+                    }
                 });
 
                 const backBtn = $('#backToSessionsBtn');
@@ -1942,6 +2117,248 @@
                     currentSessionId = null;
                     renderSessionPicker();
                 });
+            }
+
+            // ============================================================
+            //  CLASS MODE SCREENS: who's typing, track, between runs
+            // ============================================================
+            function whoBarHtml() {
+                const num = currentNum();
+                const u = num && getStorage('user:' + num);
+                if (!u) return '';
+                return `<div class="who-bar"><span class="roster-avatar sm">${esc(u.avatar || '🙂')}</span><span>Typing as <b>${esc(u.nickname || num)}</b></span><button class="btn btn-secondary btn-sm" data-switch-student>Switch student</button></div>`;
+            }
+
+            function chooseIdentity(num) {
+                if (!getStorage('user:' + num)) return;
+                setStorage('uttoron:session', { num });
+                identityConfirmed = true;
+                trackConfirmed = false;
+                currentGradeBand = null;
+                currentSessionId = null;
+                currentItemIndex = 0;
+                lessonCompleted = false;
+                checkpointResults = [];
+                checkpointSubmitted = false;
+                const saved = getSavedGradeBand();
+                if (saved && GRADE_BANDS[saved]) currentGradeBand = saved;
+                renderTypingLesson();
+            }
+
+            function doHandOver() {
+                lastTurnNum = currentNum();
+                identityConfirmed = false;
+                trackConfirmed = false;
+                renderIdentityScreen('handover');
+            }
+
+            function renderIdentityScreen(mode) {
+                onRunScreen = false;
+                const shell = $('#lessonShell');
+                const roster = getRoster();
+                const runs = runsPerSession();
+                const cards = roster.map(n => {
+                    const u = getStorage('user:' + n) || {};
+                    const ip = getInProgress(n);
+                    const doneCount = Object.keys(getStorage('typingSessions:' + n) || {}).length;
+                    const status = ip
+                        ? `▶ Session ${SESSIONS_BY_ID[ip.sessionId].number} · ${ip.results.length} of ${runs} runs done — resume`
+                        : (doneCount ? `${doneCount} session${doneCount === 1 ? '' : 's'} finished` : 'Ready to start');
+                    return `
+                        <div>
+                            <button class="roster-card" data-pick-identity="${esc(n)}">
+                                <span class="roster-avatar">${esc(u.avatar || '🙂')}</span>
+                                <span>
+                                    <span class="roster-name">${esc(u.nickname || n)}</span><br>
+                                    <span class="roster-num">${esc(n)}</span>
+                                    <div class="roster-status${ip ? ' resume' : ''}">${status}</div>
+                                </span>
+                            </button>
+                            <button class="roster-remove" data-remove-identity="${esc(n)}">Remove from this device</button>
+                        </div>`;
+                }).join('');
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">Keyboard & Typing · Class mode</span>
+                            <h2>${mode === 'handover' ? 'Pass it on — who’s next?' : 'Who’s typing?'}</h2>
+                        </div>
+                    </div>
+                    <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">${mode === 'handover'
+                        ? 'Everyone’s progress is saved. The next student taps their own name to take their turn.'
+                        : 'Tap your name to take your turn. Not on the list? Add yourself with your passport number and PIN.'}</p>
+                    ${roster.length ? `<div class="roster-grid">${cards}</div>` : `<p style="color:var(--ink-dim);margin-bottom:16px;">Nobody is signed in on this device yet.</p>`}
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                        <button class="btn btn-primary" id="addStudentBtn">＋ Add a student</button>
+                        <a href="index1.html" class="btn btn-secondary">New here? Create a passport</a>
+                    </div>
+                `;
+                $$('[data-pick-identity]').forEach(btn => btn.addEventListener('click', function() {
+                    chooseIdentity(this.dataset.pickIdentity);
+                }));
+                $$('[data-remove-identity]').forEach(btn => btn.addEventListener('click', function() {
+                    const n = this.dataset.removeIdentity;
+                    const u = getStorage('user:' + n) || {};
+                    if (!confirm('Remove ' + (u.nickname || n) + ' from this device? They can add themselves again with their passport number and PIN.')) return;
+                    rosterRemove(n);
+                    renderIdentityScreen(mode);
+                }));
+                $('#addStudentBtn').addEventListener('click', function() { renderAddStudent(mode); });
+            }
+
+            function renderAddStudent(mode) {
+                const shell = $('#lessonShell');
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">Keyboard & Typing · Class mode</span>
+                            <h2>Add a student</h2>
+                        </div>
+                    </div>
+                    <form class="add-student-form" id="addStudentForm" autocomplete="off">
+                        <label for="addNum">Passport number</label>
+                        <input id="addNum" placeholder="e.g. UT-4821" required />
+                        <label for="addPin">PIN</label>
+                        <input id="addPin" type="password" inputmode="numeric" maxlength="4" placeholder="4 digits" required />
+                        <div class="class-msg" id="addMsg"></div>
+                        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" type="submit" id="addSubmit">Add to this device</button>
+                            <button class="btn btn-secondary" type="button" id="addCancel">Cancel</button>
+                        </div>
+                    </form>
+                `;
+                $('#addNum').focus();
+                $('#addCancel').addEventListener('click', function() { renderIdentityScreen(mode); });
+                $('#addStudentForm').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const msg = $('#addMsg');
+                    const btn = $('#addSubmit');
+                    const num = $('#addNum').value.trim().toUpperCase();
+                    const pin = $('#addPin').value.trim();
+                    msg.className = 'class-msg';
+                    if (!num || !/^[0-9]{4}$/.test(pin)) {
+                        msg.textContent = 'Enter the passport number and the 4-digit PIN.';
+                        msg.classList.add('error');
+                        return;
+                    }
+                    const local = getStorage('user:' + num);
+                    if (local && local.pin === pin) { rosterAdd(num); renderIdentityScreen(mode); return; }
+                    btn.disabled = true;
+                    msg.textContent = 'Checking…';
+                    try {
+                        const bu = await window.Backend.login(num, pin);
+                        if (!bu || !bu.nickname) {
+                            msg.textContent = 'This passport was created before cross-device sign-in was added — it only works on the device that made it.';
+                            msg.classList.add('error');
+                            btn.disabled = false;
+                            return;
+                        }
+                        setStorage('user:' + num, { num, nickname: bu.nickname, avatar: bu.avatar, pin, createdAt: (local && local.createdAt) || Date.now() });
+                        try { localStorage.setItem('uttoron:backend-uid:' + num, String(bu.id)); } catch (err) {}
+                        rosterAdd(num);
+                        renderIdentityScreen(mode);
+                    } catch (err) {
+                        msg.textContent = (err instanceof TypeError)
+                            ? 'No connection. Check the internet and try again (passports already on this device work without it).'
+                            : (local ? 'Incorrect PIN. Try again.' : 'Passport not found, or the PIN is wrong. Check the number.');
+                        msg.classList.add('error');
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            function renderTrackScreen() {
+                onRunScreen = false;
+                const shell = $('#lessonShell');
+                const num = currentNum();
+                const u = (num && getStorage('user:' + num)) || {};
+                const ip = getInProgress();
+                const runs = runsPerSession();
+                const soon = (icon, name) => `
+                    <div class="scenario-card" style="opacity:0.55;margin-bottom:12px;">
+                        <span style="font-size:1.2rem;">${icon}</span> <b>${name}</b>
+                        <span style="font-size:0.78rem;color:var(--ink-dim);"> — not in class mode yet</span>
+                    </div>`;
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">Class mode</span>
+                            <h2>Hi ${esc(u.nickname || num)} — choose a track</h2>
+                            ${whoBarHtml()}
+                        </div>
+                    </div>
+                    ${ip ? `
+                    <div class="scenario-card" style="margin-bottom:12px;">
+                        <div class="roster-status resume" style="margin:0 0 6px;">▶ You’re part-way through a session</div>
+                        <h3 style="margin:0 0 4px;font-size:1.05rem;">Session ${SESSIONS_BY_ID[ip.sessionId].number}: ${SESSIONS_BY_ID[ip.sessionId].title}</h3>
+                        <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:10px;">${ip.results.length} of ${runs} runs done.</p>
+                        <button class="btn btn-primary" id="resumeBtn">Resume — run ${ip.results.length + 1} of ${runs} →</button>
+                    </div>` : ''}
+                    <div class="scenario-card" style="margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+                            <div>
+                                <span class="tag">Keyboard & Typing</span>
+                                <h3 style="margin:4px 0 2px;font-size:1.05rem;">Typing sessions</h3>
+                                <p style="font-size:0.78rem;color:var(--ink-dim);">${runs} short runs per session</p>
+                            </div>
+                            <button class="btn ${ip ? 'btn-secondary' : 'btn-primary'} btn-sm" id="pickTypingBtn">${ip ? 'Pick a different session' : 'Choose'} →</button>
+                        </div>
+                    </div>
+                    ${soon('📊', 'Spreadsheet Basics')}
+                    ${soon('🎯', 'Data Accuracy')}
+                    ${soon('🎤', 'Presentation Skills')}
+                `;
+                $('#pickTypingBtn').addEventListener('click', function() {
+                    trackConfirmed = true;
+                    currentSessionId = null;
+                    renderTypingLesson();
+                });
+                const resumeBtn = $('#resumeBtn');
+                if (resumeBtn) resumeBtn.addEventListener('click', function() {
+                    if (!loadResume()) return;
+                    trackConfirmed = true;
+                    renderTypingLesson();
+                });
+            }
+
+            function loadResume() {
+                const ip = getInProgress();
+                if (!ip) return false;
+                if (ip.bandId && GRADE_BANDS[ip.bandId]) { currentGradeBand = ip.bandId; saveGradeBand(ip.bandId); }
+                currentSessionId = ip.sessionId;
+                checkpointResults = ip.results.slice();
+                currentItemIndex = checkpointResults.length;
+                lessonCompleted = false;
+                checkpointSubmitted = false;
+                return true;
+            }
+
+            function renderBetweenRuns(total) {
+                onRunScreen = false;
+                const shell = $('#lessonShell');
+                const u = getStorage('user:' + currentNum()) || {};
+                const last = checkpointResults[checkpointResults.length - 1] || {};
+                let dots = '<div class="lesson-progress" style="justify-content:center;margin:14px 0;">';
+                for (let i = 0; i < total; i++) dots += `<span class="${i < currentItemIndex ? 'dot done' : 'dot'}"></span>`;
+                dots += '</div>';
+                shell.innerHTML = `
+                    <div class="lesson-complete">
+                        <div class="big-stamp">
+                            <span class="stamp-icon">⌨️</span>
+                            ✓
+                        </div>
+                        <h2>Run ${currentItemIndex} of ${total} done${u.nickname ? ', ' + esc(u.nickname) : ''}!</h2>
+                        <p style="color:var(--ink-dim);">${last.wpm} WPM · ${last.accuracy}% accuracy on this run</p>
+                        ${dots}
+                        <p style="color:var(--ink-dim);font-size:0.88rem;">Your progress is saved. Keep going now, or hand the laptop to the next student and pick this session up again on your next turn.</p>
+                        <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" id="continueRunBtn">Continue session →</button>
+                            <button class="btn btn-secondary" id="handOverBtn">🔁 Hand over to the next student</button>
+                        </div>
+                    </div>
+                `;
+                $('#continueRunBtn').addEventListener('click', function() { renderTypingLesson(); });
+                $('#handOverBtn').addEventListener('click', doHandOver);
             }
 
             // ============================================================
@@ -1997,13 +2414,15 @@
                             : `<p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>`}
                         ${comparisonHtml}
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
-                            ${next ? `<button class="btn btn-primary" id="nextSessionBtn">Session ${next.number}: ${next.title} →</button>` : ''}
+                            <button class="btn btn-primary" id="completeHandOverBtn">🔁 Hand over to the next student</button>
+                            ${next ? `<button class="btn btn-secondary" id="nextSessionBtn">Session ${next.number}: ${next.title} →</button>` : ''}
                             <button class="btn btn-secondary" id="allSessionsBtn">All sessions</button>
                             <button class="btn btn-secondary" id="resetLessonBtn">🔄 Redo this session</button>
                             <a href="index1.html" class="btn btn-secondary">Back to Home</a>
                         </div>
                     </div>
                 `;
+                document.getElementById('completeHandOverBtn').addEventListener('click', doHandOver);
                 if (next) {
                     document.getElementById('nextSessionBtn').addEventListener('click', function() {
                         currentSessionId = next.id;
@@ -2068,9 +2487,17 @@
             // ============================================================
             function init() {
                 checkProgress();
-                const saved = getSavedGradeBand();
-                if (saved && GRADE_BANDS[saved]) currentGradeBand = saved;
-                renderTypingLesson();
+                seedRosterFromSession();
+                // "Switch student" buttons appear on several screens, so one
+                // delegated handler covers them all.
+                $('#lessonShell').addEventListener('click', function(e) {
+                    if (!e.target.closest('[data-switch-student]')) return;
+                    if (onRunScreen && !confirm('Switch student? The run you are typing now will be lost. Runs you already finished are saved.')) return;
+                    identityConfirmed = false;
+                    trackConfirmed = false;
+                    renderIdentityScreen('switch');
+                });
+                renderTypingLesson(); // asks "who's typing?" first
                 if (window.TypingStore) {
                     TypingStore.setOnQueueChange(renderQueueBanner);
                     TypingStore.getPendingCount().then(renderQueueBanner);
