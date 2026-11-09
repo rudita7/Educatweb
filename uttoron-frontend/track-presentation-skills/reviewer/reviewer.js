@@ -216,7 +216,14 @@
     const selectedTypingTags = {}; // resultId -> Set of tagIds
 
     function formatTypingMetrics(r) {
-        return `WPM: ${r.wpm.toFixed(1)} · Accuracy: ${r.accuracy.toFixed(1)}% · Errors: ${r.errorCount} · ${r.durationSeconds.toFixed(1)}s`;
+        const runs = TypingStore.isIncomplete(r) ? ` · Runs: ${r.runsCompleted} of ${r.runsTotal}` : '';
+        return `WPM: ${r.wpm.toFixed(1)} · Accuracy: ${r.accuracy.toFixed(1)}% · Errors: ${r.errorCount} · ${r.durationSeconds.toFixed(1)}s${runs}`;
+    }
+    // Class mode: a student who ran out of time can submit what they finished.
+    function incompleteChip(r) {
+        return TypingStore.isIncomplete(r)
+            ? `<span class="status-chip" style="margin-left:6px;background:#E8A33D;color:#1a1a1a;border:1px solid #b9801f;font-weight:700;">Incomplete · ${r.runsCompleted} of ${r.runsTotal} runs</span>`
+            : '';
     }
 
     // Phase 4 (optional, spec §9) — plain before/after WPM & accuracy next
@@ -250,7 +257,7 @@
         const when = new Date(r.createdAt).toLocaleDateString();
         return `<tr>
             <td style="padding:4px 10px 4px 0;white-space:nowrap;">${escapeHtml(when)}</td>
-            <td style="padding:4px 10px;">${escapeHtml(label)}</td>
+            <td style="padding:4px 10px;">${escapeHtml(label)}${TypingStore.isIncomplete(r) ? ' <b>(incomplete: ' + r.runsCompleted + ' of ' + r.runsTotal + ' runs)</b>' : ''}</td>
             <td style="padding:4px 10px;font-family:var(--font-mono);">${r.wpm.toFixed(1)} wpm</td>
             <td style="padding:4px 10px;font-family:var(--font-mono);">${r.accuracy.toFixed(1)}%</td>
             <td style="padding:4px 0;">${r.status === 'reviewed' ? '✓ reviewed' : '⏳ pending'}</td>
@@ -360,6 +367,7 @@
                         <div>
                             <span class="q-student">${escapeHtml(displayName(r.studentName))}</span>
                             <span class="status-chip ${r.status}" style="margin-left:8px;">${escapeHtml(TypingStore.CHECKPOINT_LABELS[r.checkpointId] || r.checkpointId)}</span>
+                            ${incompleteChip(r)}
                             ${!isPending ? '<span class="status-chip reviewed" style="margin-left:6px;">✓ reviewed</span>' : ''}
                             ${showHistoryBtn ? `<button class="btn btn-secondary btn-sm" style="margin-left:8px;" data-toggle-history="${r.studentId}">📈 Progress</button>` : ''}
                         </div>

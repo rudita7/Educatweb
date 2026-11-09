@@ -1401,8 +1401,8 @@
             // failed — in which case the finished results are kept on this
             // device (typingUnsent:<passport>) so they can be sent again
             // instead of being silently lost.
-            function saveUnsent(num, checkpointId, results) {
-                setStorage('typingUnsent:' + num, { checkpointId, results: results.slice(), savedAt: Date.now() });
+            function saveUnsent(num, checkpointId, results, runsTotal) {
+                setStorage('typingUnsent:' + num, { checkpointId, results: results.slice(), runsTotal: runsTotal || results.length, savedAt: Date.now() });
             }
             function getUnsent(num) {
                 num = num || currentNum();
@@ -1412,9 +1412,14 @@
             function clearUnsent(num) {
                 if (num) { try { localStorage.removeItem('typingUnsent:' + num); } catch (e) {} }
             }
-            async function submitCheckpointToBackend(checkpointId) {
+            // opts.runsTotal: how many runs a full session has. When fewer
+            // were finished (a student out of time), the result is sent
+            // marked incomplete (runsCompleted < runsTotal).
+            async function submitCheckpointToBackend(checkpointId, opts) {
                 if (checkpointSubmitted || checkpointResults.length === 0) return null;
                 checkpointSubmitted = true;
+                const runsDone = checkpointResults.length;
+                const runsTotal = Math.max((opts && opts.runsTotal) || runsDone, runsDone);
 
                 const session = getStorage('uttoron:session');
                 if (!session || !session.num) return null; // saveProgress() already prompted to sign in
@@ -1426,12 +1431,12 @@
                     const backendUid = await TypingStore.identify({ num: session.num, nickname: localUser.nickname }, Storage);
                     if (!backendUid) return null;
                     const combined = combineCheckpointResults(checkpointResults);
-                    const outcome = await TypingStore.submitTypingResult({ backendUid, checkpointId, ...combined });
+                    const outcome = await TypingStore.submitTypingResult({ backendUid, checkpointId, ...combined, runsCompleted: runsDone, runsTotal });
                     clearUnsent(session.num);
                     return { backendUid, combined, queued: !!(outcome && outcome.queued) };
                 } catch (err) {
                     console.error('Could not submit typing checkpoint result:', err);
-                    saveUnsent(session.num, checkpointId, checkpointResults);
+                    saveUnsent(session.num, checkpointId, checkpointResults, runsTotal);
                     checkpointSubmitted = false; // allow "Send again"
                     return { failed: true };
                 }
@@ -1442,7 +1447,7 @@
                 if (!u) return null;
                 checkpointResults = u.results.slice();
                 checkpointSubmitted = false;
-                return submitCheckpointToBackend(u.checkpointId);
+                return submitCheckpointToBackend(u.checkpointId, { runsTotal: u.runsTotal });
             }
 
             // ============================================================
@@ -1812,7 +1817,7 @@
                         // then render the completion screen once that settles (it never
                         // blocks the local stamp above, but Session 8's baseline
                         // comparison needs the backend round trip to finish first).
-                        submitCheckpointToBackend(data.checkpointId).then(submitOutcome => {
+                        submitCheckpointToBackend(data.checkpointId, { runsTotal: total }).then(submitOutcome => {
                             showCompletionScreen(data, submitOutcome);
                         });
                         return;
@@ -2330,6 +2335,7 @@
                         <h3 style="margin:0 0 4px;font-size:1.05rem;">Session ${SESSIONS_BY_ID[ip.sessionId].number}: ${SESSIONS_BY_ID[ip.sessionId].title}</h3>
                         <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:10px;">${ip.results.length} of ${runs} runs done.</p>
                         <button class="btn btn-primary" id="resumeBtn">Resume — run ${ip.results.length + 1} of ${runs} →</button>
+                        <button class="roster-remove" id="trackSubmitPartialBtn" style="display:block;margin-top:10px;font-size:0.82rem;">Out of time? Submit what I’ve done so far (incomplete)</button>
                     </div>` : ''}
                     <div class="scenario-card" style="margin-bottom:12px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -2362,6 +2368,8 @@
                     m.textContent = 'Still could not send. Check the internet and try again, or tell your teacher.';
                     m.classList.add('error');
                 });
+                const trackPartialBtn = $('#trackSubmitPartialBtn');
+                if (trackPartialBtn) trackPartialBtn.addEventListener('click', submitPartial);
                 const resumeBtn = $('#resumeBtn');
                 if (resumeBtn) resumeBtn.addEventListener('click', function() {
                     if (!loadResume()) return;
@@ -2380,6 +2388,26 @@
                 lessonCompleted = false;
                 checkpointSubmitted = false;
                 return true;
+            }
+
+            // A student who runs out of time can still submit: whatever runs
+            // they finished are sent as one result marked incomplete. The
+            // session does not count as completed (no stamp, no "next").
+            async function submitPartial() {
+                const ip = getInProgress();
+                if (!ip) return;
+                const data = SESSIONS_BY_ID[ip.sessionId];
+                const done = ip.results.length;
+                const total = runsPerSession();
+                if (!confirm('Submit Session ' + data.number + ' now as incomplete (' + done + ' of ' + total + ' runs)? Your reviewer will see it marked incomplete, and you cannot resume it afterwards.')) return;
+                currentSessionId = ip.sessionId;
+                checkpointResults = ip.results.slice();
+                checkpointSubmitted = false;
+                lessonCompleted = true;
+                clearInProgress();
+                $('#lessonShell').innerHTML = '<p style="text-align:center;color:var(--ink-dim);padding:40px 0;">Sending…</p>';
+                const outcome = await submitCheckpointToBackend(data.checkpointId, { runsTotal: total });
+                showCompletionScreen(data, outcome, { partial: true, done, total });
             }
 
             function renderBetweenRuns(total) {
@@ -2404,8 +2432,10 @@
                             <button class="btn btn-primary" id="continueRunBtn">Continue session →</button>
                             <button class="btn btn-secondary" id="handOverBtn">🔁 Hand over to the next student</button>
                         </div>
+                        <button class="roster-remove" id="submitPartialBtn" style="margin-top:14px;font-size:0.82rem;">Out of time? Submit what I’ve done so far (incomplete)</button>
                     </div>
                 `;
+                $('#submitPartialBtn').addEventListener('click', submitPartial);
                 $('#continueRunBtn').addEventListener('click', function() { renderTypingLesson(); });
                 $('#handOverBtn').addEventListener('click', doHandOver);
             }
@@ -2413,7 +2443,8 @@
             // ============================================================
             //  COMPLETION
             // ============================================================
-            async function showCompletionScreen(session, submitOutcome) {
+            async function showCompletionScreen(session, submitOutcome, extra) {
+                const partial = !!(extra && extra.partial);
                 const shell = $('#lessonShell');
                 const bandSessions = GRADE_BANDS[currentGradeBand].sessions;
                 const idx = bandSessions.findIndex(s => s.id === session.id);
@@ -2427,7 +2458,7 @@
                 // curriculum's own Session 8 assessment instruction ("compare
                 // to your Session 1 baseline") surfaced directly on the page.
                 let comparisonHtml = '';
-                if (session.isFinal && submitOutcome && submitOutcome.backendUid && baselineSession) {
+                if (!partial && session.isFinal && submitOutcome && submitOutcome.backendUid && baselineSession) {
                     try {
                         const baselineRows = await TypingStore.listMine(submitOutcome.backendUid, baselineSession.checkpointId);
                         if (baselineRows && baselineRows.length > 0) {
@@ -2456,7 +2487,7 @@
                             <span class="stamp-icon">⌨️</span>
                             ✓
                         </div>
-                        <h2>🎯 Session ${session.number} complete!</h2>
+                        <h2>${partial ? '📝 Session ' + session.number + ' submitted as incomplete (' + extra.done + ' of ' + extra.total + ' runs)' : '🎯 Session ' + session.number + ' complete!'}</h2>
                         <p style="color:var(--ink-dim);">${session.title}</p>
                         ${(submitOutcome && submitOutcome.failed) || (!submitOutcome && getUnsent())
                             ? `<p style="color:var(--coral-soft);font-weight:600;margin-top:8px;">⚠️ Your result has NOT been sent yet. It is saved on this device — tap “Send again”. If it keeps failing, tell your teacher.</p>
@@ -2464,12 +2495,12 @@
                             : submitOutcome && submitOutcome.queued
                             ? `<p style="color:var(--coral-soft);font-weight:600;margin-top:8px;">📴 Saved on this device — it will be sent to your reviewer automatically as soon as the connection and server are back.</p>`
                             : submitOutcome
-                            ? `<p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>`
+                            ? `<p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer${partial ? ', marked incomplete' : ''} — check back on your Passport for feedback.</p>`
                             : ''}
                         ${comparisonHtml}
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
                             <button class="btn btn-primary" id="completeHandOverBtn">🔁 Hand over to the next student</button>
-                            ${next ? `<button class="btn btn-secondary" id="nextSessionBtn">Session ${next.number}: ${next.title} →</button>` : ''}
+                            ${next && !partial ? `<button class="btn btn-secondary" id="nextSessionBtn">Session ${next.number}: ${next.title} →</button>` : ''}
                             <button class="btn btn-secondary" id="allSessionsBtn">All sessions</button>
                             <button class="btn btn-secondary" id="resetLessonBtn">🔄 Redo this session</button>
                             <a href="index1.html" class="btn btn-secondary">Back to Home</a>
@@ -2482,9 +2513,9 @@
                     this.disabled = true;
                     this.textContent = 'Sending…';
                     const outcome = await sendUnsent();
-                    showCompletionScreen(session, outcome || { failed: true });
+                    showCompletionScreen(session, outcome || { failed: true }, extra);
                 });
-                if (next) {
+                if (next && !partial) {
                     document.getElementById('nextSessionBtn').addEventListener('click', function() {
                         currentSessionId = next.id;
                         currentItemIndex = 0;

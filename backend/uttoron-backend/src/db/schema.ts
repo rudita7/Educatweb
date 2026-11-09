@@ -106,6 +106,11 @@ export const typingResults = pgTable('typing_results', {
   durationSeconds: doublePrecision('duration_seconds').notNull(),
   textLength: integer('text_length').notNull(), // characters in the target phrase(s) — needed to sanity-check wpm
   status: text('status').notNull().default('pending'), // pending | reviewed
+  // Class mode: a session is a few short runs. A student who runs out of time can
+  // still submit; runsCompleted < runsTotal marks the result as incomplete.
+  // Both null on results submitted before this existed (treated as complete).
+  runsCompleted: integer('runs_completed'),
+  runsTotal: integer('runs_total'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

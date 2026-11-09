@@ -1232,7 +1232,7 @@
             if (typingRows.length > 0) {
                 html += `<div style="font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-faint);margin:10px 0 6px;">⌨️ Typing</div>`;
                 html += typingRows.map(({ result, feedback: fb }) => renderFeedbackCard(
-                    (TypingStore.CHECKPOINT_LABELS[result.checkpointId] || result.checkpointId) + ` · ${result.wpm} WPM, ${result.accuracy}% accuracy`,
+                    (TypingStore.CHECKPOINT_LABELS[result.checkpointId] || result.checkpointId) + ` · ${result.wpm} WPM, ${result.accuracy}% accuracy` + (TypingStore.isIncomplete(result) ? ` · incomplete (${result.runsCompleted} of ${result.runsTotal} runs)` : ''),
                     'Submitted ' + new Date(result.createdAt).toLocaleDateString(),
                     result.status, fb, TypingStore.TYPING_TAGS
                 )).join('');

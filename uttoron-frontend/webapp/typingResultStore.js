@@ -55,8 +55,8 @@
     let onQueueChange = null;
     function setOnQueueChange(fn) { onQueueChange = fn; }
 
-    function typingResultPayload({ backendUid, checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength }) {
-        return { backendUid, checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength };
+    function typingResultPayload({ backendUid, checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength, runsCompleted, runsTotal }) {
+        return { backendUid, checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength, runsCompleted, runsTotal };
     }
 
     async function postTypingResult(payload) {
@@ -66,6 +66,8 @@
             body: JSON.stringify({
                 checkpointId: payload.checkpointId, wpm: payload.wpm, accuracy: payload.accuracy,
                 errorCount: payload.errorCount, durationSeconds: payload.durationSeconds, textLength: payload.textLength,
+                // class mode: omitted (undefined) for payloads queued before this existed
+                runsCompleted: payload.runsCompleted, runsTotal: payload.runsTotal,
             }),
         });
     }
@@ -124,7 +126,13 @@
         return apiFetch('/api/typing/comparisons' + qs, { headers: { 'x-user-id': String(backendUid) } });
     }
 
+    // A result is incomplete when the student submitted before finishing every run.
+    function isIncomplete(r) {
+        return !!r && Number.isInteger(r.runsCompleted) && Number.isInteger(r.runsTotal) && r.runsCompleted < r.runsTotal;
+    }
+
     global.TypingStore = {
+        isIncomplete,
         identify, submitTypingResult, listMine, listQueue, submitFeedback, getComparisons,
         TYPING_TAGS, CHECKPOINT_LABELS, tagsForTypingCheckpoint,
         setOnQueueChange,

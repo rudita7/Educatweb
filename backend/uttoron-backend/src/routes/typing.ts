@@ -57,6 +57,7 @@ const TYPING_TAG_CATEGORIES = ['accuracy', 'typing_pacing', 'progress'];
 
 const MAX_WPM = 300; // generous ceiling — catches a client-side timing bug, not a real typist
 const MAX_COMMENT_LENGTH = 200;
+const MAX_RUNS = 20; // a session is a handful of short runs; this only catches a client bug
 
 function isFiniteNumber(v: unknown): v is number {
   return typeof v === 'number' && Number.isFinite(v);
@@ -65,6 +66,8 @@ function isFiniteNumber(v: unknown): v is number {
 // ---------------- Submit a result (spec §4, POST /results) ----------------
 router.post('/results', authenticate, async (req: AuthRequest, res: Response) => {
   const { checkpointId, wpm, accuracy, errorCount, durationSeconds, textLength } = req.body;
+  // Optional (class mode): how many of the session's runs were finished.
+  const { runsCompleted, runsTotal } = req.body;
 
   if (!checkpointId || !VALID_CHECKPOINT_IDS.includes(checkpointId)) {
     return res.status(400).json({ error: 'checkpointId must be one of ' + VALID_CHECKPOINT_IDS.join(', ') });
@@ -84,6 +87,12 @@ router.post('/results', authenticate, async (req: AuthRequest, res: Response) =>
   if (!isFiniteNumber(textLength) || textLength <= 0) {
     return res.status(400).json({ error: 'textLength must be a positive number' });
   }
+  const hasRuns = runsCompleted !== undefined || runsTotal !== undefined;
+  if (hasRuns) {
+    if (!Number.isInteger(runsCompleted) || !Number.isInteger(runsTotal) || runsTotal < 1 || runsTotal > MAX_RUNS || runsCompleted < 1 || runsCompleted > runsTotal) {
+      return res.status(400).json({ error: `runsCompleted and runsTotal must be whole numbers with 1 <= runsCompleted <= runsTotal <= ${MAX_RUNS}` });
+    }
+  }
 
   try {
     const [inserted] = await db
@@ -96,6 +105,8 @@ router.post('/results', authenticate, async (req: AuthRequest, res: Response) =>
         errorCount,
         durationSeconds,
         textLength,
+        runsCompleted: hasRuns ? runsCompleted : null,
+        runsTotal: hasRuns ? runsTotal : null,
         status: 'pending',
       })
       .returning();
