@@ -83,7 +83,11 @@
             await postTypingResult(payload);
             return { queued: false };
         } catch (err) {
-            if (err && err.isNetworkError && global.OfflineQueue) {
+            // Queue on a dropped connection AND on a server error (5xx,
+            // after fetchWithRetry's retries): a backend that is asleep or
+            // whose database is paused must not silently lose the result.
+            const serverTrouble = err && err.status && err.status >= 500;
+            if (err && (err.isNetworkError || serverTrouble) && global.OfflineQueue) {
                 await global.OfflineQueue.enqueue('typing-result', payload);
                 if (onQueueChange) onQueueChange(await global.OfflineQueue.count());
                 return { queued: true };

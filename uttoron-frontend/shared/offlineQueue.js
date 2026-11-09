@@ -73,7 +73,9 @@
     // hammering the rest while the device is still offline, it'll pick up
     // where it left off on the next flush. An item the server rejects
     // outright (not a network error) is dropped, since retrying it again
-    // later could never succeed either.
+    // later could never succeed either. A server error (5xx — e.g. the
+    // free-tier backend waking up, or its database paused) is NOT a
+    // rejection of the data: keep the item and try again later.
     let flushing = false;
     async function flush(handlers, onChange) {
         if (flushing) return;
@@ -88,7 +90,7 @@
                     await remove(item.id);
                     if (onChange) onChange(await count());
                 } catch (err) {
-                    if (err && err.isNetworkError) break;
+                    if (err && (err.isNetworkError || (err.status && err.status >= 500))) break;
                     console.error('Dropping a queued offline submission the server rejected:', item, err);
                     await remove(item.id);
                     if (onChange) onChange(await count());
@@ -102,6 +104,9 @@
     function autoFlush(handlers, onChange) {
         flush(handlers, onChange);
         global.addEventListener('online', () => flush(handlers, onChange));
+        // Also retry every 30s while the page is open: the connection may
+        // be fine but the server may have only just woken up.
+        setInterval(() => flush(handlers, onChange), 30000);
     }
 
     global.OfflineQueue = { enqueue, getAll, remove, count, flush, autoFlush };

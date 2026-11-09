@@ -1395,6 +1395,23 @@
             // "lesson complete" stamp (saveProgress(), just below) — the
             // student's own progress view is unaffected either way, a
             // reviewer just won't see this particular attempt in their queue.
+            //
+            // Returns { backendUid, combined, queued } on success, null when
+            // there is nothing to send, or { failed: true } when the send
+            // failed — in which case the finished results are kept on this
+            // device (typingUnsent:<passport>) so they can be sent again
+            // instead of being silently lost.
+            function saveUnsent(num, checkpointId, results) {
+                setStorage('typingUnsent:' + num, { checkpointId, results: results.slice(), savedAt: Date.now() });
+            }
+            function getUnsent(num) {
+                num = num || currentNum();
+                const u = num && getStorage('typingUnsent:' + num);
+                return u && Array.isArray(u.results) && u.results.length ? u : null;
+            }
+            function clearUnsent(num) {
+                if (num) { try { localStorage.removeItem('typingUnsent:' + num); } catch (e) {} }
+            }
             async function submitCheckpointToBackend(checkpointId) {
                 if (checkpointSubmitted || checkpointResults.length === 0) return null;
                 checkpointSubmitted = true;
@@ -1410,11 +1427,22 @@
                     if (!backendUid) return null;
                     const combined = combineCheckpointResults(checkpointResults);
                     const outcome = await TypingStore.submitTypingResult({ backendUid, checkpointId, ...combined });
+                    clearUnsent(session.num);
                     return { backendUid, combined, queued: !!(outcome && outcome.queued) };
                 } catch (err) {
                     console.error('Could not submit typing checkpoint result:', err);
-                    return null;
+                    saveUnsent(session.num, checkpointId, checkpointResults);
+                    checkpointSubmitted = false; // allow "Send again"
+                    return { failed: true };
                 }
+            }
+            // Re-send a finished session whose first send failed.
+            async function sendUnsent() {
+                const u = getUnsent();
+                if (!u) return null;
+                checkpointResults = u.results.slice();
+                checkpointSubmitted = false;
+                return submitCheckpointToBackend(u.checkpointId);
             }
 
             // ============================================================
@@ -2161,7 +2189,9 @@
                     const u = getStorage('user:' + n) || {};
                     const ip = getInProgress(n);
                     const doneCount = Object.keys(getStorage('typingSessions:' + n) || {}).length;
-                    const status = ip
+                    const status = getUnsent(n)
+                        ? '⚠️ A finished session has not been sent yet'
+                        : ip
                         ? `▶ Session ${SESSIONS_BY_ID[ip.sessionId].number} · ${ip.results.length} of ${runs} runs done — resume`
                         : (doneCount ? `${doneCount} session${doneCount === 1 ? '' : 's'} finished` : 'Ready to start');
                     return `
@@ -2171,7 +2201,7 @@
                                 <span>
                                     <span class="roster-name">${esc(u.nickname || n)}</span><br>
                                     <span class="roster-num">${esc(n)}</span>
-                                    <div class="roster-status${ip ? ' resume' : ''}">${status}</div>
+                                    <div class="roster-status${ip || getUnsent(n) ? ' resume' : ''}">${status}</div>
                                 </span>
                             </button>
                             <button class="roster-remove" data-remove-identity="${esc(n)}">Remove from this device</button>
@@ -2287,6 +2317,13 @@
                             ${whoBarHtml()}
                         </div>
                     </div>
+                    ${getUnsent() ? `
+                    <div class="scenario-card" style="margin-bottom:12px;">
+                        <div class="roster-status resume" style="margin:0 0 6px;">⚠️ A finished session hasn’t been sent to your reviewer yet</div>
+                        <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:10px;">It is saved on this device. Send it now.</p>
+                        <button class="btn btn-primary" id="sendUnsentBtn">Send now</button>
+                        <div class="class-msg" id="sendUnsentMsg"></div>
+                    </div>` : ''}
                     ${ip ? `
                     <div class="scenario-card" style="margin-bottom:12px;">
                         <div class="roster-status resume" style="margin:0 0 6px;">▶ You’re part-way through a session</div>
@@ -2312,6 +2349,18 @@
                     trackConfirmed = true;
                     currentSessionId = null;
                     renderTypingLesson();
+                });
+                const sendUnsentBtn = $('#sendUnsentBtn');
+                if (sendUnsentBtn) sendUnsentBtn.addEventListener('click', async function() {
+                    this.disabled = true;
+                    this.textContent = 'Sending…';
+                    const outcome = await sendUnsent();
+                    if (outcome && !outcome.failed) { showToast('✅ Sent to your reviewer', 'success'); renderTrackScreen(); return; }
+                    this.disabled = false;
+                    this.textContent = 'Send now';
+                    const m = $('#sendUnsentMsg');
+                    m.textContent = 'Still could not send. Check the internet and try again, or tell your teacher.';
+                    m.classList.add('error');
                 });
                 const resumeBtn = $('#resumeBtn');
                 if (resumeBtn) resumeBtn.addEventListener('click', function() {
@@ -2409,9 +2458,14 @@
                         </div>
                         <h2>🎯 Session ${session.number} complete!</h2>
                         <p style="color:var(--ink-dim);">${session.title}</p>
-                        ${submitOutcome && submitOutcome.queued
-                            ? `<p style="color:var(--coral-soft);font-weight:600;margin-top:8px;">📴 No internet connection — your result is saved on this device and will be sent to your reviewer automatically once you're back online.</p>`
-                            : `<p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>`}
+                        ${(submitOutcome && submitOutcome.failed) || (!submitOutcome && getUnsent())
+                            ? `<p style="color:var(--coral-soft);font-weight:600;margin-top:8px;">⚠️ Your result has NOT been sent yet. It is saved on this device — tap “Send again”. If it keeps failing, tell your teacher.</p>
+                               <button class="btn btn-primary" id="retrySendBtn" style="margin-top:8px;">Send again</button>`
+                            : submitOutcome && submitOutcome.queued
+                            ? `<p style="color:var(--coral-soft);font-weight:600;margin-top:8px;">📴 Saved on this device — it will be sent to your reviewer automatically as soon as the connection and server are back.</p>`
+                            : submitOutcome
+                            ? `<p style="color:var(--teal);font-weight:600;margin-top:8px;">✅ Sent to your reviewer — check back on your Passport for feedback.</p>`
+                            : ''}
                         ${comparisonHtml}
                         <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
                             <button class="btn btn-primary" id="completeHandOverBtn">🔁 Hand over to the next student</button>
@@ -2423,6 +2477,13 @@
                     </div>
                 `;
                 document.getElementById('completeHandOverBtn').addEventListener('click', doHandOver);
+                const retryBtn = document.getElementById('retrySendBtn');
+                if (retryBtn) retryBtn.addEventListener('click', async function() {
+                    this.disabled = true;
+                    this.textContent = 'Sending…';
+                    const outcome = await sendUnsent();
+                    showCompletionScreen(session, outcome || { failed: true });
+                });
                 if (next) {
                     document.getElementById('nextSessionBtn').addEventListener('click', function() {
                         currentSessionId = next.id;
