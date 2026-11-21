@@ -1,6 +1,33 @@
 import { pgTable, serial, text, integer, timestamp, jsonb, uniqueIndex, doublePrecision, type AnyPgColumn } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+
+// ============================================================
+// Multi-tenancy. Every NGO/partner is one row in `organizations`; every table
+// holding student or teacher data carries `organization_id`, and Postgres
+// Row Level Security (see migration 0006 + docs/MULTI_TENANCY.md) makes a
+// database session see only the rows of the organization it is scoped to.
+//
+// The default below reads the per-transaction setting `app.current_org` that
+// src/db/index.ts (`scopedDb`) sets, so inserts are stamped with the right
+// organization automatically and RLS WITH CHECK rejects any attempt to write
+// into another one. `tags` is a shared vocabulary and is intentionally global.
+// ============================================================
+export const organizations = pgTable('organizations', {
+  id: serial('id').primaryKey(),
+  slug: text('slug').notNull().unique(), // stable URL/registration key, e.g. 'aim-initiative'
+  name: text('name').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+const orgColumn = () =>
+  integer('organization_id')
+    .notNull()
+    .references(() => organizations.id)
+    .default(sql`nullif(current_setting('app.current_org', true), '')::integer`);
+
 
 export const users = pgTable('users', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   username: text('username').notNull().unique(), // the passport number (e.g. "UT-4821") for students; a plain chosen name for reviewers
   pin: text('pin').notNull(), // Hashed PIN
@@ -11,6 +38,7 @@ export const users = pgTable('users', {
 });
 
 export const progress = pgTable('progress', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   userId: integer('user_id').references(() => users.id).notNull(),
   trackId: text('track_id').notNull(), // e.g., 'data-entry'
@@ -26,6 +54,7 @@ export const progress = pgTable('progress', {
 });
 
 export const analyticsEvents = pgTable('analytics_events', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   userId: integer('user_id').references(() => users.id),
   eventType: text('event_type').notNull(),
@@ -46,6 +75,7 @@ export const tags = pgTable('tags', {
 });
 
 export const submissions = pgTable('submissions', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   studentId: integer('student_id').references(() => users.id).notNull(),
   lessonId: text('lesson_id').notNull(), // 'lesson_9_checkpoint' | 'lesson_12_delivery' | 'lesson_13_capstone'
@@ -60,6 +90,7 @@ export const submissions = pgTable('submissions', {
 });
 
 export const feedback = pgTable('feedback', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   submissionId: integer('submission_id').references(() => submissions.id).notNull(),
   reviewerId: integer('reviewer_id').references(() => users.id).notNull(),
@@ -79,6 +110,7 @@ export const feedback = pgTable('feedback', {
 // Never a score/grade — raw counts a teacher can compare before/after.
 // ============================================================
 export const submissionMetrics = pgTable('submission_metrics', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   submissionId: integer('submission_id').references(() => submissions.id).notNull().unique(),
   avgWordsPerSlide: doublePrecision('avg_words_per_slide'),
@@ -97,6 +129,7 @@ export const submissionMetrics = pgTable('submission_metrics', {
 // ============================================================
 
 export const typingResults = pgTable('typing_results', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   studentId: integer('student_id').references(() => users.id).notNull(),
   checkpointId: text('checkpoint_id').notNull(), // 'typing_checkpoint' — dated attempts are distinguished by createdAt, not by separate ids (see typing.ts)
@@ -115,6 +148,7 @@ export const typingResults = pgTable('typing_results', {
 });
 
 export const typingFeedback = pgTable('typing_feedback', {
+  organizationId: orgColumn(),
   id: serial('id').primaryKey(),
   resultId: integer('result_id').references(() => typingResults.id).notNull(),
   reviewerId: integer('reviewer_id').references(() => users.id).notNull(),

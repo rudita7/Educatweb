@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
 import multer from 'multer';
-import { db } from '@/db';
+import { db, runInOrg } from '@/db';
 import { submissions, feedback, tags, users, submissionMetrics } from '@/db/schema';
 import { eq, and, asc, desc, SQL } from 'drizzle-orm';
 import { authenticate, requireReviewer, AuthRequest } from '@/middleware/auth';
@@ -55,12 +55,14 @@ const LESSON_TAG_MAP: Record<string, string[]> = {
 // upload response is already sent — never blocks a student on this.
 // A corrupt/unparseable deck stores parse_status:'failed' rather than
 // throwing, so a bad file can never crash the submission flow.
-function runMetricExtractionInBackground(submissionId: number, buffer: Buffer) {
+function runMetricExtractionInBackground(submissionId: number, organizationId: number, buffer: Buffer) {
   console.log(`[metrics] extracting for submission ${submissionId}...`);
   extractPptxMetrics(buffer)
     .then((result) => {
       console.log(`[metrics] submission ${submissionId}: parse_status=${result.parse_status}`, result.error ? `error=${result.error}` : result);
-      return db.insert(submissionMetrics).values({
+      // The request's org-scoped transaction is closed by now (this runs after the response),
+      // so open a fresh one scoped to the same organization.
+      return runInOrg(organizationId, () => db.insert(submissionMetrics).values({
         submissionId,
         avgWordsPerSlide: result.avg_words_per_slide ?? null,
         avgBulletsPerSlide: result.avg_bullets_per_slide ?? null,
@@ -68,7 +70,7 @@ function runMetricExtractionInBackground(submissionId: number, buffer: Buffer) {
         distinctFontCount: result.distinct_font_count ?? null,
         slideCount: result.slide_count ?? null,
         parseStatus: result.parse_status,
-      });
+      }));
     })
     .catch((err) => console.error(`[metrics] submission ${submissionId}: extraction threw`, err));
 }
@@ -160,7 +162,7 @@ router.post(
         })
         .returning();
       res.status(201).json(await withUrls(inserted));
-      if (deckFile) runMetricExtractionInBackground(inserted.id, deckFile.buffer); // after response — never blocks upload
+      if (deckFile) runMetricExtractionInBackground(inserted.id, req.user!.organizationId, deckFile.buffer); // after response — never blocks upload
     } catch (error) {
       console.error('Create submission error:', error);
       res.status(500).json({ error: 'Failed to create submission' });

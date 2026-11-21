@@ -43,6 +43,13 @@
       "when": 1793400000000,
       "tag": "0005_typing_partial_runs",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795271882217,
+      "tag": "0006_multi_tenant_rls",
+      "breakpoints": true
     }
   ]
 }
