@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
-import { db } from '@/db';
-import { analyticsEvents } from '@/db/schema';
+import { dbAdmin } from '@/db'; // unauthenticated endpoint: the organization is derived from the user, below
+import { analyticsEvents, users, organizations } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 import { authenticate, AuthRequest } from '@/middleware/auth';
 import { recommendTrack } from '@/lib/decisionTree';
 
@@ -15,8 +16,18 @@ router.post('/log', async (req, res) => {
   }
 
   try {
-    await db.insert(analyticsEvents).values({
-      userId: userId ? Number(userId) : null,
+    // Stamp the event with the user's organization (or the default one for anonymous events)
+    // so it is covered by the same row level security as everything else.
+    const user = userId ? await dbAdmin.query.users.findFirst({ where: eq(users.id, Number(userId)), columns: { id: true, organizationId: true } }) : null;
+    let organizationId = user?.organizationId;
+    if (!organizationId) {
+      const org = await dbAdmin.query.organizations.findFirst({ where: eq(organizations.slug, process.env.DEFAULT_ORG_SLUG || 'aim-initiative') });
+      if (!org) return res.status(500).json({ error: 'Failed to log event' });
+      organizationId = org.id;
+    }
+    await dbAdmin.insert(analyticsEvents).values({
+      organizationId,
+      userId: user ? user.id : null,
       eventType,
       metadata,
     });

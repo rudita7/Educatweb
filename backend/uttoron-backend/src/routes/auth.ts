@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { db } from '@/db';
-import { users } from '@/db/schema';
+import { dbAdmin as db } from '@/db'; // pre-tenant: there is no organization to scope to before sign-in
+import { users, organizations } from '@/db/schema';
 import { eq, count } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 
 const router = Router();
+const DEFAULT_ORG_SLUG = process.env.DEFAULT_ORG_SLUG || 'aim-initiative';
 const SALT_ROUNDS = Number(process.env.PIN_SALT_ROUNDS) || 10;
 
 // Total passports issued — a real count from the database, not a per-device
@@ -22,7 +23,7 @@ router.get('/count', async (_req, res) => {
 
 // Register new user with PIN
 router.post('/register', async (req, res) => {
-  const { username, pin, nickname, avatar } = req.body;
+  const { username, pin, nickname, avatar, organization } = req.body;
 
   if (!username || !pin) {
     return res.status(400).json({ error: 'Username and PIN are required' });
@@ -37,9 +38,19 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Username already exists' });
     }
 
+    // Which organization is this student joining? Optional `organization` slug in the body
+    // (each partner gets its own link); falls back to the default organization.
+    const org = await db.query.organizations.findFirst({
+      where: eq(organizations.slug, String(organization || DEFAULT_ORG_SLUG)),
+    });
+    if (!org) {
+      return res.status(400).json({ error: 'Unknown organization' });
+    }
+
     const hashedPin = await bcrypt.hash(pin, SALT_ROUNDS);
 
     const [newUser] = await db.insert(users).values({
+      organizationId: org.id,
       username,
       pin: hashedPin,
       nickname: nickname ? String(nickname).slice(0, 60) : null,

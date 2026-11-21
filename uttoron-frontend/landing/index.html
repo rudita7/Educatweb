@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Uttoron — Free digital skills for students in Bangladesh</title>
+<meta name="description" content="Uttoron is a free, browser-based skills platform for students in Bangladesh. Typing, spreadsheets, data accuracy and presentation skills, with real feedback from volunteer teachers." />
+<meta property="og:title" content="Uttoron — Free digital skills for students in Bangladesh" />
+<meta property="og:description" content="Interactive lessons plus real human feedback from volunteer teachers. In pilot with 50 students." />
+<meta property="og:image" content="/webapp/assets/hero-classroom.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<!--
+  PUBLIC MARKETING PAGE. Deliberately static: no scripts, no API calls, no
+  student data. Everything here is safe to show to anyone. Real student data
+  lives only behind the sign-in on the app itself.
+-->
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #050505; --ink: #F5F1E6; --ink-dim: rgba(245,241,230,.72); --ink-faint: rgba(245,241,230,.5);
+    --coral: #E6493C; --coral-soft: #FF6B57; --marigold: #E8A33D; --teal: #4FB88A;
+    --line: rgba(255,255,255,.1); --glass: rgba(255,255,255,.04);
+    --display: 'Space Grotesk', sans-serif; --serif: 'Instrument Serif', serif;
+    --body: 'Inter', sans-serif; --mono: 'IBM Plex Mono', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: var(--display); letter-spacing: -.01em; line-height: 1.12; }
+  em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--coral-soft); }
+  a { color: var(--marigold); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  section { padding: 84px 0; }
+  .eyebrow { display: inline-block; font-family: var(--mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--marigold); margin-bottom: 14px; }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 14px; }
+  .sub { color: var(--ink-dim); max-width: 640px; font-size: 1.05rem; }
+
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(5,5,5,.82); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .nav-inner { max-width: 1080px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .brand { font-family: var(--display); font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+  .mark { width: 32px; height: 32px; border-radius: 9px; background: var(--coral); display: grid; place-items: center; font-weight: 700; }
+  .nav-links { display: flex; gap: 22px; align-items: center; font-size: .92rem; }
+  .nav-links a { color: var(--ink-dim); text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+
+  .btn { display: inline-block; padding: 13px 24px; border-radius: 999px; font-weight: 600; text-decoration: none; font-size: .98rem; border: 1px solid transparent; transition: transform .15s, background .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--coral); color: #fff; }
+  .btn-primary:hover { background: var(--coral-soft); }
+  .btn-ghost { border-color: var(--line); color: var(--ink); background: var(--glass); }
+  .btn-ghost:hover { border-color: var(--ink-faint); }
+  .btn-sm { padding: 8px 16px; font-size: .88rem; }
+
+  .hero { position: relative; padding: 120px 0 90px; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; z-index: -1; }
+  .hero-bg img { width: 100%; height: 100%; object-fit: cover; object-position: 68% 32%; filter: brightness(.5) contrast(1.05); }
+  .hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,5,5,.35) 0%, rgba(5,5,5,.95) 100%); }
+  .hero h1 { font-size: clamp(2.4rem, 6.5vw, 4.4rem); max-width: 800px; margin-bottom: 22px; }
+  .hero .lede { font-size: 1.2rem; color: var(--ink-dim); max-width: 620px; margin-bottom: 34px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; margin-top: -40px; position: relative; }
+  .stat { background: #0b0b0c; padding: 28px 22px; }
+  .stat b { display: block; font-family: var(--display); font-size: 2.3rem; line-height: 1.1; color: var(--ink); }
+  .stat span { color: var(--ink-dim); font-size: .9rem; }
+
+  .grid { display: grid; gap: 18px; margin-top: 40px; }
+  .g2 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: repeat(3, 1fr); }
+  .card { background: var(--glass); border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
+  .card h3 { font-size: 1.15rem; margin-bottom: 8px; }
+  .card p { color: var(--ink-dim); font-size: .96rem; }
+  .card .tag { font-family: var(--mono); font-size: .72rem; color: var(--marigold); letter-spacing: .08em; text-transform: uppercase; display: block; margin-bottom: 10px; }
+
+  .steps { counter-reset: s; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 40px; }
+  .step { counter-increment: s; background: var(--glass); border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
+  .step::before { content: counter(s); font-family: var(--mono); font-weight: 600; color: var(--coral-soft); font-size: .95rem; display: block; margin-bottom: 12px; }
+  .step h3 { font-size: 1.1rem; margin-bottom: 8px; }
+  .step p { color: var(--ink-dim); font-size: .95rem; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip { font-size: .8rem; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-dim); }
+  .chip.pos { border-color: rgba(79,184,138,.5); color: var(--teal); }
+  .chip.con { border-color: rgba(232,163,61,.5); color: var(--marigold); }
+
+  .demo { background: linear-gradient(135deg, rgba(230,73,60,.14), rgba(232,163,61,.07)); border: 1px solid var(--line); border-radius: 24px; padding: 44px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+  .creds { background: #0b0b0c; border: 1px solid var(--line); border-radius: 16px; padding: 22px; font-family: var(--mono); font-size: .88rem; }
+  .creds div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); }
+  .creds div:last-child { border: 0; }
+  .creds small { color: var(--ink-faint); font-family: var(--body); display: block; margin-top: 12px; font-size: .8rem; }
+  .video { margin-top: 28px; aspect-ratio: 16/9; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); }
+  .video iframe { width: 100%; height: 100%; border: 0; }
+
+  .safe { display: flex; gap: 14px; align-items: flex-start; margin-top: 18px; color: var(--ink-dim); }
+  .safe i { font-style: normal; color: var(--teal); font-weight: 700; flex: none; }
+
+  .partner { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .partner img { height: 54px; width: auto; background: #fff; padding: 6px 10px; border-radius: 10px; }
+
+  footer { border-top: 1px solid var(--line); padding: 38px 0; color: var(--ink-faint); font-size: .9rem; }
+  .foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 860px) {
+    section { padding: 60px 0; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .g2, .g3, .steps, .demo { grid-template-columns: 1fr; }
+    .demo { padding: 28px; }
+    .nav-links a.hide-sm { display: none; }
+    .hero { padding: 80px 0 70px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+</style>
+</head>
+<body>
+
+<nav aria-label="Main">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true">উ</span>Uttoron</a>
+    <div class="nav-links">
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#tracks">Tracks</a>
+      <a class="hide-sm" href="#demo">Demo</a>
+      <a class="hide-sm" href="#partners">Partners</a>
+      <a class="btn btn-primary btn-sm" href="https://uttoron-demo.netlify.app" rel="noopener">Try the demo</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-bg" aria-hidden="true"><img src="/webapp/assets/hero-classroom.jpg" alt="" /></div>
+  <div class="wrap">
+    <span class="eyebrow">Free · Browser-based · Built for Bangladesh</span>
+    <h1>Digital skills, taught with <em>real human feedback.</em></h1>
+    <p class="lede">Uttoron gives students in Bangladesh interactive lessons in typing, spreadsheets, data accuracy and presentations — and sends their real work to a volunteer teacher who replies with feedback they can actually use.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://uttoron-demo.netlify.app" rel="noopener">Try the live demo</a>
+      <a class="btn btn-ghost" href="#how">See how it works</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stats" role="list">
+    <div class="stat" role="listitem"><b>50</b><span>students in the active pilot</span></div>
+    <div class="stat" role="listitem"><b>100%</b><span>student retention</span></div>
+    <div class="stat" role="listitem"><b>4</b><span>skill tracks live</span></div>
+    <div class="stat" role="listitem"><b>200</b><span>students planned by April 2027</span></div>
+  </div>
+</div>
+
+<section id="how">
+  <div class="wrap">
+    <span class="eyebrow">The feedback loop</span>
+    <h2>A teacher reads <em>their</em> work. Not an auto-grader.</h2>
+    <p class="sub">Most free learning platforms mark answers right or wrong. Uttoron puts a person in the loop at the moments that matter.</p>
+    <div class="steps">
+      <div class="step"><h3>Learn by doing</h3><p>Students work through short interactive lessons — a live spreadsheet grid, a simulated PowerPoint ribbon, a typing trainer with finger-placement guidance.</p></div>
+      <div class="step"><h3>Send real work</h3><p>At set checkpoints they submit a typing result, a deck or a spoken recording to a volunteer teacher. Works offline: results are queued and sent when the connection returns.</p></div>
+      <div class="step"><h3>Get tagged feedback</h3><p>The teacher picks from a fixed vocabulary of tags and adds a short note. Students see it on their own Feedback Passport.</p></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>Fixed tags keep one volunteer fast and consistent</h3>
+      <p>Each tag is either positive or constructive, so feedback stays specific and quick to give — even when one teacher reviews many students.</p>
+      <div class="chips" aria-label="Example feedback tags">
+        <span class="chip pos">clear structure</span><span class="chip pos">strong accuracy</span><span class="chip pos">good progress</span>
+        <span class="chip con">too many words per slide</span><span class="chip con">typing pacing</span><span class="chip con">vocal delivery</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tracks" style="padding-top:0">
+  <div class="wrap">
+    <span class="eyebrow">What students learn</span>
+    <h2>Four tracks, <em>one passport.</em></h2>
+    <p class="sub">Finishing every lesson in a track earns a stamp in the student's Skills Passport. A passport is just a number and a 4-digit PIN — no email or phone needed, and it works from any device.</p>
+    <div class="grid g2">
+      <div class="card"><span class="tag">Typing</span><h3>Typing fluency</h3><p>Two grade bands, multi-session practice, WPM and accuracy scoring, and a baseline-versus-latest comparison so growth is visible.</p></div>
+      <div class="card"><span class="tag">Spreadsheets</span><h3>Spreadsheet basics</h3><p>Guided steps on a live grid — entering data, SUM, AVERAGE, MAX and MIN — each checked against what the student actually typed.</p></div>
+      <div class="card"><span class="tag">Data</span><h3>Data accuracy &amp; QA</h3><p>Find errors, correct records, clean and validate data, then submit a quality report scored against an 80% pass mark.</p></div>
+      <div class="card"><span class="tag">Presentation</span><h3>Presentation skills</h3><p>Thirteen lessons practised on a simulated ribbon, then repeated in real PowerPoint, with three teacher-reviewed checkpoints.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo" style="padding-top:0">
+  <div class="wrap">
+    <div class="demo">
+      <div>
+        <span class="eyebrow">See the real product</span>
+        <h2>Click through it yourself.</h2>
+        <p class="sub">The demo is the full app running on a separate system filled with invented students. Sign in as a student, then open the teacher view and tag some feedback.</p>
+        <div class="cta-row" style="margin-top:24px">
+          <a class="btn btn-primary" href="https://uttoron-demo.netlify.app" rel="noopener">Open the student demo</a>
+          <a class="btn btn-ghost" href="https://uttoron-demo.netlify.app/track-presentation-skills/reviewer/" rel="noopener">Open the teacher view</a>
+        </div>
+      </div>
+      <div class="creds" aria-label="Demo sign-in details">
+        <div><span>Student passport</span><span>UT-5028</span></div>
+        <div><span>Student PIN</span><span>1234</span></div>
+        <div><span>Teacher username</span><span>demo-teacher-amina</span></div>
+        <div><span>Teacher PIN</span><span>1111</span></div>
+        <small>Demo accounts only. Synthetic data — no real student is ever reachable from the demo. The first load can take up to a minute while the free server wakes up.</small>
+      </div>
+    </div>
+    <div class="video">
+      <iframe src="https://www.youtube-nocookie.com/embed/6FZrlksfbbg" title="Uttoron demo video (under 2 minutes)" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <span class="eyebrow">Student privacy</span>
+    <h2>Real student data stays <em>off the public site.</em></h2>
+    <div class="safe"><i>✓</i><p>This page and the demo contain no real student information. Real accounts live on a separate production system behind sign-in.</p></div>
+    <div class="safe"><i>✓</i><p>Passports use a number and hashed PIN — no email, phone number or address is collected.</p></div>
+    <div class="safe"><i>✓</i><p>Submitted files are stored privately and shown only through short-lived links to the student and their reviewer.</p></div>
+    <div class="safe"><i>✓</i><p>Built so each partner organisation's students are isolated from every other's at the database level.</p></div>
+  </div>
+</section>
+
+<section id="partners" style="padding-top:0">
+  <div class="wrap">
+    <span class="eyebrow">Partnership</span>
+    <h2>Built with the <em>AIM Initiative Foundation.</em></h2>
+    <p class="sub">Uttoron is in active pilot under a signed contract and proposal. The agreed plan is to grow from 50 to 200 students by April 2027, and the foundation intends to keep Uttoron as a permanent resource.</p>
+    <div class="partner" style="margin-top:26px">
+      <img src="/webapp/assets/aim-initiative-foundation-logo.png" alt="AIM Initiative Foundation logo" />
+      <span style="color:var(--ink-dim)">In partnership with <strong style="color:var(--ink)">AIM Initiative Foundation</strong></span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>Uttoron — free digital skills for students in Bangladesh</span>
+    <span><a href="https://uttoron-demo.netlify.app" rel="noopener">Live demo</a> · <a href="https://youtu.be/6FZrlksfbbg" rel="noopener">Demo video</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

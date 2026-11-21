@@ -8,6 +8,7 @@ passport.
 
 - **Live demo (synthetic data only):** https://uttoron-demo.netlify.app
 - **Demo video (under 2 min):** https://youtu.be/6FZrlksfbbg
+- **Public landing page:** `uttoron-frontend/landing/` (served at `/about`) — static, no student data.
 - **Status:** in active pilot with **50 students**, built in partnership with the **AIM Initiative Foundation** under a signed
   contract and proposal. The agreed plan is to scale to **200 students by April 2027**; the foundation intends to keep
   Uttoron as a permanent resource (this is stated explicitly in the contract and proposal).
@@ -88,7 +89,9 @@ Browser (static HTML / CSS / vanilla JS)  ──►  Express + TypeScript API  �
   logic modules: formula evaluation, fuzzy duplicate matching, undo/redo stack, rule validation, state machines…).
 - **Backend** — `backend/uttoron-backend/`: Express 5 + Drizzle ORM. Passwords/PINs are hashed (`bcryptjs`).
   Submitted files go to a private Supabase Storage bucket and are served by short-lived signed URL.
-- **Database** — Postgres with 10 tables (users, progress, submissions, submission metrics, feedback, tags, typing
+- **Multi-tenancy** — every partner NGO is an `organizations` row; student/teacher tables carry `organization_id` and Postgres Row Level Security
+  keeps each organization's data invisible to the others, enforced by the database rather than by API checks. See `docs/MULTI_TENANCY.md`.
+- **Database** — Postgres with 11 tables (users, progress, submissions, submission metrics, feedback, tags, typing
   results and typing feedback, analytics events, …); migrations live in `src/db/migrations/`.
 - **Why a custom backend rather than calling Supabase from the browser:** reviewer-only endpoints, signed URLs for
   private files and server-side deck analysis can't be done safely with a public client key alone.
@@ -119,7 +122,7 @@ cd backend/uttoron-backend
 pnpm install
 pip3 install -r scripts/requirements.txt
 cp .env.example .env          # DATABASE_URL, PORT, PIN_SALT_ROUNDS, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY — never commit it
-# apply the SQL in src/db/migrations/ (0000 → 0004) to your Postgres, then:
+# apply the SQL in src/db/migrations/ (0000 → 0006) to your Postgres, then:
 pnpm exec tsx src/db/seed.ts                                   # the fixed tag vocabulary
 pnpm exec tsx src/db/createReviewer.ts <username> <pin>        # a reviewer account
 pnpm run dev                  # http://localhost:3000
@@ -165,7 +168,8 @@ Stated plainly, because this is a prototype:
 
 - **Authentication is minimal.** After sign-in the browser identifies itself with an `x-user-id` header and the server
   checks that account's role (e.g. reviewer-only routes). That was enough to build and pilot the system, but it is not a
-  replacement for signed session tokens; replacing it is the first hardening step planned before scaling to 200 students.
+  replacement for signed session tokens; replacing it is the first hardening step planned before scaling to 200 students. Database-level organization isolation (Row Level Security)
+  contains bugs in route code but does not stop a forged `x-user-id`, so signed tokens are required before a second NGO's real students are onboarded.
 - **PINs are 4 digits** (hashed on the server), and the passport PIN is also kept in the browser's local storage on the
   device used to sign in.
 - **Four stamps are placeholders** (communication, email, CV, career).
@@ -176,6 +180,7 @@ Stated plainly, because this is a prototype:
 
 ## Documentation and credits
 
+- `docs/MULTI_TENANCY.md` — how organizations are isolated, how to roll it out and onboard an NGO, and what it does not cover.
 - `docs/BUILD_PROCESS.md` — build timeline and two real dead ends (a native-dependency build problem and a stored-XSS fix).
 - `AI_USAGE.md` — an account of where AI tools were used in building this project and which files they affected.
   The commit history is left intact and unmodified as the build record.
