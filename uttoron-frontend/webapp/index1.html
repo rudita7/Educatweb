@@ -734,7 +734,7 @@
                     </details>
                     <details class="faq-item reveal">
                         <summary>What is my "passport number"?<span class="plus">+</span></summary>
-                        <div class="faq-answer">When you create your passport, we generate a unique number like UT-4821. Use it together with your PIN to sign back in.</div>
+                        <div class="faq-answer">When you create your passport, we generate a unique number like UT-4821. Use it together with your PIN to sign back in. You can also sign in with the name you chose and your PIN.</div>
                     </details>
                     <details class="faq-item reveal">
                         <summary>What happens if I forget my PIN?<span class="plus">+</span></summary>
@@ -814,11 +814,11 @@
             <div class="wrap">
                 <div class="card">
                     <h2>👋 Welcome back</h2>
-                    <p class="sub">Enter your passport number and PIN.</p>
+                    <p class="sub">Enter your name and PIN.</p>
                     <form id="signinForm" autocomplete="off">
                         <div class="field">
-                            <label for="siNum">Passport number</label>
-                            <input id="siNum" placeholder="e.g. UT-4821" required />
+                            <label for="siNum">Your name (or passport number)</label>
+                            <input id="siNum" placeholder="e.g. Tanvir" required />
                         </div>
                         <div class="field">
                             <label for="siPin">PIN</label>
@@ -1422,6 +1422,10 @@
         const signinForm = $('#signinForm');
 
         function completeSignin(user, num, msg) {
+            // The submit button is disabled while a backend check runs; turn it back
+            // on so the next student on this device can sign in without a reload.
+            const submitBtn = signinForm.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = false;
             session = { num, nickname: user.nickname, avatar: user.avatar, createdAt: user.createdAt };
             const p = Storage.get('progress:' + num);
             progress = p || {};
@@ -1434,20 +1438,59 @@
             setTimeout(() => enterDashboard(), 500);
         }
 
+        // Sign in with the name a student chose + PIN. Works on any device: this
+        // device's own saved passports are tried first (also works offline), then
+        // the backend, which knows every passport.
+        async function signInByName(name, pin, msg) {
+            const key = name.trim().toLowerCase().replace(/\s+/g, ' ');
+            const here = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (!k || !k.startsWith('user:')) continue;
+                const u = Storage.get(k);
+                if (u && u.pin === pin && String(u.nickname || '').trim().toLowerCase().replace(/\s+/g, ' ') === key) here.push(u);
+            }
+            if (here.length === 1) { completeSignin(here[0], here[0].num, msg); return; }
+
+            const submitBtn = signinForm.querySelector('button[type="submit"]');
+            if (submitBtn) submitBtn.disabled = true;
+            msg.textContent = 'Checking…';
+            try {
+                const bu = await window.Backend.loginByName(name, pin);
+                const num = bu.username;
+                const user = { num, nickname: bu.nickname, avatar: bu.avatar, pin, createdAt: Date.parse(bu.createdAt) || Date.now() };
+                Storage.set('user:' + num, user);
+                localStorage.setItem('uttoron:backend-uid:' + num, String(bu.id));
+                completeSignin(user, num, msg);
+            } catch (err) {
+                msg.textContent = err.status === 401
+                    ? 'We could not find that name with that PIN. Check how you spell your name, and your PIN.'
+                    : (err instanceof TypeError ? 'No connection. Check the internet and try again.' : (err.message || 'Could not sign in.'));
+                msg.classList.add('error');
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        }
+
         signinForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const msg = $('#signinMsg');
             msg.className = 'form-msg';
             msg.textContent = '';
 
-            const num = $('#siNum').value.trim().toUpperCase();
+            const raw = $('#siNum').value.trim();
             const pin = $('#siPin').value.trim();
 
-            if (!num || !pin) {
+            if (!raw || !pin) {
                 msg.textContent = 'Please fill in both fields.';
                 msg.classList.add('error');
                 return;
             }
+
+            // A passport number (UT-1234) signs in as before; anything else is
+            // treated as the name the student chose when they made their passport.
+            const passportMatch = /^UT-?(\d{3,6})$/i.exec(raw);
+            if (!passportMatch) { await signInByName(raw, pin, msg); return; }
+            const num = 'UT-' + passportMatch[1];
 
             const localUser = Storage.get('user:' + num);
             if (localUser && localUser.pin === pin) {

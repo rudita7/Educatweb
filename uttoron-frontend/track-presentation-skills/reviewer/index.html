@@ -59,6 +59,7 @@
             <div class="queue-tabs" style="display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.1);">
                 <button class="btn btn-secondary btn-sm queue-tab active" data-tab="presentation" style="border-radius:8px 8px 0 0;">🖥️ Presentation Skills</button>
                 <button class="btn btn-secondary btn-sm queue-tab" data-tab="typing" style="border-radius:8px 8px 0 0;">⌨️ Typing</button>
+                <button class="btn btn-secondary btn-sm queue-tab" data-tab="students" style="border-radius:8px 8px 0 0;">👥 Students</button>
             </div>
 
             <div id="presentationPanel">
@@ -99,6 +100,18 @@
                 <div id="queueList"></div>
             </div>
 
+            <div id="studentsPanel" class="hidden">
+                <p style="font-size:0.85rem;color:rgba(255,255,255,0.7);margin:0 0 10px;">Every student passport on the server. PINs are stored scrambled and can never be shown: if a student forgets theirs, tap <b>Reset PIN</b>, choose a new 4-digit PIN and tell the student.</p>
+                <div class="queue-filters" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;align-items:flex-end;">
+                    <div class="field" style="margin:0;flex:1;min-width:200px;">
+                        <label for="studentsFilter">Search</label>
+                        <input id="studentsFilter" type="text" placeholder="Name or passport number" />
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="studentsCsv">⬇️ Download list (CSV)</button>
+                </div>
+                <div id="studentsList"></div>
+            </div>
+
             <div id="typingPanel" class="hidden">
                 <div class="queue-filters" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;align-items:flex-end;">
                     <div class="field" style="margin:0;">
@@ -115,6 +128,7 @@
                     </div>
                 </div>
 
+                <div id="typingRankings"></div>
                 <div id="typingQueueList"></div>
             </div>
         </div>

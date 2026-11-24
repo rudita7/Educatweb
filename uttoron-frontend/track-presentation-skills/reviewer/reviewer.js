@@ -10,6 +10,22 @@
     // devices). Strip the salt for a clean, human-readable display name.
     function displayName(studentName) { return String(studentName || '').replace(/\.[a-z0-9]{6}$/i, ''); }
 
+    // A student's backend username is their passport number. The nickname they
+    // chose when creating the passport (studentNickname, from the queue API) is
+    // shown as their name, with the passport number beside it; older queue
+    // responses without a nickname still show the passport number alone.
+    function studentText(row) {
+        const pass = displayName(row.studentName);
+        return row.studentNickname ? row.studentNickname + ' (' + pass + ')' : pass;
+    }
+    function studentHtml(row) {
+        const pass = escapeHtml(displayName(row.studentName));
+        return row.studentNickname
+            ? `${escapeHtml(row.studentNickname)} <span style="font-family:var(--font-mono);font-size:0.72rem;opacity:0.75;font-weight:400;">${pass}</span>`
+            : pass;
+    }
+    function studentSearchText(row) { return studentText(row).toLowerCase(); }
+
     let toastTimer = null;
     function showToast(msg, type) {
         const el = $('#toast');
@@ -71,7 +87,9 @@
         $$('.queue-tab').forEach(b => b.classList.toggle('active', b === btn));
         $('#presentationPanel').classList.toggle('hidden', tab !== 'presentation');
         $('#typingPanel').classList.toggle('hidden', tab !== 'typing');
+        $('#studentsPanel').classList.toggle('hidden', tab !== 'students');
         if (tab === 'typing') renderTypingQueue();
+        if (tab === 'students') renderStudentsDirectory(true);
     }));
 
     const cached = sessionStorage.getItem('ps:reviewer-session');
@@ -111,7 +129,7 @@
             $('#queueList').innerHTML = `<div class="empty-queue">⚠️ Couldn't load the queue (${escapeHtml(err.message)}).</div>`;
             return;
         }
-        if (nameFilter) queue = queue.filter(s => displayName(s.studentName).toLowerCase().includes(nameFilter));
+        if (nameFilter) queue = queue.filter(s => studentSearchText(s).includes(nameFilter));
 
         if (!queue.length) {
             $('#queueList').innerHTML = '<div class="empty-queue">📭 Nothing matches these filters right now.</div>';
@@ -167,7 +185,7 @@
                 <div class="queue-card" data-id="${sub.id}">
                     <div class="q-head">
                         <div>
-                            <span class="q-student">${escapeHtml(displayName(sub.studentName))}</span>
+                            <span class="q-student">${studentHtml(sub)}</span>
                             <span class="status-chip ${sub.status}" style="margin-left:8px;">${escapeHtml(PS.submissionStore.LESSON_LABELS[sub.lessonId] || sub.lessonId)}</span>
                             ${sub.resubmissionOf ? '<span class="status-chip pending" style="margin-left:6px;">resubmission</span>' : ''}
                             ${!isPending ? '<span class="status-chip reviewed" style="margin-left:6px;">✓ reviewed</span>' : ''}
@@ -304,7 +322,156 @@
         }
     }
 
+    // ============================================================
+    //  Students tab: every passport on the server, with a way to reset a
+    //  forgotten PIN (PINs are stored hashed and can never be shown) and a CSV
+    //  of names + passport numbers.
+    // ============================================================
+    let studentsCache = [];
+    const studentName = (s) => s.nickname || s.username;
+
+    async function renderStudentsDirectory(reload) {
+        const list = $('#studentsList');
+        if (reload || !studentsCache.length) {
+            list.innerHTML = '<div class="empty-queue">Loading…</div>';
+            try {
+                studentsCache = await Backend.apiFetch('/api/auth/students', { headers: { 'x-user-id': String(reviewerUid) } });
+            } catch (err) {
+                list.innerHTML = `<div class="empty-queue">⚠️ Couldn't load the students (${escapeHtml(err.message)}).</div>`;
+                return;
+            }
+        }
+        const q = ($('#studentsFilter').value || '').trim().toLowerCase();
+        const rows = studentsCache
+            .filter(s => (studentName(s) + ' ' + s.username).toLowerCase().includes(q))
+            .sort((a, b) => studentName(a).toLowerCase().localeCompare(studentName(b).toLowerCase()));
+        if (!rows.length) { list.innerHTML = '<div class="empty-queue">📭 No students match.</div>'; return; }
+        const cell = 'padding:6px 14px 6px 0;';
+        list.innerHTML = `<table style="border-collapse:collapse;font-size:0.9rem;color:rgba(255,255,255,0.9);">
+            <thead><tr style="text-align:left;color:rgba(255,255,255,0.6);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;">
+                <th style="${cell}">Name</th><th style="${cell}">Passport number</th><th style="${cell}">Joined</th><th></th></tr></thead>
+            <tbody>${rows.map(s => `<tr style="border-top:1px solid rgba(255,255,255,0.08);">
+                <td style="${cell}font-weight:600;">${escapeHtml(studentName(s))}</td>
+                <td style="${cell}font-family:var(--font-mono);">${escapeHtml(s.username)}</td>
+                <td style="${cell}">${escapeHtml(new Date(s.createdAt).toLocaleDateString())}</td>
+                <td style="${cell}"><button class="btn btn-secondary btn-sm" data-reset-pin="${s.id}">Reset PIN</button></td>
+            </tr>`).join('')}</tbody></table>`;
+        $$('[data-reset-pin]').forEach(btn => btn.addEventListener('click', async () => {
+            const s = studentsCache.find(x => String(x.id) === btn.dataset.resetPin);
+            if (!s) return;
+            const pin = window.prompt('New 4-digit PIN for ' + studentName(s) + ' (' + s.username + ').\n\nTell the student their new PIN. It is stored scrambled and cannot be shown again.');
+            if (pin === null) return;
+            if (!/^[0-9]{4}$/.test(pin.trim())) { window.alert('The PIN must be exactly 4 digits.'); return; }
+            try {
+                await Backend.apiFetch('/api/auth/students/' + s.id + '/reset-pin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-user-id': String(reviewerUid) },
+                    body: JSON.stringify({ pin: pin.trim() })
+                });
+                window.alert(studentName(s) + '’s PIN is now ' + pin.trim() + '. Tell them now; it will not be shown again.');
+            } catch (err) {
+                window.alert('Could not reset the PIN: ' + err.message);
+            }
+        }));
+    }
+    $('#studentsFilter').addEventListener('input', () => renderStudentsDirectory(false));
+    $('#studentsCsv').addEventListener('click', () => {
+        const q = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+        const lines = ['Name,Passport number,Joined'].concat(studentsCache
+            .slice().sort((a, b) => studentName(a).toLowerCase().localeCompare(studentName(b).toLowerCase()))
+            .map(s => [q(studentName(s)), q(s.username), q(new Date(s.createdAt).toLocaleDateString())].join(',')));
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' }));
+        a.download = 'uttoron-students.csv';
+        a.click();
+    });
+
+    // ============================================================
+    //  Session rankings (class mode). Once every result for a typing session
+    //  has been reviewed, the students who took it are ranked by one
+    //  aggregate score, highest first:
+    //      score = WPM x accuracy / 100   (net speed: mistakes reduce it)
+    //  One row per student: their most recent COMPLETE attempt. Students who
+    //  only submitted an incomplete attempt (they ran out of time) are listed
+    //  separately and not ranked, because they typed fewer runs.
+    // ============================================================
+    function typingScore(r) { return Math.round(r.wpm * r.accuracy / 100 * 10) / 10; }
+
+    function buildSessionRankings(rows) {
+        const bySession = {};
+        rows.forEach(r => { (bySession[r.checkpointId] = bySession[r.checkpointId] || []).push(r); });
+        const order = Object.keys(TypingStore.CHECKPOINT_LABELS);
+        const byScore = (a, b) => typingScore(b) - typingScore(a) || b.accuracy - a.accuracy || studentText(a).localeCompare(studentText(b));
+        return Object.keys(bySession).map(cp => {
+            const list = bySession[cp];
+            const byStudent = {};
+            list.forEach(r => { (byStudent[r.studentId] = byStudent[r.studentId] || []).push(r); });
+            const ranked = [], incomplete = [];
+            Object.values(byStudent).forEach(att => {
+                att.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // newest first
+                const complete = att.find(r => !TypingStore.isIncomplete(r));
+                if (complete) ranked.push(complete); else incomplete.push(att[0]);
+            });
+            ranked.sort(byScore); incomplete.sort(byScore);
+            return { checkpointId: cp, pending: list.filter(r => r.status === 'pending').length, ranked, incomplete };
+        }).sort((a, b) => {
+            const ia = order.indexOf(a.checkpointId), ib = order.indexOf(b.checkpointId);
+            return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
+        });
+    }
+
+    function renderRankingTable(rows, ranked) {
+        const cell = 'padding:5px 12px 5px 0;';
+        const body = rows.map((r, i) => `<tr>
+            <td style="${cell}font-family:var(--font-mono);">${ranked ? (i + 1) : '–'}</td>
+            <td style="${cell}">${studentHtml(r)}</td>
+            <td style="${cell}font-family:var(--font-mono);font-weight:700;">${typingScore(r).toFixed(1)}</td>
+            <td style="${cell}font-family:var(--font-mono);">${r.wpm.toFixed(1)}</td>
+            <td style="${cell}font-family:var(--font-mono);">${r.accuracy.toFixed(1)}%</td>
+            ${ranked ? '' : `<td style="${cell}">${r.runsCompleted} of ${r.runsTotal} runs</td>`}
+        </tr>`).join('');
+        let avg = '';
+        if (ranked && rows.length > 1) {
+            const mean = (f) => rows.reduce((s, r) => s + f(r), 0) / rows.length;
+            avg = `<tr style="border-top:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.7);">
+                <td style="${cell}"></td><td style="${cell}">Class average</td>
+                <td style="${cell}font-family:var(--font-mono);">${mean(typingScore).toFixed(1)}</td>
+                <td style="${cell}font-family:var(--font-mono);">${mean(r => r.wpm).toFixed(1)}</td>
+                <td style="${cell}font-family:var(--font-mono);">${mean(r => r.accuracy).toFixed(1)}%</td></tr>`;
+        }
+        return `<table style="border-collapse:collapse;font-size:0.88rem;color:rgba(255,255,255,0.9);margin:6px 0 4px;">
+            <thead><tr style="text-align:left;color:rgba(255,255,255,0.6);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;">
+                <th style="${cell}">${ranked ? 'Rank' : ''}</th><th style="${cell}">Student</th><th style="${cell}">Score</th><th style="${cell}">WPM</th><th style="${cell}">Accuracy</th>${ranked ? '' : `<th style="${cell}">Runs</th>`}
+            </tr></thead><tbody>${body}${avg}</tbody></table>`;
+    }
+
+    async function renderTypingRankings() {
+        const el = $('#typingRankings');
+        if (!el) return;
+        let rows;
+        try { rows = await TypingStore.listQueue(reviewerUid, { status: 'all' }); }
+        catch (err) { el.innerHTML = ''; return; }
+        const sessions = buildSessionRankings(rows);
+        const ready = sessions.filter(s => s.pending === 0 && (s.ranked.length || s.incomplete.length));
+        const waiting = sessions.filter(s => s.pending > 0);
+        if (!ready.length && !waiting.length) { el.innerHTML = ''; return; }
+        const label = (s) => escapeHtml(TypingStore.CHECKPOINT_LABELS[s.checkpointId] || s.checkpointId);
+        el.innerHTML = `
+            <div style="margin:4px 0 18px;padding:14px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;">
+                <div style="font-weight:700;font-size:1rem;margin-bottom:2px;">📊 Session rankings</div>
+                <div style="font-size:0.78rem;color:rgba(255,255,255,0.65);margin-bottom:8px;">Shown once every result for a session is reviewed. Score = WPM × accuracy ÷ 100, highest first; each student's latest complete attempt counts.</div>
+                ${ready.map((s, i) => `
+                    <details ${i === 0 ? 'open' : ''} style="margin:6px 0;">
+                        <summary style="cursor:pointer;font-weight:600;">${label(s)} <span style="font-weight:400;color:rgba(255,255,255,0.65);">· ${s.ranked.length} ranked${s.incomplete.length ? ', ' + s.incomplete.length + ' incomplete' : ''}</span></summary>
+                        ${s.ranked.length ? renderRankingTable(s.ranked, true) : ''}
+                        ${s.incomplete.length ? `<div style="font-size:0.78rem;color:rgba(255,255,255,0.65);margin-top:6px;">Incomplete, not ranked:</div>${renderRankingTable(s.incomplete, false)}` : ''}
+                    </details>`).join('')}
+                ${waiting.map(s => `<div style="font-size:0.82rem;color:rgba(255,255,255,0.65);margin-top:6px;">⏳ ${label(s)}: ${s.pending} result${s.pending === 1 ? '' : 's'} still to review — the ranking appears when they are all reviewed.</div>`).join('')}
+            </div>`;
+    }
+
     async function renderTypingQueue() {
+        renderTypingRankings(); // independent of the status/name filters below
         const status = $('#typingFilterStatus').value;
         const nameFilter = $('#typingFilterStudent').value.trim().toLowerCase();
 
@@ -315,7 +482,7 @@
             $('#typingQueueList').innerHTML = `<div class="empty-queue">⚠️ Couldn't load the queue (${escapeHtml(err.message)}).</div>`;
             return;
         }
-        if (nameFilter) queue = queue.filter(r => displayName(r.studentName).toLowerCase().includes(nameFilter));
+        if (nameFilter) queue = queue.filter(r => studentSearchText(r).includes(nameFilter));
 
         if (!queue.length) {
             $('#typingQueueList').innerHTML = '<div class="empty-queue">📭 Nothing matches these filters right now.</div>';
@@ -365,7 +532,7 @@
                 <div class="queue-card" data-id="${r.id}">
                     <div class="q-head">
                         <div>
-                            <span class="q-student">${escapeHtml(displayName(r.studentName))}</span>
+                            <span class="q-student">${studentHtml(r)}</span>
                             <span class="status-chip ${r.status}" style="margin-left:8px;">${escapeHtml(TypingStore.CHECKPOINT_LABELS[r.checkpointId] || r.checkpointId)}</span>
                             ${incompleteChip(r)}
                             ${!isPending ? '<span class="status-chip reviewed" style="margin-left:6px;">✓ reviewed</span>' : ''}
@@ -481,12 +648,12 @@
         try { allSubs = await PS.submissionStore.listQueue(reviewerUid, { status: 'all' }); }
         catch (err) { $('#studentInsights').innerHTML = ''; return; }
 
-        const matches = allSubs.filter(s => displayName(s.studentName).toLowerCase().includes(nameFilter));
+        const matches = allSubs.filter(s => studentSearchText(s).includes(nameFilter));
         const uniqueStudentIds = Array.from(new Set(matches.map(s => s.studentId)));
         if (uniqueStudentIds.length !== 1) { $('#studentInsights').innerHTML = ''; return; } // no match, or ambiguous — nothing safe to show
 
         const studentId = uniqueStudentIds[0];
-        const resolvedName = displayName(matches[0].studentName);
+        const resolvedName = studentText(matches[0]);
 
         let portfolio, patterns;
         try {

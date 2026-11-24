@@ -188,10 +188,10 @@ router.get('/queue', authenticate, requireReviewer, async (req: AuthRequest, res
     const withStudent = await Promise.all(
       rows.map(async (s) => {
         const [student, fb] = await Promise.all([
-          db.query.users.findFirst({ where: eq(users.id, s.studentId), columns: { username: true } }),
+          db.query.users.findFirst({ where: eq(users.id, s.studentId), columns: { username: true, nickname: true } }),
           s.status === 'reviewed' ? db.query.feedback.findFirst({ where: eq(feedback.submissionId, s.id) }) : Promise.resolve(null),
         ]);
-        return withUrls({ ...s, studentName: student?.username || 'Unknown', feedback: fb || null });
+        return withUrls({ ...s, studentName: student?.username || 'Unknown', studentNickname: student?.nickname || null, feedback: fb || null });
       })
     );
     res.json(withStudent);

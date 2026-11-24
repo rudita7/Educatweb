@@ -120,6 +120,21 @@
         return data.user; // { id, username, role }
     }
 
+    // Sign in with the name a student chose + PIN (the backend finds the passport).
+    async function loginByName(name, pin) {
+        const res = await fetch(API_BASE + '/api/auth/login-by-name', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, pin })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const err = new Error(data.error || 'Invalid name or PIN.');
+            err.status = res.status;
+            throw err;
+        }
+        return data.user; // { id, username (the passport number), role, nickname, avatar, createdAt }
+    }
+
     // ---------------- API helpers ----------------
     async function apiFetch(path, opts) {
         let res;
@@ -162,7 +177,7 @@
     }
 
     global.Backend = {
-        API_BASE, identify, ensureBackendAccount, login, apiFetch, fetchWithRetry,
+        API_BASE, identify, ensureBackendAccount, login, loginByName, apiFetch, fetchWithRetry,
         pullStampProgress, pushStampProgress
     };
 })(window);

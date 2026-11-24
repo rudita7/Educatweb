@@ -2221,10 +2221,11 @@
                     </div>
                     <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">${mode === 'handover'
                         ? 'Everyone’s progress is saved. The next student taps their own name to take their turn.'
-                        : 'Tap your name to take your turn. Not on the list? Add yourself with your passport number and PIN.'}</p>
+                        : 'Tap your name to take your turn. Not on the list? Add yourself with your name and PIN.'}</p>
                     ${roster.length ? `<div class="roster-grid">${cards}</div>` : `<p style="color:var(--ink-dim);margin-bottom:16px;">Nobody is signed in on this device yet.</p>`}
                     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
                         <button class="btn btn-primary" id="addStudentBtn">＋ Add a student</button>
+                        <button class="btn btn-secondary" id="loadClassBtn">☁️ Load class from server (teacher)</button>
                         <a href="index1.html" class="btn btn-secondary">New here? Create a passport</a>
                     </div>
                 `;
@@ -2234,11 +2235,149 @@
                 $$('[data-remove-identity]').forEach(btn => btn.addEventListener('click', function() {
                     const n = this.dataset.removeIdentity;
                     const u = getStorage('user:' + n) || {};
-                    if (!confirm('Remove ' + (u.nickname || n) + ' from this device? They can add themselves again with their passport number and PIN.')) return;
+                    if (!confirm('Remove ' + (u.nickname || n) + ' from this device? They can add themselves again with their name and PIN.')) return;
                     rosterRemove(n);
                     renderIdentityScreen(mode);
                 }));
                 $('#addStudentBtn').addEventListener('click', function() { renderAddStudent(mode); });
+                $('#loadClassBtn').addEventListener('click', function() { renderLoadClassLogin(mode); });
+            }
+
+            // ============================================================
+            //  LOAD CLASS FROM SERVER — the device's list of students lives in
+            //  the browser, which can be cleared. A teacher (reviewer account)
+            //  can pull the class list back from the server instead of every
+            //  student re-entering a passport number and PIN. The teacher's PIN
+            //  is used once to sign in and is not stored.
+            // ============================================================
+            function renderLoadClassLogin(mode) {
+                const shell = $('#lessonShell');
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">Keyboard & Typing · Class mode</span>
+                            <h2>Load class from server</h2>
+                        </div>
+                    </div>
+                    <p style="color:var(--ink-dim);margin-bottom:6px;font-size:0.88rem;">Sign in as the teacher to choose which students to put on this device.</p>
+                    <form class="add-student-form" id="loadClassForm" autocomplete="off">
+                        <label for="lcUser">Teacher username</label>
+                        <input id="lcUser" required />
+                        <label for="lcPin">Teacher PIN</label>
+                        <input id="lcPin" type="password" inputmode="numeric" maxlength="4" required />
+                        <div class="class-msg" id="lcMsg"></div>
+                        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" type="submit" id="lcSubmit">Load students</button>
+                            <button class="btn btn-secondary" type="button" id="lcCancel">Cancel</button>
+                        </div>
+                    </form>
+                `;
+                $('#lcUser').focus();
+                $('#lcCancel').addEventListener('click', function() { renderIdentityScreen(mode); });
+                $('#loadClassForm').addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const msg = $('#lcMsg');
+                    const btn = $('#lcSubmit');
+                    msg.className = 'class-msg';
+                    btn.disabled = true;
+                    msg.textContent = 'Checking…';
+                    try {
+                        const teacher = await window.Backend.login($('#lcUser').value.trim(), $('#lcPin').value.trim());
+                        if (!teacher || teacher.role !== 'reviewer') {
+                            msg.textContent = 'That account is not a teacher (reviewer) account.';
+                            msg.classList.add('error');
+                            btn.disabled = false;
+                            return;
+                        }
+                        const students = await window.Backend.apiFetch('/api/auth/students', { headers: { 'x-user-id': String(teacher.id) } });
+                        $('#lcPin').value = '';
+                        renderLoadClassPicker(mode, Array.isArray(students) ? students : []);
+                    } catch (err) {
+                        msg.textContent = (err instanceof TypeError || err.isNetworkError)
+                            ? 'No connection. Check the internet and try again.'
+                            : (err.message || 'Could not load the class.');
+                        msg.classList.add('error');
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            function renderLoadClassPicker(mode, students) {
+                const shell = $('#lessonShell');
+                const label = (s) => (s.nickname || s.username);
+                const sorted = students.slice().sort((a, b) => label(a).toLowerCase().localeCompare(label(b).toLowerCase()));
+                const byNum = {};
+                sorted.forEach(s => { byNum[s.username] = s; });
+                const onDevice = new Set(getRoster());
+                const selected = new Set();
+                shell.innerHTML = `
+                    <div class="lesson-top">
+                        <div>
+                            <span class="tag">Keyboard & Typing · Class mode</span>
+                            <h2>Choose students to add</h2>
+                        </div>
+                    </div>
+                    <p style="color:var(--ink-dim);margin-bottom:10px;font-size:0.88rem;">${sorted.length} student${sorted.length === 1 ? '' : 's'} on the server. Tick the ones taking part in this class.</p>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+                        <input id="lcSearch" placeholder="Search by name or passport" style="padding:8px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg-elev);color:var(--ink);min-width:220px;font-size:0.9rem;" />
+                        <button class="btn btn-secondary btn-sm" id="lcAll">Select all shown</button>
+                        <button class="btn btn-secondary btn-sm" id="lcNone">Clear</button>
+                    </div>
+                    <div id="lcList" style="max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:6px 12px;margin-bottom:12px;"></div>
+                    <div class="class-msg" id="lcPickMsg"></div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <button class="btn btn-primary" id="lcAdd">Add selected to this device</button>
+                        <button class="btn btn-secondary" id="lcBack">Back</button>
+                    </div>
+                `;
+                function drawList() {
+                    const q = ($('#lcSearch').value || '').trim().toLowerCase();
+                    const shown = sorted.filter(s => !q || (label(s) + ' ' + s.username).toLowerCase().includes(q));
+                    $('#lcList').innerHTML = shown.length ? shown.map(s => {
+                        const here = onDevice.has(s.username);
+                        return `<label style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line-soft);cursor:${here ? 'default' : 'pointer'};">
+                            <input type="checkbox" data-lc-num="${esc(s.username)}" ${here ? 'checked disabled' : (selected.has(s.username) ? 'checked' : '')} />
+                            <span class="roster-avatar sm">${esc(s.avatar || '🙂')}</span>
+                            <span><b>${esc(label(s))}</b> <span class="roster-num">${esc(s.username)}</span>${here ? ' <span class="roster-num">· already on this device</span>' : ''}</span>
+                        </label>`;
+                    }).join('') : '<p style="color:var(--ink-dim);padding:10px 0;">No students match.</p>';
+                    $$('[data-lc-num]').forEach(cb => cb.addEventListener('change', function() {
+                        if (this.checked) selected.add(this.dataset.lcNum); else selected.delete(this.dataset.lcNum);
+                    }));
+                }
+                drawList();
+                $('#lcSearch').addEventListener('input', drawList);
+                $('#lcAll').addEventListener('click', function() {
+                    $$('[data-lc-num]').forEach(cb => { if (!cb.disabled) { cb.checked = true; selected.add(cb.dataset.lcNum); } });
+                });
+                $('#lcNone').addEventListener('click', function() {
+                    selected.clear();
+                    $$('[data-lc-num]').forEach(cb => { if (!cb.disabled) cb.checked = false; });
+                });
+                $('#lcBack').addEventListener('click', function() { renderIdentityScreen(mode); });
+                $('#lcAdd').addEventListener('click', function() {
+                    if (!selected.size) {
+                        $('#lcPickMsg').textContent = 'Tick at least one student.';
+                        $('#lcPickMsg').className = 'class-msg error';
+                        return;
+                    }
+                    selected.forEach(num => {
+                        const s = byNum[num];
+                        if (!s) return;
+                        const local = getStorage('user:' + num) || {};
+                        // No PIN is stored for a student loaded this way: the
+                        // device knows their backend account id instead, which
+                        // is all submitting a result needs.
+                        setStorage('user:' + num, {
+                            num, nickname: s.nickname || local.nickname || num, avatar: s.avatar || local.avatar,
+                            pin: local.pin || null, createdAt: Date.parse(s.createdAt) || local.createdAt || Date.now()
+                        });
+                        try { localStorage.setItem('uttoron:backend-uid:' + num, String(s.id)); } catch (err) {}
+                        rosterAdd(num);
+                    });
+                    showToast('Added ' + selected.size + ' student' + (selected.size === 1 ? '' : 's') + ' to this device', 'success');
+                    renderIdentityScreen(mode);
+                });
             }
 
             function renderAddStudent(mode) {
@@ -2251,8 +2390,8 @@
                         </div>
                     </div>
                     <form class="add-student-form" id="addStudentForm" autocomplete="off">
-                        <label for="addNum">Passport number</label>
-                        <input id="addNum" placeholder="e.g. UT-4821" required />
+                        <label for="addNum">Name (or passport number)</label>
+                        <input id="addNum" placeholder="e.g. Tanvir" required />
                         <label for="addPin">PIN</label>
                         <input id="addPin" type="password" inputmode="numeric" maxlength="4" placeholder="4 digits" required />
                         <div class="class-msg" id="addMsg"></div>
@@ -2268,20 +2407,36 @@
                     e.preventDefault();
                     const msg = $('#addMsg');
                     const btn = $('#addSubmit');
-                    const num = $('#addNum').value.trim().toUpperCase();
+                    const raw = $('#addNum').value.trim();
                     const pin = $('#addPin').value.trim();
                     msg.className = 'class-msg';
-                    if (!num || !/^[0-9]{4}$/.test(pin)) {
-                        msg.textContent = 'Enter the passport number and the 4-digit PIN.';
+                    if (!raw || !/^[0-9]{4}$/.test(pin)) {
+                        msg.textContent = 'Enter the name (or passport number) and the 4-digit PIN.';
                         msg.classList.add('error');
                         return;
                     }
-                    const local = getStorage('user:' + num);
+                    // A passport number (UT-1234) or the name the student chose.
+                    const pm = /^UT-?(\d{3,6})$/i.exec(raw);
+                    let num = pm ? 'UT-' + pm[1] : null;
+                    let local = num ? getStorage('user:' + num) : null;
+                    if (!num) {
+                        // Is there already a passport with this name + PIN on this device?
+                        const key = raw.trim().toLowerCase().replace(/\s+/g, ' ');
+                        const here = [];
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const k = localStorage.key(i);
+                            if (!k || !k.startsWith('user:')) continue;
+                            const u = getStorage(k);
+                            if (u && u.pin === pin && String(u.nickname || '').trim().toLowerCase().replace(/\s+/g, ' ') === key) here.push(u);
+                        }
+                        if (here.length === 1) { rosterAdd(here[0].num); renderIdentityScreen(mode); return; }
+                    }
                     if (local && local.pin === pin) { rosterAdd(num); renderIdentityScreen(mode); return; }
                     btn.disabled = true;
                     msg.textContent = 'Checking…';
                     try {
-                        const bu = await window.Backend.login(num, pin);
+                        const bu = num ? await window.Backend.login(num, pin) : await window.Backend.loginByName(raw, pin);
+                        if (!num) { num = bu.username; local = getStorage('user:' + num); }
                         if (!bu || !bu.nickname) {
                             msg.textContent = 'This passport was created before cross-device sign-in was added — it only works on the device that made it.';
                             msg.classList.add('error');
@@ -2295,7 +2450,8 @@
                     } catch (err) {
                         msg.textContent = (err instanceof TypeError)
                             ? 'No connection. Check the internet and try again (passports already on this device work without it).'
-                            : (local ? 'Incorrect PIN. Try again.' : 'Passport not found, or the PIN is wrong. Check the number.');
+                            : (err.status === 409 ? err.message
+                            : (local ? 'Incorrect PIN. Try again.' : 'No student found with that name (or passport number) and PIN. Check the spelling and the PIN.'));
                         msg.classList.add('error');
                         btn.disabled = false;
                     }
@@ -2579,6 +2735,9 @@
             // ============================================================
             function init() {
                 checkProgress();
+                // Ask the browser to keep this site's saved students and results
+                // (it may refuse; clearing browsing data by hand still removes them).
+                try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
                 seedRosterFromSession();
                 // "Switch student" buttons appear on several screens, so one
                 // delegated handler covers them all.
