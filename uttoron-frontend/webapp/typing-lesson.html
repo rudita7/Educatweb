@@ -1285,6 +1285,64 @@
             // ============================================================
             //  ROSTER + IN-PROGRESS SESSIONS (class mode)
             // ============================================================
+            // ============================================================
+            //  PROGRESS FROM THE SERVER — which sessions a student has finished
+            //  comes from their saved results on the server, not only from this
+            //  browser's memory, so it is the same on every device, after a
+            //  merge, and after the browser's data is cleared.
+            // ============================================================
+            const CHECKPOINT_TO_SESSION = {};
+            Object.keys(SESSIONS_BY_ID).forEach(id => { CHECKPOINT_TO_SESSION[SESSIONS_BY_ID[id].checkpointId] = id; });
+            const serverProgress = {}; // passport -> { sessionId: { attempts, completeAttempts, lastComplete, lastIncomplete } }
+            const syncTried = new Set();
+
+            function backendUidFor(num) {
+                try { return localStorage.getItem('uttoron:backend-uid:' + num); } catch (e) { return null; }
+            }
+            async function loadServerProgress(num) {
+                const uid = backendUidFor(num);
+                if (!uid || !window.TypingStore) return null;
+                const rows = await TypingStore.listMine(uid); // [{ result, feedback }], newest first
+                const by = {};
+                (rows || []).forEach(row => {
+                    const r = row.result;
+                    const sid = CHECKPOINT_TO_SESSION[r.checkpointId];
+                    if (!sid) return;
+                    const e = by[sid] = by[sid] || { attempts: 0, completeAttempts: 0, lastComplete: null, lastIncomplete: null };
+                    e.attempts++;
+                    const slim = { wpm: r.wpm, accuracy: r.accuracy, createdAt: r.createdAt, runsCompleted: r.runsCompleted, runsTotal: r.runsTotal };
+                    if (TypingStore.isIncomplete(r)) { if (!e.lastIncomplete) e.lastIncomplete = slim; }
+                    else { e.completeAttempts++; if (!e.lastComplete) e.lastComplete = slim; }
+                });
+                serverProgress[num] = by;
+                // Keep this device's own record in step (it is also what works offline).
+                const local = getStorage('typingSessions:' + num) || {};
+                let changed = false;
+                Object.keys(by).forEach(sid => { if (by[sid].completeAttempts > 0 && !local[sid]) { local[sid] = true; changed = true; } });
+                if (changed) setStorage('typingSessions:' + num, local);
+                return by;
+            }
+            // Sessions finished: this device's flags plus the server's results.
+            function finishedSessionIds(num) {
+                const ids = new Set(Object.keys(getStorage('typingSessions:' + num) || {}).filter(k => SESSIONS_BY_ID[k]));
+                const sp = serverProgress[num] || {};
+                Object.keys(sp).forEach(k => { if (sp[k].completeAttempts > 0) ids.add(k); });
+                return ids;
+            }
+            // The grade band where this student has done the most.
+            function bandFromProgress(num) {
+                const counts = {};
+                Object.keys(GRADE_BANDS).forEach(b => { counts[b] = 0; });
+                const fin = finishedSessionIds(num);
+                fin.forEach(sid => { const b = sid.split('-')[0]; if (b in counts) counts[b]++; });
+                Object.keys(serverProgress[num] || {}).forEach(sid => { if (!fin.has(sid)) { const b = sid.split('-')[0]; if (b in counts) counts[b] += 0.5; } });
+                let best = null, bestN = 0;
+                Object.keys(counts).forEach(b => { if (counts[b] > bestN) { best = b; bestN = counts[b]; } });
+                return best;
+            }
+            function fmtDate(iso) { const d = new Date(iso); return isNaN(d.getTime()) ? '' : d.toLocaleDateString(); }
+            const dateTail = (iso) => { const d = fmtDate(iso); return d ? ' · ' + esc(d) : ''; };
+
             function currentNum() {
                 const s = getStorage('uttoron:session');
                 return (s && s.num) || null;
@@ -1433,6 +1491,7 @@
                     const combined = combineCheckpointResults(checkpointResults);
                     const outcome = await TypingStore.submitTypingResult({ backendUid, checkpointId, ...combined, runsCompleted: runsDone, runsTotal });
                     clearUnsent(session.num);
+                    loadServerProgress(session.num).catch(() => {}); // refresh what the session list shows
                     return { backendUid, combined, queued: !!(outcome && outcome.queued) };
                 } catch (err) {
                     console.error('Could not submit typing checkpoint result:', err);
@@ -1692,18 +1751,22 @@
             // ============================================================
             function renderGradeBandPicker() {
                 const shell = $('#lessonShell');
-                const cardsHtml = Object.values(GRADE_BANDS).map(band => `
+                const finishedHere = finishedSessionIds(currentNum());
+                const cardsHtml = Object.values(GRADE_BANDS).map(band => {
+                    const nDone = band.sessions.filter(s => finishedHere.has(s.id)).length;
+                    return `
                     <div class="scenario-card" style="margin-bottom:12px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
                             <div>
                                 <span class="tag">${band.label}</span>
                                 <h3 style="margin:4px 0 2px;font-size:1.05rem;">${band.subtitle}</h3>
-                                <p style="font-size:0.78rem;color:var(--ink-faint);">${band.sessions.length} sessions</p>
+                                <p style="font-size:0.78rem;color:var(--ink-dim);">${band.sessions.length} sessions${nDone ? ' · <b style="color:#4aa882;">' + nDone + ' finished</b>' : ''}</p>
                             </div>
                             <button class="btn btn-primary btn-sm" data-pick-band="${band.id}" style="flex-shrink:0;">Choose →</button>
                         </div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
                 shell.innerHTML = `
                     <div class="lesson-top">
                         <div>
@@ -1731,11 +1794,25 @@
             function renderSessionPicker() {
                 const shell = $('#lessonShell');
                 const band = GRADE_BANDS[currentGradeBand];
-                const done = getSessionProgress();
+                const num = currentNum();
+                const finished = finishedSessionIds(num);
+                const sp = serverProgress[num] || {};
+                const nFinished = band.sessions.filter(s => finished.has(s.id)).length;
                 const cardsHtml = band.sessions.map(s => {
-                    const isDone = !!done[s.id];
+                    const isDone = finished.has(s.id);
                     const ip = getInProgress();
                     const inProg = !!(ip && ip.sessionId === s.id);
+                    const st = sp[s.id];
+                    const stat = 'font-size:0.8rem;font-weight:600;margin:6px 0 0;';
+                    const statusHtml = inProg
+                        ? `<p style="${stat}color:var(--marigold);">▶ In progress: ${ip.results.length} of ${runsPerSession()} runs done</p>`
+                        : (st && st.lastComplete)
+                        ? `<p style="${stat}color:#4aa882;">✅ Finished${st.completeAttempts > 1 ? ' · ' + st.completeAttempts + ' attempts' : ''} · last: ${st.lastComplete.wpm} WPM, ${st.lastComplete.accuracy}% accuracy${dateTail(st.lastComplete.createdAt)}</p>`
+                        : isDone
+                        ? `<p style="${stat}color:#4aa882;">✅ Finished</p>`
+                        : (st && st.lastIncomplete)
+                        ? `<p style="${stat}color:var(--marigold);">📝 Submitted incomplete (${st.lastIncomplete.runsCompleted} of ${st.lastIncomplete.runsTotal} runs)${dateTail(st.lastIncomplete.createdAt)}</p>`
+                        : '';
                     return `
                         <div class="scenario-card" style="margin-bottom:12px;${isDone ? 'opacity:0.75;' : ''}">
                             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
@@ -1744,6 +1821,7 @@
                                     <h3 style="margin:4px 0 6px;font-size:1.05rem;">${s.title}</h3>
                                     <p style="font-size:0.85rem;color:var(--ink-dim);margin-bottom:2px;">${s.objective}</p>
                                     <p style="font-size:0.76rem;color:var(--ink-faint);">${s.curriculumNote}</p>
+                                    ${statusHtml}
                                 </div>
                                 <button class="btn ${isDone && !inProg ? 'btn-secondary' : 'btn-primary'} btn-sm" data-start-session="${s.id}" style="flex-shrink:0;">${inProg ? 'Resume (' + ip.results.length + ' of ' + runsPerSession() + ' runs done)' : (isDone ? 'Redo' : 'Start')} →</button>
                             </div>
@@ -1759,7 +1837,7 @@
                             <button class="btn btn-secondary btn-sm" id="switchGradeBtn" style="margin-top:8px;">Switch grade</button>
                         </div>
                     </div>
-                    <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">${band.sessions.length} sessions, in curriculum order. Each session is ${runsPerSession()} short runs; your result goes to your reviewer when you finish the last one, and you can hand the laptop to another student after any run.</p>
+                    <p style="color:var(--ink-dim);margin-bottom:16px;font-size:0.88rem;">${nFinished} of ${band.sessions.length} sessions finished, in curriculum order. Each session is ${runsPerSession()} short runs; your result goes to your reviewer when you finish the last one, and you can hand the laptop to another student after any run.</p>
                     ${cardsHtml}
                 `;
                 $$('[data-start-session]').forEach(btn => btn.addEventListener('click', function() {
@@ -2176,6 +2254,16 @@
                 const saved = getSavedGradeBand();
                 if (saved && GRADE_BANDS[saved]) currentGradeBand = saved;
                 renderTypingLesson();
+                // Then refresh from the server. Only a screen that is just a menu
+                // (track / grade band / session list) is redrawn; a run in progress is left alone.
+                loadServerProgress(num).then(function() {
+                    if (currentNum() !== num || !identityConfirmed) return;
+                    if (!currentGradeBand) {
+                        const b = bandFromProgress(num);
+                        if (b) { currentGradeBand = b; saveGradeBand(b); }
+                    }
+                    if ($('[data-start-session]') || $('[data-pick-band]') || $('#pickTypingBtn')) renderTypingLesson();
+                }).catch(function() {});
             }
 
             function doHandOver() {
@@ -2193,7 +2281,7 @@
                 const cards = roster.map(n => {
                     const u = getStorage('user:' + n) || {};
                     const ip = getInProgress(n);
-                    const doneCount = Object.keys(getStorage('typingSessions:' + n) || {}).length;
+                    const doneCount = finishedSessionIds(n).size;
                     const status = getUnsent(n)
                         ? '⚠️ A finished session has not been sent yet'
                         : ip
@@ -2232,6 +2320,14 @@
                 $$('[data-pick-identity]').forEach(btn => btn.addEventListener('click', function() {
                     chooseIdentity(this.dataset.pickIdentity);
                 }));
+                // Fetch each student's saved results once, then redraw the cards.
+                const toSync = roster.filter(n => !syncTried.has(n) && backendUidFor(n));
+                toSync.forEach(n => syncTried.add(n));
+                if (toSync.length) {
+                    Promise.all(toSync.map(n => loadServerProgress(n).catch(() => null))).then(function(results) {
+                        if (results.some(Boolean) && $('[data-pick-identity]')) renderIdentityScreen(mode);
+                    });
+                }
                 $$('[data-remove-identity]').forEach(btn => btn.addEventListener('click', function() {
                     const n = this.dataset.removeIdentity;
                     const u = getStorage('user:' + n) || {};
